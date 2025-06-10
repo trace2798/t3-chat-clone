@@ -1,23 +1,27 @@
-import type { UIMessage } from 'ai';
-import { PreviewMessage, ThinkingMessage } from './message';
-import { Greeting } from './greeting';
-import { memo } from 'react';
+import type { UIMessage } from "ai";
+import { PreviewMessage, ThinkingMessage } from "./message";
+import { Greeting } from "./greeting";
+import { memo } from "react";
 // import type { Vote } from '@/lib/db/schema';
-import equal from 'fast-deep-equal';
-import type { UseChatHelpers } from '@ai-sdk/react';
-import { motion } from 'motion/react';
-import { useMessages } from '@/hooks/use-messages';
+import equal from "fast-deep-equal";
+import type { UseChatHelpers } from "@ai-sdk/react";
+import { motion } from "motion/react";
+import { useMessages } from "@/hooks/use-messages";
+import { VisibilityType } from "./visibility-selector";
 
 interface MessagesProps {
   chatId: string;
-  status: UseChatHelpers['status'];
-//   votes: Array<Vote> | undefined;
+  status: UseChatHelpers["status"];
+  //   votes: Array<Vote> | undefined;
   votes: any;
   messages: Array<UIMessage>;
-  setMessages: UseChatHelpers['setMessages'];
-  reload: UseChatHelpers['reload'];
+  setMessages: UseChatHelpers["setMessages"];
+  reload: UseChatHelpers["reload"];
   isReadonly: boolean;
   isArtifactVisible: boolean;
+  append: UseChatHelpers["append"];
+  selectedVisibilityType: VisibilityType;
+  handleSubmit: UseChatHelpers["handleSubmit"];
 }
 
 function PureMessages({
@@ -28,6 +32,9 @@ function PureMessages({
   setMessages,
   reload,
   isReadonly,
+  append,
+  selectedVisibilityType,
+  handleSubmit,
 }: MessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -45,14 +52,21 @@ function PureMessages({
       ref={messagesContainerRef}
       className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4 relative"
     >
-      {messages.length === 0 && <Greeting />}
+      {messages.length === 0 && (
+        <Greeting
+          chatId={chatId}
+          append={append}
+          selectedVisibilityType={selectedVisibilityType}
+          handleSubmit={handleSubmit}
+        />
+      )}
 
       {messages.map((message, index) => (
         <PreviewMessage
           key={message.id}
           chatId={chatId}
           message={message}
-          isLoading={status === 'streaming' && messages.length - 1 === index}
+          isLoading={status === "streaming" && messages.length - 1 === index}
           vote={
             votes
               ? votes.find((vote) => vote.messageId === message.id)
@@ -67,9 +81,9 @@ function PureMessages({
         />
       ))}
 
-      {status === 'submitted' &&
+      {status === "submitted" &&
         messages.length > 0 &&
-        messages[messages.length - 1].role === 'user' && <ThinkingMessage />}
+        messages[messages.length - 1].role === "user" && <ThinkingMessage />}
 
       <motion.div
         ref={messagesEndRef}

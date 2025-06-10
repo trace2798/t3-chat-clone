@@ -98,6 +98,9 @@ export function Chat({
           reload={reload}
           isReadonly={isReadonly}
           isArtifactVisible={false}
+          append={append}
+          selectedVisibilityType={visibilityType}
+          handleSubmit={handleSubmit}
         />
         <form className="flex mx-auto px-4 bg-background pb-0  gap-2 w-full md:max-w-3xl">
           {!isReadonly && (

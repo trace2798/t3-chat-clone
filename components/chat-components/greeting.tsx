@@ -1,6 +1,19 @@
-import { motion } from 'motion/react';
+import { motion } from "motion/react";
+import { VisibilityType } from "./visibility-selector";
+import { UseChatHelpers } from "@ai-sdk/react";
+import { SuggestedActions } from "./suggested-actions";
 
-export const Greeting = () => {
+export const Greeting = ({
+  chatId,
+  append,
+  selectedVisibilityType,
+  handleSubmit,
+}: {
+  chatId: string;
+  append: UseChatHelpers["append"];
+  selectedVisibilityType: VisibilityType;
+  handleSubmit: UseChatHelpers["handleSubmit"];
+}) => {
   return (
     <div
       key="overview"
@@ -11,18 +24,23 @@ export const Greeting = () => {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.5 }}
-        className="text-2xl font-semibold"
+        className="text-3xl font-semibold"
       >
-        Hello there!
+        How can I help you?
       </motion.div>
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.6 }}
-        className="text-2xl text-zinc-500"
+        className="text-2xl mt-5"
       >
-        How can I help you today?
+        <SuggestedActions
+          append={append}
+          chatId={chatId}
+          selectedVisibilityType={selectedVisibilityType}
+          handleSubmit={handleSubmit}
+        />
       </motion.div>
     </div>
   );

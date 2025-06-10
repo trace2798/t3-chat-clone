@@ -20,7 +20,7 @@ import { useLocalStorage, useWindowSize } from "usehooks-ts";
 import { PreviewAttachment } from "./preview-attachment";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-// import { SuggestedActions } from './suggested-actions';
+
 import equal from "fast-deep-equal";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { AnimatePresence, motion } from "motion/react";
@@ -28,6 +28,8 @@ import { ArrowDown, ArrowUp, PaperclipIcon, StopCircle } from "lucide-react";
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
 import type { VisibilityType } from "./visibility-selector";
 import { cn } from "@/lib/utils";
+import { SuggestedActions } from "./suggested-actions";
+import { Greeting } from "./greeting";
 
 function PureMultimodalInput({
   chatId,
