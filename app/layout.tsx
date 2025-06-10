@@ -4,6 +4,12 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/sidebar/app-sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +44,20 @@ export default function RootLayout({
             forcedTheme="dark"
             disableTransitionOnChange
           >
-            <ConvexClientProvider>{children}</ConvexClientProvider>
+            <ConvexClientProvider>
+              <SidebarProvider className="">
+                <AppSidebar />
+                <SidebarInset className="">
+                  <main>
+                    {/* <SidebarTrigger className="absolute z-50 inset-0" /> */}
+                    <div className="flex w-full">
+                      <SidebarTrigger className="" />
+                    </div>
+                    {children}
+                  </main>
+                </SidebarInset>
+              </SidebarProvider>
+            </ConvexClientProvider>
           </ThemeProvider>
         </body>
       </html>

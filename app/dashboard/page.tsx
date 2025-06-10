@@ -11,7 +11,9 @@ const Page = async ({}) => {
   console.log(user);
   return (
     <>
-      <div>Page</div>
+      <div className="flex flex-1 flex-col w-full min-h-screen rounded-lg bg-zinc-800">
+        Hello
+      </div>
     </>
   );
 };
