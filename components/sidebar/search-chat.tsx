@@ -23,9 +23,11 @@ import {
 } from "@/components/ui/command";
 import { Button } from "../ui/button";
 import { useSidebar } from "../ui/sidebar";
+import { cn } from "@/lib/utils";
 
 export function SearchChat() {
   const [open, setOpen] = React.useState(false);
+  const { state } = useSidebar();
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
@@ -41,12 +43,20 @@ export function SearchChat() {
   return (
     <>
       <Button
-        size={"icon"}
+        // size={"icon"}
+        // variant={"ghost"}
+        // onClick={() => setOpen(true)}
+        // className="size-7"
+        size={state === "expanded" ? "sm" : "icon"}
         variant={"ghost"}
         onClick={() => setOpen(true)}
-        className="size-7"
+        className={cn(
+          "h-7  hover:cursor-pointer",
+          state === "expanded" ? "justify-start w-full" : "justify-center w-fit"
+        )}
       >
         <Search className="size-4" />
+        {state === "expanded" && "Search Chat"}
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandInput placeholder="Type a command or search..." />

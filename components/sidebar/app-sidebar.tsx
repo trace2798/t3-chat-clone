@@ -15,6 +15,8 @@ import {
 import { LayoutDashboard, Search } from "lucide-react";
 import { Button } from "../ui/button";
 import { SignOut } from "../auth/sign-out";
+import CreateChat from "./create-chat";
+import { SearchChat } from "./search-chat";
 
 const data = {
   user: {
@@ -48,10 +50,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
-        <Button size={"sm"}>
-          <Search />
-        </Button>
+      <SidebarContent className="px-3">
+        <CreateChat/>
+        <SearchChat/>
         Content
       </SidebarContent>
       <SidebarFooter>
