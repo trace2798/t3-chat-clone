@@ -24,8 +24,9 @@ import {
 } from "@/components/ui/tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import {SearchChat} from "../sidebar/search-chat";
+import { SearchChat } from "../sidebar/search-chat";
 import { Avatar, AvatarImage } from "./avatar";
+import CreateChat from "../sidebar/create-chat";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -264,7 +265,7 @@ function SidebarTrigger({
 
   console.log("SidebarTrigger", state);
   return (
-    <div className="flex items-center justify-between pr-3 w-full">
+    <div className="flex items-center justify-between pr-3 w-full z-10">
       {state === "collapsed" ? (
         <div className="flex items-center gap-2">
           <Button
@@ -282,7 +283,7 @@ function SidebarTrigger({
             <PanelLeftIcon />
             <span className="sr-only">Toggle Sidebar</span>
           </Button>
-
+          <CreateChat />
           <SearchChat />
         </div>
       ) : (
@@ -752,6 +753,5 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar
+  useSidebar,
 };
-

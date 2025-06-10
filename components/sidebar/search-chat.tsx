@@ -22,10 +22,10 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { Button } from "../ui/button";
+import { useSidebar } from "../ui/sidebar";
 
 export function SearchChat() {
   const [open, setOpen] = React.useState(false);
-
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
