@@ -148,31 +148,34 @@ function PureSuggestedActions({
 
       {tabs.map((tab) => (
         <TabsContent key={tab.name} value={tab.name} className="mt-10 md:mt-3">
-          <div className="grid grid-cols-1 gap-3">
+          <div className="grid grid-cols-1 gap-1">
             {tab.actions.map((suggestedAction, index) => (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ delay: 0.05 * index }}
-                key={`suggested-action-${suggestedAction.title}-${index}`}
-                className="border-b"
-              >
-                <div
-                  // variant="ghost"
-                  onClick={async () => {
-                    window.history.replaceState({}, "", `/chat/${chatId}`);
-                    append({
-                      role: "user",
-                      content: suggestedAction.action,
-                    });
-                    handleSubmit();
-                  }}
-                  className="text-left rounded-xl pb-3 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start hover:cursor-pointer"
+              <>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ delay: 0.05 * index }}
+                  key={`suggested-action-${suggestedAction.title}-${index}`}
+                  // className="hover:bg-accent "
                 >
-                  <span className="font-medium">{suggestedAction.title}</span>
-                </div>
-              </motion.div>
+                  <div
+                    typeof="button"
+                    onClick={async () => {
+                      window.history.replaceState({}, "", `/chat/${chatId}`);
+                      append({
+                        role: "user",
+                        content: suggestedAction.action,
+                      });
+                      handleSubmit();
+                    }}
+                    className="text-left rounded-xl hover:bg-accent px-3 py-2 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start hover:cursor-pointer"
+                  >
+                    <span className="font-medium">{suggestedAction.title}</span>
+                  </div>
+                </motion.div>
+                <Separator />
+              </>
             ))}
           </div>
         </TabsContent>
