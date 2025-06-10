@@ -10,6 +10,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/sidebar/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +50,7 @@ export default function RootLayout({
                 <AppSidebar />
                 <SidebarInset className="">
                   <main>
+                    <Toaster/>
                     {/* <SidebarTrigger className="absolute z-50 inset-0" /> */}
                     <div className="flex w-full">
                       <SidebarTrigger className="" />

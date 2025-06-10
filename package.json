@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.3.22",
+    "@ai-sdk/react": "^1.2.12",
     "@auth/core": "0.37.0",
     "@convex-dev/auth": "^0.0.87",
     "@radix-ui/react-avatar": "^1.1.10",
@@ -18,17 +20,23 @@
     "@radix-ui/react-separator": "^1.1.7",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "ai": "^4.3.16",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "convex": "^1.24.8",
     "convex-helpers": "0.1.23",
+    "fast-deep-equal": "^3.1.3",
     "lucide-react": "^0.513.0",
+    "motion": "^12.16.0",
     "next": "15.3.3",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sonner": "^2.0.5",
+    "swr": "^2.3.3",
     "tailwind-merge": "^3.3.0",
+    "usehooks-ts": "^3.1.1",
     "zod": "^3.25.56"
   },
   "devDependencies": {
