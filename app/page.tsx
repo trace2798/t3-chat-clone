@@ -6,7 +6,7 @@ import { generateUUID } from "@/lib/utils";
 export default function Home() {
   const id = generateUUID();
   return (
-    <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen pt-8 p-3 bg-zinc-800">
+    <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen pt-8 bg-zinc-800">
       <Chat
         key={id}
         id={id}

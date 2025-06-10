@@ -10,6 +10,7 @@ import { ChatSDKError } from "@/lib/errors";
 import { toast } from "sonner";
 import { MultimodalInput } from "./input-box";
 import { useState } from "react";
+import { Messages } from "./messages";
 
 export function Chat({
   id,
@@ -88,28 +89,17 @@ export function Chat({
         />
       </div> */}
       <div className="flex flex-col min-w-0 h-dvh bg-background">
-        {/* <ChatHeader
-          chatId={id}
-          selectedModelId={initialChatModel}
-          selectedVisibilityType={initialVisibilityType}
-          isReadonly={isReadonly}
-          session={session}
-        /> */}
-        <h1>Header</h1>
-
-        {/* <Messages
+        <Messages
           chatId={id}
           status={status}
-          votes={votes}
+          votes={""}
           messages={messages}
           setMessages={setMessages}
           reload={reload}
           isReadonly={isReadonly}
-          isArtifactVisible={isArtifactVisible}
-        /> */}
-        <h1>Messages</h1>
-
-        <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
+          isArtifactVisible={false}
+        />
+        <form className="flex mx-auto px-4 bg-background pb-0  gap-2 w-full md:max-w-3xl">
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
