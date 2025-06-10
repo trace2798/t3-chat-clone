@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import type { VisibilityType } from "./visibility-selector";
+import { Separator } from "../ui/separator";
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -146,8 +147,8 @@ function PureSuggestedActions({
       </TabsList>
 
       {tabs.map((tab) => (
-        <TabsContent key={tab.name} value={tab.name}>
-          <div className="grid grid-cols-1 gap-2">
+        <TabsContent key={tab.name} value={tab.name} className="mt-10 md:mt-3">
+          <div className="grid grid-cols-1 gap-3">
             {tab.actions.map((suggestedAction, index) => (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -157,8 +158,8 @@ function PureSuggestedActions({
                 key={`suggested-action-${suggestedAction.title}-${index}`}
                 className="border-b"
               >
-                <Button
-                  variant="ghost"
+                <div
+                  // variant="ghost"
                   onClick={async () => {
                     window.history.replaceState({}, "", `/chat/${chatId}`);
                     append({
@@ -167,10 +168,10 @@ function PureSuggestedActions({
                     });
                     handleSubmit();
                   }}
-                  className="text-left rounded-xl text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start hover:cursor-pointer"
+                  className="text-left rounded-xl pb-3 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start hover:cursor-pointer"
                 >
                   <span className="font-medium">{suggestedAction.title}</span>
-                </Button>
+                </div>
               </motion.div>
             ))}
           </div>
