@@ -36,6 +36,7 @@ import type { VisibilityType } from "./visibility-selector";
 import { cn } from "@/lib/utils";
 import { SuggestedActions } from "./suggested-actions";
 import { Greeting } from "./greeting";
+import { ExampleCombobox } from "../model-selector";
 
 function PureMultimodalInput({
   chatId,
@@ -282,7 +283,7 @@ function PureMultimodalInput({
         value={input}
         onChange={handleInput}
         className={cn(
-          "min-h-[24px] max-h-[calc(50dvh)] overflow-hidden resize-none rounded-t-2xl !text-base bg-muted pb-10 dark:border-zinc-700",
+          "min-h-[24px] max-h-[calc(50dvh)] overflow-hidden resize-none rounded-t-2xl rounded-b-none !text-base bg-muted pb-10 dark:border-zinc-700",
           className
         )}
         rows={2}
@@ -305,7 +306,7 @@ function PureMultimodalInput({
       />
 
       <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start items-center space-x-2">
-        <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+        <ExampleCombobox />
         <SearchButton
           triggerSearch={() => {
             setIsSearchMode((prev) => !prev);
@@ -313,6 +314,7 @@ function PureMultimodalInput({
           disabled={status !== "ready"}
           isActive={isSearchMode}
         />
+        <AttachmentsButton fileInputRef={fileInputRef} status={status} />
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
@@ -353,7 +355,7 @@ function PureAttachmentsButton({
   return (
     <Button
       data-testid="attachments-button"
-      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent"
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
