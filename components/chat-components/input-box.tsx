@@ -227,7 +227,7 @@ function PureMultimodalInput({
 
   return (
     <>
-      <div className="relative flex flex-col gap-4 w-full max-w-2xl mx-auto z-50">
+      <div className="relative flex flex-col gap-4 w-full max-w2xl mx-auto z-50">
         <div className=" w-full max-w-2xl mx-auto flex flex-col gap-4">
           <AnimatePresence>
             {!isAtBottom && (
@@ -542,8 +542,6 @@ export function Dictaphone({ input, setInput }: DictaphoneProps) {
     </HoverCard>
   );
 }
-
-// jayantaps@gmail.com
 
 const mockAttachments: Attachment[] = [
   {

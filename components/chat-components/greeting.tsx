@@ -17,7 +17,7 @@ export const Greeting = ({
   return (
     <div
       key="overview"
-      className="max-w-xl mx-auto md:mt-20 lg:mt-44 px-8 size-full flex flex-col justify-start"
+      className="max-w-xl mx-auto mt-20 lg:mt-44 px-8 size-full flex flex-col justify-start"
     >
       <motion.div
         initial={{ opacity: 0, y: 10 }}
