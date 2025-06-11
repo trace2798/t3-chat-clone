@@ -15,6 +15,9 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 // import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
 import { PreviewAttachment } from "./preview-attachment";
@@ -28,8 +31,10 @@ import {
   ArrowDown,
   ArrowUp,
   Globe,
+  Mic,
   PaperclipIcon,
   StopCircle,
+  Voicemail,
 } from "lucide-react";
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
 import type { VisibilityType } from "./visibility-selector";
@@ -38,6 +43,12 @@ import { SuggestedActions } from "./suggested-actions";
 import { Greeting } from "./greeting";
 import { ExampleCombobox } from "../model-selector";
 import { CommandDialogDemo } from "../command-model-selector";
+import { useSidebar } from "../ui/sidebar";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "../ui/hover-card";
 
 function PureMultimodalInput({
   chatId,
@@ -71,7 +82,7 @@ function PureMultimodalInput({
   const [isSearchMode, setIsSearchMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
-
+  const { isMobile } = useSidebar();
   useEffect(() => {
     if (textareaRef.current) {
       adjustHeight();
@@ -112,6 +123,12 @@ function PureMultimodalInput({
   useEffect(() => {
     setLocalStorageInput(input);
   }, [input, setLocalStorageInput]);
+
+  // useEffect(() => {
+  //   if (process.env.NODE_ENV === "development") {
+  //     setAttachments((current) => [...current, ...mockAttachments]);
+  //   }
+  // }, []);
 
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
@@ -209,128 +226,131 @@ function PureMultimodalInput({
   }, [status, scrollToBottom]);
 
   return (
-    <div className="relative w-full flex flex-col gap-4">
-      <AnimatePresence>
-        {!isAtBottom && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            className="absolute left-1/2 bottom-28 -translate-x-1/2 z-50"
-          >
-            <Button
-              data-testid="scroll-to-bottom-button"
-              className="rounded-full"
-              size="icon"
-              variant="outline"
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToBottom();
-              }}
+    <>
+      <div className="relative flex flex-col gap-4 w-full max-w-2xl mx-auto z-50">
+        <div className=" w-full max-w-2xl mx-auto flex flex-col gap-4">
+          <AnimatePresence>
+            {!isAtBottom && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="relative left-1/2 flex justify-center -translate-x-1/2 z-50"
+              >
+                <Button
+                  data-testid="scroll-to-bottom-button"
+                  className="rounded-full"
+                  size="icon"
+                  variant="outline"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToBottom();
+                  }}
+                >
+                  <ArrowDown />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <input
+            type="file"
+            className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
+            ref={fileInputRef}
+            multiple
+            onChange={handleFileChange}
+            tabIndex={-1}
+          />
+
+          {(attachments.length > 0 || uploadQueue.length > 0) && (
+            <div
+              data-testid="attachments-preview"
+              className="flex flex-row gap-2 overflow-x-scroll items-end"
             >
-              <ArrowDown />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {attachments.map((attachment) => (
+                <PreviewAttachment
+                  key={attachment.url}
+                  attachment={attachment}
+                />
+              ))}
 
-      {/* {messages.length === 0 &&
-        attachments.length === 0 &&
-        uploadQueue.length === 0 && (
-          <SuggestedActions
-            append={append}
-            chatId={chatId}
-            selectedVisibilityType={selectedVisibilityType}
-          />
-        )} */}
-
-      <input
-        type="file"
-        className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
-        ref={fileInputRef}
-        multiple
-        onChange={handleFileChange}
-        tabIndex={-1}
-      />
-
-      {(attachments.length > 0 || uploadQueue.length > 0) && (
-        <div
-          data-testid="attachments-preview"
-          className="flex flex-row gap-2 overflow-x-scroll items-end"
-        >
-          {attachments.map((attachment) => (
-            <PreviewAttachment key={attachment.url} attachment={attachment} />
-          ))}
-
-          {uploadQueue.map((filename) => (
-            <PreviewAttachment
-              key={filename}
-              attachment={{
-                url: "",
-                name: filename,
-                contentType: "",
-              }}
-              isUploading={true}
-            />
-          ))}
+              {uploadQueue.map((filename) => (
+                <PreviewAttachment
+                  key={filename}
+                  attachment={{
+                    url: "",
+                    name: filename,
+                    contentType: "",
+                  }}
+                  isUploading={true}
+                />
+              ))}
+            </div>
+          )}
         </div>
-      )}
+        <div className=" w-full max-w-2xl mx-auto flex flex-col bg-input/30 rounded-t-2xl border border-b-0 dark:border-zinc-700 ">
+          <div className="flex flex-col gap-2">
+            <Textarea
+              data-testid="multimodal-input"
+              ref={textareaRef}
+              placeholder="Send a message..."
+              value={input}
+              onChange={handleInput}
+              className={cn(
+                "min-h-[24px] max-h-[calc(20dvh)] overflow-hidden resize-none rounded-t-2xl rounded-b-none !text-base bg-muted pb-10 focus:border-none border-none",
+                className
+              )}
+              rows={2}
+              autoFocus
+              onKeyDown={(event) => {
+                if (
+                  event.key === "Enter" &&
+                  !event.shiftKey &&
+                  !event.nativeEvent.isComposing
+                ) {
+                  event.preventDefault();
 
-      <Textarea
-        data-testid="multimodal-input"
-        ref={textareaRef}
-        placeholder="Send a message..."
-        value={input}
-        onChange={handleInput}
-        className={cn(
-          "min-h-[24px] max-h-[calc(50dvh)] overflow-hidden resize-none rounded-t-2xl rounded-b-none !text-base bg-muted pb-10 dark:border-zinc-700",
-          className
-        )}
-        rows={2}
-        autoFocus
-        onKeyDown={(event) => {
-          if (
-            event.key === "Enter" &&
-            !event.shiftKey &&
-            !event.nativeEvent.isComposing
-          ) {
-            event.preventDefault();
+                  if (status !== "ready") {
+                    toast.error(
+                      "Please wait for the model to finish its response!"
+                    );
+                  } else {
+                    submitForm();
+                  }
+                }
+              }}
+            />
+          </div>
+          <div className=" w-full flex justify-between items-center ">
+            <div className=" p-2 w-fit flex flex-row justify-start items-center space-x-2">
+              <CommandDialogDemo />
+              <SearchButton
+                triggerSearch={() => {
+                  setIsSearchMode((prev) => !prev);
+                }}
+                disabled={status !== "ready"}
+                isActive={isSearchMode}
+              />
+              <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+            </div>
 
-            if (status !== "ready") {
-              toast.error("Please wait for the model to finish its response!");
-            } else {
-              submitForm();
-            }
-          }
-        }}
-      />
-
-      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start items-center space-x-2">
-        {/* <ExampleCombobox /> */}
-        <CommandDialogDemo/>
-        <SearchButton
-          triggerSearch={() => {
-            setIsSearchMode((prev) => !prev);
-          }}
-          disabled={status !== "ready"}
-          isActive={isSearchMode}
-        />
-        <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+            <div className=" p-2 w-fit flex flex-row space-x-2 items-center justify-end">
+              <Dictaphone input={input} setInput={setInput} />
+              {status === "submitted" ? (
+                <StopButton stop={stop} setMessages={setMessages} />
+              ) : (
+                <SendButton
+                  input={input}
+                  submitForm={submitForm}
+                  uploadQueue={uploadQueue}
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-
-      <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
-        {status === "submitted" ? (
-          <StopButton stop={stop} setMessages={setMessages} />
-        ) : (
-          <SendButton
-            input={input}
-            submitForm={submitForm}
-            uploadQueue={uploadQueue}
-          />
-        )}
-      </div>
-    </div>
+    </>
   );
 }
 
@@ -379,6 +399,7 @@ function PureSearchButton({
   disabled: boolean;
   isActive: boolean;
 }) {
+  const { isMobile } = useSidebar();
   return (
     <Button
       data-testid="search-button"
@@ -395,7 +416,7 @@ function PureSearchButton({
       variant="outline"
     >
       <Globe size={14} />
-      <span>Search</span>
+      <span className={cn(isMobile && "hidden")}>Search</span>
     </Button>
   );
 }
@@ -439,7 +460,7 @@ function PureSendButton({
   return (
     <Button
       data-testid="send-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className="rounded-full p-1.5 h-fit border dark:border-zinc-600 hover:cursor-pointer hover:bg-primary/80"
       onClick={(event) => {
         event.preventDefault();
         submitForm();
@@ -457,3 +478,82 @@ const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
   if (prevProps.input !== nextProps.input) return false;
   return true;
 });
+
+type DictaphoneProps = {
+  input: string;
+  setInput: (input: string) => void;
+};
+
+export function Dictaphone({ input, setInput }: DictaphoneProps) {
+  const {
+    transcript,
+    listening,
+    resetTranscript,
+    browserSupportsSpeechRecognition,
+  } = useSpeechRecognition();
+
+  const wasListening = useRef(false);
+
+  useEffect(() => {
+    // When we stop listening, use the final transcript to update input
+    if (wasListening.current && !listening) {
+      setInput(transcript.trim());
+      resetTranscript(); // optional: clear for next use
+    }
+    wasListening.current = listening;
+  }, [listening]);
+
+  const toggleListening = () => {
+    if (listening) {
+      SpeechRecognition.stopListening();
+    } else {
+      resetTranscript();
+      SpeechRecognition.startListening({
+        continuous: false,
+        language: "en-US",
+      });
+    }
+  };
+
+  return (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <div
+          role="button"
+          aria-disabled={!browserSupportsSpeechRecognition}
+          onClick={
+            browserSupportsSpeechRecognition ? toggleListening : undefined
+          }
+          className={cn(
+            "rounded-full p-1.5 h-fit border dark:border-zinc-600 cursor-pointer",
+            !browserSupportsSpeechRecognition &&
+              "opacity-50 cursor-not-allowed",
+            listening && "bg-background/80 text-green-600 animate-pulse"
+          )}
+        >
+          {listening ? <StopCircle size={14} /> : <Mic size={14} />}
+        </div>
+      </HoverCardTrigger>
+      <HoverCardContent className="p-1 text-sm w-fit">
+        {browserSupportsSpeechRecognition
+          ? "Dictate"
+          : "Browser doesn't support speech recognition."}
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+
+// jayantaps@gmail.com
+
+const mockAttachments: Attachment[] = [
+  {
+    url: "https://via.placeholder.com/150",
+    name: "placeholder-150.png",
+    contentType: "image/png",
+  },
+  {
+    url: "https://placekitten.com/200/300",
+    name: "cute-kitten.jpg",
+    contentType: "image/jpeg",
+  },
+];

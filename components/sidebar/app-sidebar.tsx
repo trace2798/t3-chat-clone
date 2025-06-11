@@ -7,6 +7,8 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -43,7 +45,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <a href="/">
                 <span className="text-base font-semibold">T3 Chat</span>
               </a>
             </SidebarMenuButton>
@@ -51,13 +53,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="px-3">
-        <CreateChat/>
-        <SearchChat/>
-        Content
+        <CreateChat />
+        <SearchChat />
+        <SidebarGroup>
+          <SidebarGroupLabel>Chat</SidebarGroupLabel>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
-        <SignOut/>
+        <SignOut />
       </SidebarFooter>
     </Sidebar>
   );
