@@ -37,6 +37,7 @@ import { cn } from "@/lib/utils";
 import { SuggestedActions } from "./suggested-actions";
 import { Greeting } from "./greeting";
 import { ExampleCombobox } from "../model-selector";
+import { CommandDialogDemo } from "../command-model-selector";
 
 function PureMultimodalInput({
   chatId,
@@ -306,7 +307,8 @@ function PureMultimodalInput({
       />
 
       <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start items-center space-x-2">
-        <ExampleCombobox />
+        {/* <ExampleCombobox /> */}
+        <CommandDialogDemo/>
         <SearchButton
           triggerSearch={() => {
             setIsSearchMode((prev) => !prev);
