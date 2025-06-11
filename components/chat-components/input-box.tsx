@@ -24,7 +24,13 @@ import { Textarea } from "@/components/ui/textarea";
 import equal from "fast-deep-equal";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowDown, ArrowUp, PaperclipIcon, StopCircle } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Globe,
+  PaperclipIcon,
+  StopCircle,
+} from "lucide-react";
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
 import type { VisibilityType } from "./visibility-selector";
 import { cn } from "@/lib/utils";
@@ -60,6 +66,7 @@ function PureMultimodalInput({
   className?: string;
   selectedVisibilityType: VisibilityType;
 }) {
+  const [isSearchMode, setIsSearchMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
 
@@ -117,6 +124,9 @@ function PureMultimodalInput({
 
     handleSubmit(undefined, {
       experimental_attachments: attachments,
+      body: {
+        isSearch: isSearchMode,
+      },
     });
 
     setAttachments([]);
@@ -294,8 +304,15 @@ function PureMultimodalInput({
         }}
       />
 
-      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
+      <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start items-center space-x-2">
         <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+        <SearchButton
+          triggerSearch={() => {
+            setIsSearchMode((prev) => !prev);
+          }}
+          disabled={status !== "ready"}
+          isActive={isSearchMode}
+        />
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
@@ -330,7 +347,7 @@ function PureAttachmentsButton({
   fileInputRef,
   status,
 }: {
-  fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   status: UseChatHelpers["status"];
 }) {
   return (
@@ -349,7 +366,38 @@ function PureAttachmentsButton({
   );
 }
 
+function PureSearchButton({
+  triggerSearch,
+  disabled,
+  isActive,
+}: {
+  triggerSearch: () => void;
+  disabled: boolean;
+  isActive: boolean;
+}) {
+  return (
+    <Button
+      data-testid="search-button"
+      size="sm"
+      className={cn(
+        " p-[2px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent rounded-full",
+        isActive && "text-blue-500"
+      )}
+      onClick={(event) => {
+        event.preventDefault();
+        triggerSearch();
+      }}
+      disabled={disabled}
+      variant="outline"
+    >
+      <Globe size={14} />
+      <span>Search</span>
+    </Button>
+  );
+}
+
 const AttachmentsButton = memo(PureAttachmentsButton);
+const SearchButton = memo(PureSearchButton);
 
 function PureStopButton({
   stop,
@@ -361,7 +409,7 @@ function PureStopButton({
   return (
     <Button
       data-testid="stop-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className="rounded-full p-1.5 h-fit border dark:border-zinc-600 "
       onClick={(event) => {
         event.preventDefault();
         stop();
