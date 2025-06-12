@@ -4,51 +4,47 @@ import type { Attachment, UIMessage } from "ai";
 
 import type React from "react";
 import {
-  useRef,
-  useEffect,
-  useState,
+  memo,
   useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
   type Dispatch,
   type SetStateAction,
-  type ChangeEvent,
-  memo,
 } from "react";
-import { toast } from "sonner";
-import { useLocalStorage, useWindowSize } from "usehooks-ts";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { toast } from "sonner";
+import { useLocalStorage, useWindowSize } from "usehooks-ts";
 
 // import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
-import { PreviewAttachment } from "./preview-attachment";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { PreviewAttachment } from "./preview-attachment";
 
-import equal from "fast-deep-equal";
+import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
+import { cn } from "@/lib/utils";
 import type { UseChatHelpers } from "@ai-sdk/react";
-import { AnimatePresence, motion } from "motion/react";
+import equal from "fast-deep-equal";
 import {
   ArrowDown,
   ArrowUp,
   Globe,
   Mic,
   PaperclipIcon,
-  StopCircle,
-  Voicemail,
+  StopCircle
 } from "lucide-react";
-import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
-import type { VisibilityType } from "./visibility-selector";
-import { cn } from "@/lib/utils";
-import { SuggestedActions } from "./suggested-actions";
-import { Greeting } from "./greeting";
-import { ExampleCombobox } from "../model-selector";
+import { AnimatePresence, motion } from "motion/react";
 import { CommandDialogDemo } from "../command-model-selector";
-import { useSidebar } from "../ui/sidebar";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
+import { useSidebar } from "../ui/sidebar";
+import type { VisibilityType } from "./visibility-selector";
 
 function PureMultimodalInput({
   chatId,

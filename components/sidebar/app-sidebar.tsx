@@ -14,28 +14,39 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { LayoutDashboard, Search } from "lucide-react";
-import { Button } from "../ui/button";
+import { LayoutDashboard } from "lucide-react";
 import { SignOut } from "../auth/sign-out";
 import CreateChat from "./create-chat";
 import { SearchChat } from "./search-chat";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { SignInWithGitHub } from "@/app/(auth)/signin/_components/signin-github";
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "#",
-      icon: LayoutDashboard,
-    },
-  ],
-};
+// const data = {
+//   user: {
+//     name: "shadcn",
+//     email: "m@example.com",
+//     avatar: "/avatars/shadcn.jpg",
+//   },
+//   navMain: [
+//     {
+//       title: "Dashboard",
+//       url: "#",
+//       icon: LayoutDashboard,
+//     },
+//   ],
+// };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSidebarProps = {
+  currentUser: {
+    name?: string;
+    // add more fields as needed
+  } | null;
+} & React.ComponentProps<typeof Sidebar>;
+
+export function AppSidebar({ currentUser, ...props }: AppSidebarProps) {
+  console.log("CURRENT USER:", currentUser);
+  const data = currentUser;
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -60,8 +71,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
-        <SignOut />
+        {currentUser && <NavUser user={currentUser} />}
+        {currentUser ? <SignOut /> : <SignInWithGitHub />}
       </SidebarFooter>
     </Sidebar>
   );

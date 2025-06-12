@@ -12,7 +12,7 @@ export default function Home() {
         id={id}
         initialMessages={[]}
         initialChatModel={DEFAULT_CHAT_MODEL}
-        initialVisibilityType="private"
+        initialVisibilityType="public"
         isReadonly={false}
         session={""}
         autoResume={false}

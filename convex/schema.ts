@@ -10,9 +10,11 @@ const schema = defineSchema({
     parentChat: v.optional(v.id("chat")),
     visibility: v.union(v.literal("private"), v.literal("public")),
     updatedAt: v.number(),
+    slug: v.string(),
   })
     .index("by_user", ["userId"])
     .index("by_user_parent", ["userId", "parentChat"])
+    .index("by_slug", ["slug"])
     .searchIndex("search_title", {
       searchField: "title",
       filterFields: ["userId", "visibility"],

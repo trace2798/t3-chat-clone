@@ -2,6 +2,7 @@ import { CoreAssistantMessage, CoreToolMessage, UIMessage } from "ai";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ChatSDKError, type ErrorCode } from "./errors";
+import { customAlphabet } from "nanoid";
 
 type Document = {
   id: string;
@@ -12,7 +13,6 @@ type Document = {
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
 
 export const fetcher = async (url: string) => {
   const response = await fetch(url);
@@ -95,3 +95,5 @@ export function getTrailingMessageId({
 export function sanitizeText(text: string) {
   return text.replace("<has_function_call>", "");
 }
+
+

@@ -10,7 +10,6 @@ import { Attachment, UIMessage } from "ai";
 import { useQuery } from "convex/react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useSWRConfig } from "swr";
 import { MultimodalInput } from "./input-box";
 import { Messages } from "./messages";
 import { VisibilityType } from "./visibility-selector";
@@ -32,8 +31,9 @@ export function Chat({
   session: string;
   autoResume: boolean;
 }) {
-  const { mutate } = useSWRConfig();
 
+  const chatInfo = useQuery(api.chat.getChatBySlug, { slug: id });
+  console.log(chatInfo);
   const { visibilityType } = useChatVisibility({
     chatId: id,
     initialVisibilityType,
