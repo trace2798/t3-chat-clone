@@ -24,6 +24,9 @@ import { DocumentPreview } from "./document-preview";
 import { MessageReasoning } from "./message-reasoning";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { PencilIcon, SparklesIcon } from "lucide-react";
+import { Doc } from "@/convex/_generated/dataModel";
+
+type Vote = Doc<"vote">;
 
 const PurePreviewMessage = ({
   chatId,
@@ -37,8 +40,7 @@ const PurePreviewMessage = ({
 }: {
   chatId: string;
   message: UIMessage;
-  //   vote: Vote | undefined;
-  vote: any;
+  vote: Vote | undefined;
   isLoading: boolean;
   setMessages: UseChatHelpers["setMessages"];
   reload: UseChatHelpers["reload"];

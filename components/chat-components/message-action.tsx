@@ -1,9 +1,6 @@
 import type { Message } from "ai";
 import { useSWRConfig } from "swr";
 import { useCopyToClipboard } from "usehooks-ts";
-
-// import type { Vote } from '@/lib/db/schema';
-
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -15,7 +12,8 @@ import { memo } from "react";
 import equal from "fast-deep-equal";
 import { toast } from "sonner";
 import { CopyIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
-
+import { Doc } from "@/convex/_generated/dataModel";
+type Vote = Doc<"vote">;
 export function PureMessageActions({
   chatId,
   message,
@@ -81,34 +79,34 @@ export function PureMessageActions({
                   }),
                 });
 
-                toast.promise(upvote, {
-                  loading: "Upvoting Response...",
-                  success: () => {
-                    mutate<Array<Vote>>(
-                      `/api/vote?chatId=${chatId}`,
-                      (currentVotes) => {
-                        if (!currentVotes) return [];
+                // toast.promise(upvote, {
+                //   loading: "Upvoting Response...",
+                //   success: () => {
+                //     mutate<Array<Vote>>(
+                //       `/api/vote?chatId=${chatId}`,
+                //       (currentVotes) => {
+                //         if (!currentVotes) return [];
 
-                        const votesWithoutCurrent = currentVotes.filter(
-                          (vote) => vote.messageId !== message.id
-                        );
+                //         const votesWithoutCurrent = currentVotes.filter(
+                //           (vote) => vote.messageId !== message.id
+                //         );
 
-                        return [
-                          ...votesWithoutCurrent,
-                          {
-                            chatId,
-                            messageId: message.id,
-                            isUpvoted: true,
-                          },
-                        ];
-                      },
-                      { revalidate: false }
-                    );
+                //         return [
+                //           ...votesWithoutCurrent,
+                //           {
+                //             chatId,
+                //             messageId: message.id,
+                //             isUpvoted: true,
+                //           },
+                //         ];
+                //       },
+                //       { revalidate: false }
+                //     );
 
-                    return "Upvoted Response!";
-                  },
-                  error: "Failed to upvote response.",
-                });
+                //     return "Upvoted Response!";
+                //   },
+                //   error: "Failed to upvote response.",
+                // });
               }}
             >
               <ThumbsUpIcon />
@@ -134,34 +132,34 @@ export function PureMessageActions({
                   }),
                 });
 
-                toast.promise(downvote, {
-                  loading: "Downvoting Response...",
-                  success: () => {
-                    mutate<Array<Vote>>(
-                      `/api/vote?chatId=${chatId}`,
-                      (currentVotes) => {
-                        if (!currentVotes) return [];
+                // toast.promise(downvote, {
+                //   loading: "Downvoting Response...",
+                //   success: () => {
+                //     mutate<Array<Vote>>(
+                //       `/api/vote?chatId=${chatId}`,
+                //       (currentVotes) => {
+                //         if (!currentVotes) return [];
 
-                        const votesWithoutCurrent = currentVotes.filter(
-                          (vote) => vote.messageId !== message.id
-                        );
+                //         const votesWithoutCurrent = currentVotes.filter(
+                //           (vote) => vote.messageId !== message.id
+                //         );
 
-                        return [
-                          ...votesWithoutCurrent,
-                          {
-                            chatId,
-                            messageId: message.id,
-                            isUpvoted: false,
-                          },
-                        ];
-                      },
-                      { revalidate: false }
-                    );
+                //         return [
+                //           ...votesWithoutCurrent,
+                //           {
+                //             chatId,
+                //             messageId: message.id,
+                //             isUpvoted: false,
+                //           },
+                //         ];
+                //       },
+                //       { revalidate: false }
+                //     );
 
-                    return "Downvoted Response!";
-                  },
-                  error: "Failed to downvote response.",
-                });
+                //     return "Downvoted Response!";
+                //   },
+                //   error: "Failed to downvote response.",
+                // });
               }}
             >
               <ThumbsDownIcon />

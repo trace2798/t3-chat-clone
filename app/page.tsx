@@ -4,7 +4,7 @@ import { DEFAULT_CHAT_MODEL } from "@/lib/models";
 import { generateUUID } from "@/lib/utils";
 
 export default function Home() {
-  const id = generateUUID();
+  const id = "";
   return (
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100vdh] bg-zinc-800">
       <Chat

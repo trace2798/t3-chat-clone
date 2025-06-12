@@ -1,16 +1,19 @@
 "use client";
 
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useChatVisibility } from "@/hooks/use-chat-visibility";
+import { ChatSDKError } from "@/lib/errors";
+import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { Attachment, UIMessage } from "ai";
-import { unstable_serialize, useSWRConfig } from "swr";
-import { VisibilityType } from "./visibility-selector";
-import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
-import { ChatSDKError } from "@/lib/errors";
-import { toast } from "sonner";
-import { MultimodalInput } from "./input-box";
+import { useQuery } from "convex/react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useSWRConfig } from "swr";
+import { MultimodalInput } from "./input-box";
 import { Messages } from "./messages";
+import { VisibilityType } from "./visibility-selector";
 
 export function Chat({
   id,
@@ -70,29 +73,20 @@ export function Chat({
     },
   });
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+
+  const votes = id
+    ? useQuery(api.votes.getVotesByChatId, {
+        chatId: id as Id<"chat">,
+      })
+    : undefined;
+  console.log("votes", votes);
   return (
     <>
-      {/* <div>
-        <MultimodalInput
-          chatId={id}
-          input={input}
-          setInput={setInput}
-          handleSubmit={handleSubmit}
-          status={status}
-          stop={stop}
-          attachments={attachments}
-          setAttachments={setAttachments}
-          messages={messages}
-          setMessages={setMessages}
-          append={append}
-          selectedVisibilityType={visibilityType}
-        />
-      </div> */}
       <div className="flex flex-col min-w-0 h-dvh bg-background">
         <Messages
           chatId={id}
           status={status}
-          votes={""}
+          votes={votes}
           messages={messages}
           setMessages={setMessages}
           reload={reload}

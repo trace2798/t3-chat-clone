@@ -1,12 +1,11 @@
 "use client";
 
-import { motion } from "motion/react";
-import { memo, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { UseChatHelpers } from "@ai-sdk/react";
-import type { VisibilityType } from "./visibility-selector";
+import { motion } from "motion/react";
+import { memo } from "react";
 import { Separator } from "../ui/separator";
+import type { VisibilityType } from "./visibility-selector";
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -135,9 +134,9 @@ function PureSuggestedActions({
   return (
     <Tabs defaultValue="create" className="w-full">
       <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-5 w-full bg-transparent">
-        {tabs.map((tab) => (
+        {tabs.map((tab, index) => (
           <TabsTrigger
-            key={tab.name}
+            key={`tab-${index}`}
             value={tab.name}
             className="hover:cursor-pointer hover:bg-accent"
           >
@@ -146,8 +145,8 @@ function PureSuggestedActions({
         ))}
       </TabsList>
 
-      {tabs.map((tab) => (
-        <TabsContent key={tab.name} value={tab.name} className="mt-10 md:mt-3">
+      {tabs.map((tab, index) => (
+        <TabsContent key={`tab-content-${index}`} value={tab.name} className="mt-10 md:mt-3">
           <div className="grid grid-cols-1 gap-1">
             {tab.actions.map((suggestedAction, index) => (
               <>

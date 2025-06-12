@@ -2,18 +2,18 @@ import type { UIMessage } from "ai";
 import { PreviewMessage, ThinkingMessage } from "./message";
 import { Greeting } from "./greeting";
 import { memo } from "react";
-// import type { Vote } from '@/lib/db/schema';
 import equal from "fast-deep-equal";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { useMessages } from "@/hooks/use-messages";
 import { VisibilityType } from "./visibility-selector";
+import { Doc } from "@/convex/_generated/dataModel";
 
+type Vote = Doc<"vote">;
 interface MessagesProps {
   chatId: string;
   status: UseChatHelpers["status"];
-  //   votes: Array<Vote> | undefined;
-  votes: any;
+  votes: Array<Vote> | undefined;
   messages: Array<UIMessage>;
   setMessages: UseChatHelpers["setMessages"];
   reload: UseChatHelpers["reload"];
