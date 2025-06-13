@@ -75,3 +75,17 @@ export const getChatBySlug = query({
     return chat;
   },
 });
+
+export const getChatByUserId = query({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_user_updatedAt", (q) => q.eq("userId", args.userId))
+      .order("desc")
+      .collect();
+    console.log("CHATS inside api:", chats);
+
+    return chats;
+  },
+});
