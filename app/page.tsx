@@ -1,5 +1,5 @@
-import Chat from "@/components/chat-components/chat";
-import { MultimodalInput } from "@/components/chat-components/input-box";
+import { Chat } from "@/components/chat-components/chat";
+import DemoChat from "@/components/chat-test";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";
 import { generateUUID } from "@/lib/utils";
 
@@ -12,11 +12,12 @@ export default function Home() {
         id={id}
         initialMessages={[]}
         initialChatModel={DEFAULT_CHAT_MODEL}
-        initialVisibilityType="public"
+        // initialVisibilityType="public"
         isReadonly={false}
-        session={""}
+        currentUserId={""}
         autoResume={false}
       />
+      <DemoChat/>
     </div>
   );
 }

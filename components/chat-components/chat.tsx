@@ -1,122 +1,116 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { useChatVisibility } from "@/hooks/use-chat-visibility";
-import { ChatSDKError } from "@/lib/errors";
 import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { Attachment, UIMessage } from "ai";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { MultimodalInput } from "./input-box";
 import { Messages } from "./messages";
-import { VisibilityType } from "./visibility-selector";
 
 export function Chat({
   id,
   initialMessages,
   initialChatModel,
-  initialVisibilityType,
   isReadonly,
-  session,
+  currentUserId,
   autoResume,
 }: {
   id: string;
   initialMessages: Array<UIMessage>;
   initialChatModel: string;
-  initialVisibilityType: VisibilityType;
   isReadonly: boolean;
-  session: string;
+  currentUserId: string;
   autoResume: boolean;
 }) {
+  const router = useRouter();
+  const [slugId, setSlugId] = useState(id || "");
+  const [hasCreatedChat, setHasCreatedChat] = useState(Boolean(id));
 
-  const chatInfo = useQuery(api.chat.getChatBySlug, { slug: id });
-  console.log(chatInfo);
-  const { visibilityType } = useChatVisibility({
-    chatId: id,
-    initialVisibilityType,
-  });
+  const createChat = useMutation(api.chat.createChat);
+  // const chatInfo = slugId
+  //   ? useQuery(api.chat.getChatBySlug, { slug: slugId })
+  //   : null;
+
+
   const {
     messages,
     setMessages,
-    handleSubmit,
+    handleSubmit: realHandleSubmit,
     input,
     setInput,
     append,
     status,
     stop,
     reload,
-    experimental_resume,
-    data,
   } = useChat({
-    id,
+    id: slugId,
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
     generateId: generateUUID,
     fetch: fetchWithErrorHandlers,
-    experimental_prepareRequestBody: (body) => ({
-      id,
-      message: body.messages.at(-1),
-      selectedChatModel: initialChatModel,
-      selectedVisibilityType: visibilityType,
-    }),
-    // onFinish: () => {
-    //   mutate(unstable_serialize(getChatHistoryPaginationKey));
-    // },
+    // experimental_prepareRequestBody: (body) => ({
+    //   id: slugId,
+    //   message: body.messages.at(-1),
+    //   selectedChatModel: initialChatModel,
+    //   selectedVisibilityType: visibilityType,
+    // }),
     onError: (error) => {
-      if (error instanceof ChatSDKError) {
-        toast.error(error.message);
-      }
+      toast.error(error.message);
     },
   });
-  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
 
-  const votes = id
-    ? useQuery(api.votes.getVotesByChatId, {
-        chatId: id as Id<"chat">,
-      })
-    : undefined;
-  console.log("votes", votes);
+  const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  const handleFirstSubmit = async () => {
+    if (!hasCreatedChat) {
+      // 1) create the chat record
+      const { chatId, slug } = await createChat({
+        title: input, // ← pass the prompt as `title`
+        userId: currentUserId,
+      });
+      // 2) store it in state and update the URL
+      setSlugId(slug);
+      setHasCreatedChat(true);
+      router.replace(`/chat/${slug}`);
+    }
+    // 3) now do the actual send/stream
+    realHandleSubmit();
+  };
   return (
-    <>
-      <div className="flex flex-col min-w-0 h-dvh bg-background">
-        <Messages
-          chatId={id}
-          status={status}
-          votes={votes}
-          messages={messages}
-          setMessages={setMessages}
-          reload={reload}
-          isReadonly={isReadonly}
-          isArtifactVisible={false}
-          append={append}
-          selectedVisibilityType={visibilityType}
-          handleSubmit={handleSubmit}
-        />
-        <form className="flex mx-auto px-4 bg-background pb-0  gap-2 w-full md:max-w-3xl">
-          {!isReadonly && (
-            <MultimodalInput
-              chatId={id}
-              input={input}
-              setInput={setInput}
-              handleSubmit={handleSubmit}
-              status={status}
-              stop={stop}
-              attachments={attachments}
-              setAttachments={setAttachments}
-              messages={messages}
-              setMessages={setMessages}
-              append={append}
-              selectedVisibilityType={visibilityType}
-            />
-          )}
-        </form>
-      </div>
-    </>
+    <div className="flex flex-col min-w-0 h-dvh bg-background">
+      <Messages
+        chatId={slugId}
+        status={status}
+        votes={undefined}
+        messages={messages}
+        setMessages={setMessages}
+        reload={reload}
+        isReadonly={isReadonly}
+        isArtifactVisible={false}
+        append={append}
+        handleSubmit={handleFirstSubmit}
+      />
+      <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
+        {!isReadonly && (
+          <MultimodalInput
+            chatId={slugId}
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleFirstSubmit}
+            status={status}
+            stop={stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            messages={messages}
+            setMessages={setMessages}
+            append={append}
+          />
+        )}
+      </form>
+    </div>
   );
 }
-
-export default Chat;

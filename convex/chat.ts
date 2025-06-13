@@ -28,7 +28,6 @@ export const createChat = mutation({
   args: {
     title: v.string(),
     userId: v.string(),
-    // no need to pass `visibility` or `slug` from client
   },
   handler: async (ctx, args) => {
     const slug = generateSlug(args.title);

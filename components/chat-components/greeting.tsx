@@ -6,12 +6,12 @@ import { SuggestedActions } from "./suggested-actions";
 export const Greeting = ({
   chatId,
   append,
-  selectedVisibilityType,
+  // selectedVisibilityType,
   handleSubmit,
 }: {
   chatId: string;
   append: UseChatHelpers["append"];
-  selectedVisibilityType: VisibilityType;
+  // selectedVisibilityType: VisibilityType;
   handleSubmit: UseChatHelpers["handleSubmit"];
 }) => {
   return (
@@ -38,7 +38,7 @@ export const Greeting = ({
         <SuggestedActions
           append={append}
           chatId={chatId}
-          selectedVisibilityType={selectedVisibilityType}
+          // selectedVisibilityType={selectedVisibilityType}
           handleSubmit={handleSubmit}
         />
       </motion.div>

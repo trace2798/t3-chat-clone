@@ -34,7 +34,7 @@ import {
   Globe,
   Mic,
   PaperclipIcon,
-  StopCircle
+  StopCircle,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { CommandDialogDemo } from "../command-model-selector";
@@ -59,7 +59,7 @@ function PureMultimodalInput({
   append,
   handleSubmit,
   className,
-  selectedVisibilityType,
+  // selectedVisibilityType,
 }: {
   chatId: string;
   input: UseChatHelpers["input"];
@@ -73,12 +73,12 @@ function PureMultimodalInput({
   append: UseChatHelpers["append"];
   handleSubmit: UseChatHelpers["handleSubmit"];
   className?: string;
-  selectedVisibilityType: VisibilityType;
+  // selectedVisibilityType: VisibilityType;
 }) {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
-  const { isMobile } = useSidebar();
+
   useEffect(() => {
     if (textareaRef.current) {
       adjustHeight();
@@ -120,12 +120,6 @@ function PureMultimodalInput({
     setLocalStorageInput(input);
   }, [input, setLocalStorageInput]);
 
-  // useEffect(() => {
-  //   if (process.env.NODE_ENV === "development") {
-  //     setAttachments((current) => [...current, ...mockAttachments]);
-  //   }
-  // }, []);
-
   const handleInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
     adjustHeight();
@@ -135,13 +129,13 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    window.history.replaceState({}, "", `/chat/${chatId}`);
+    // window.history.replaceState({}, "", `/chat/${chatId}`);
 
     handleSubmit(undefined, {
       experimental_attachments: attachments,
-      body: {
-        isSearch: isSearchMode,
-      },
+      // body: {
+      //   isSearch: isSearchMode,
+      // },
     });
 
     setAttachments([]);
@@ -356,8 +350,8 @@ export const MultimodalInput = memo(
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
-    if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
-      return false;
+    // if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
+    //   return false;
 
     return true;
   }

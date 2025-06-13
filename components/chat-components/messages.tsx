@@ -6,7 +6,7 @@ import equal from "fast-deep-equal";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { useMessages } from "@/hooks/use-messages";
-import { VisibilityType } from "./visibility-selector";
+// import { VisibilityType } from "./visibility-selector";
 import { Doc } from "@/convex/_generated/dataModel";
 
 type Vote = Doc<"vote">;
@@ -20,7 +20,7 @@ interface MessagesProps {
   isReadonly: boolean;
   isArtifactVisible: boolean;
   append: UseChatHelpers["append"];
-  selectedVisibilityType: VisibilityType;
+  // selectedVisibilityType: VisibilityType;
   handleSubmit: UseChatHelpers["handleSubmit"];
 }
 
@@ -33,7 +33,7 @@ function PureMessages({
   reload,
   isReadonly,
   append,
-  selectedVisibilityType,
+  // selectedVisibilityType,
   handleSubmit,
 }: MessagesProps) {
   const {
@@ -56,7 +56,7 @@ function PureMessages({
         <Greeting
           chatId={chatId}
           append={append}
-          selectedVisibilityType={selectedVisibilityType}
+          // selectedVisibilityType={selectedVisibilityType}
           handleSubmit={handleSubmit}
         />
       )}
