@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 export const saveMessage = mutation({
   args: {
@@ -38,5 +39,21 @@ export const saveMessage = mutation({
       parts,
       timestamp,
     });
+  },
+});
+
+export const getMessagesByChatId = query({
+  args: { chatId: v.string() },
+  handler: async (ctx, args) => {
+    const messages = await ctx.db
+      .query("message")
+      .withIndex("by_chat", (q) => q.eq("chatId", args.chatId as Id<"chat">))
+      .collect();
+
+    // if (messages.length === 0) {
+    //   return "Messages not found";
+    // }
+
+    return messages;
   },
 });

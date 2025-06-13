@@ -31,10 +31,11 @@ export function Chat({
   const [hasCreatedChat, setHasCreatedChat] = useState(Boolean(id));
 
   const createChat = useMutation(api.chat.createChat);
-  // const chatInfo = slugId
-  //   ? useQuery(api.chat.getChatBySlug, { slug: slugId })
-  //   : null;
-
+  const chatInfo = useQuery(
+    api.chat.getChatBySlug,
+    slugId ? { slug: slugId } : "skip"
+  );
+  console.log("Chat Info", chatInfo);
   const {
     messages,
     setMessages,
@@ -88,7 +89,6 @@ export function Chat({
         isReadonly={isReadonly}
         isArtifactVisible={false}
         append={append}
-        handleSubmit={handleFirstSubmit}
         setInput={setInput}
       />
       <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">

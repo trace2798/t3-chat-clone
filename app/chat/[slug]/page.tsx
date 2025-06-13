@@ -16,14 +16,20 @@ export default async function ChatSlugPage({
     {},
     { token: await convexAuthNextjsToken() }
   );
+  const chatInfo = await fetchQuery(api.chat.getChatBySlug, { slug });
+  console.log("Chat Info", chatInfo);
+  if (chatInfo === "Chat not found") return <div>Chat not found</div>;
+  const messages = await fetchQuery(api.message.getMessagesByChatId, {
+    chatId: chatInfo._id as string,
+  });
+  console.log("Messages", messages);
   return (
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100dvh] bg-zinc-800">
       <Chat
         key={slug}
         id={slug}
-        initialMessages={[]}
+        initialMessages={messages as any[]}
         initialChatModel={DEFAULT_CHAT_MODEL}
-        // initialVisibilityType="public"
         isReadonly={false}
         currentUserId={user?._id as Id<"users">}
         autoResume={false}

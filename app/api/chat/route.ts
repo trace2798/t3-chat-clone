@@ -22,20 +22,18 @@ export async function POST(req: Request) {
     }
 
     const { id: slug, messages } = await req.json();
-    // 1) look up internal chatId by slug …
+
     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
     if (chatRecord === "Chat not found") {
       return new Response("Chat not found", { status: 404 });
     }
     const chatId = chatRecord._id;
 
-    // 2) get the last message object
     const [lastMessage] = messages.slice(-1);
     if (!lastMessage) {
       return new Response("No message provided", { status: 400 });
     }
 
-    // 3) save it
     await fetchMutation(api.message.saveMessage, {
       chatId,
       userId: user._id,
@@ -47,8 +45,7 @@ export async function POST(req: Request) {
       parts: lastMessage.parts,
       timestamp: Date.now(),
     });
-
-    // 4) stream the AI response
+    
     const result = streamText({
       model: openrouter.chat("deepseek/deepseek-r1-0528:free"),
       messages,

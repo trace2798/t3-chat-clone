@@ -19,8 +19,6 @@ interface MessagesProps {
   isReadonly: boolean;
   isArtifactVisible: boolean;
   append: UseChatHelpers["append"];
-  // selectedVisibilityType: VisibilityType;
-  handleSubmit: UseChatHelpers["handleSubmit"];
   setInput: UseChatHelpers["setInput"];
 }
 
@@ -33,8 +31,6 @@ function PureMessages({
   reload,
   isReadonly,
   append,
-  // selectedVisibilityType,
-  handleSubmit,
   setInput,
 }: MessagesProps) {
   const {
