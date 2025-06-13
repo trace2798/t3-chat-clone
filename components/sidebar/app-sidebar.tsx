@@ -20,14 +20,30 @@ import CreateChat from "./create-chat";
 import { SearchChat } from "./search-chat";
 import SidebarChat from "./sidebar-chat";
 
+export interface ChatItem {
+  _creationTime: number;
+  _id: string;
+  slug: string;
+  title: string;
+  updatedAt: number;
+  userId: string;
+  visibility: "private" | "public";
+}
+
 type AppSidebarProps = {
   currentUser: {
     _id: string;
     name?: string;
   } | null;
+  // Always an array; can be empty if no chats
+  userChats: ChatItem[];
 } & React.ComponentProps<typeof Sidebar>;
 
-export function AppSidebar({ currentUser, ...props }: AppSidebarProps) {
+export function AppSidebar({
+  currentUser,
+  userChats,
+  ...props
+}: AppSidebarProps) {
   console.log("CURRENT USER Sidebar:", currentUser);
   const data = currentUser;
 
@@ -50,8 +66,22 @@ export function AppSidebar({ currentUser, ...props }: AppSidebarProps) {
       <SidebarContent className="px-3">
         <CreateChat />
         <SearchChat />
-        
-        {currentUser && <SidebarChat currentUserId={data?._id as string} />}
+        {/* <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>Chats</SidebarGroupLabel>
+          <SidebarMenu>
+            {userChats.map((chat) => (
+              <SidebarMenuItem key={chat._id}>
+                <SidebarMenuButton asChild>
+                  <a href={`/chat/${chat.slug}`}>
+                    <span>{chat.title}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup> */}
+        {/* {currentUser && <SidebarChat userChats={userChats} />} */}
+        {currentUser && <SidebarChat currentUserId={currentUser._id} />}
       </SidebarContent>
       <SidebarFooter>
         {currentUser && <NavUser user={currentUser} />}

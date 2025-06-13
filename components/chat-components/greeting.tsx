@@ -1,18 +1,11 @@
-import { motion } from "motion/react";
-import { VisibilityType } from "./visibility-selector";
 import { UseChatHelpers } from "@ai-sdk/react";
+import { motion } from "motion/react";
 import { SuggestedActions } from "./suggested-actions";
 
 export const Greeting = ({
-  chatId,
-  append,
-  // selectedVisibilityType,
-  handleSubmit,
+  setInput,
 }: {
-  chatId: string;
-  append: UseChatHelpers["append"];
-  // selectedVisibilityType: VisibilityType;
-  handleSubmit: UseChatHelpers["handleSubmit"];
+  setInput: UseChatHelpers["setInput"];
 }) => {
   return (
     <div
@@ -35,12 +28,7 @@ export const Greeting = ({
         transition={{ delay: 0.6 }}
         className="text-2xl mt-5"
       >
-        <SuggestedActions
-          append={append}
-          chatId={chatId}
-          // selectedVisibilityType={selectedVisibilityType}
-          handleSubmit={handleSubmit}
-        />
+        <SuggestedActions setInput={setInput} />
       </motion.div>
     </div>
   );

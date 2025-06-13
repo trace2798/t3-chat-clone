@@ -8,10 +8,7 @@ import { Separator } from "../ui/separator";
 // import type { VisibilityType } from "./visibility-selector";
 
 interface SuggestedActionsProps {
-  chatId: string;
-  append: UseChatHelpers["append"];
-  handleSubmit: UseChatHelpers["handleSubmit"];
-  // selectedVisibilityType: VisibilityType;
+  setInput: UseChatHelpers["setInput"];
 }
 
 const tabs = [
@@ -50,22 +47,21 @@ const tabs = [
     actions: [
       {
         title: "Good books for fans of Rick Rubin",
-        label: "",
+
         action: "Good books for fans of Rick Rubin",
       },
       {
         title: "Countries ranked by number of corgies",
-        label: "",
+
         action: "Countries ranked by number of corgies",
       },
       {
         title: "Most successful companies in the world",
-        label: "",
+
         action: "Most successful companies in the world",
       },
       {
         title: "How much does Claude cost?",
-        label: "",
         action: "How much does Claude cost?",
       },
     ],
@@ -76,24 +72,24 @@ const tabs = [
     actions: [
       {
         title: "Write code to invert a binary search tree in Python",
-        label: "",
+
         action: "Write code to invert a binary search tree in Python",
       },
       {
         title:
           "What's the difference between Promise.all and Promise.allSettled",
-        label: "",
+
         action:
           "What's the difference between Promise.all and Promise.allSettled?",
       },
       {
         title: "Explain react's useEffect cleanup function",
-        label: "",
+
         action: "Explain react's useEffect cleanup function",
       },
       {
         title: "Best practices for error handling in async/await",
-        label: "",
+
         action: "Best practices for error handling in async/await",
       },
     ],
@@ -104,33 +100,29 @@ const tabs = [
     actions: [
       {
         title: "Begineer's guide to Typescript",
-        label: "",
+
         action: "Begineer's guide to Typescript",
       },
       {
         title: "Explain the CAP theorem in distributed systems",
-        label: "",
+
         action: "Explain the CAP theorem in distributed systems",
       },
       {
         title: "Why is AI so expensive?",
-        label: "",
+
         action: "Why is AI so expensive?",
       },
       {
         title: "Are black holes real?",
-        label: "",
+
         action: "Are black holes real?",
       },
     ],
   },
 ];
 
-function PureSuggestedActions({
-  chatId,
-  append,
-  handleSubmit,
-}: SuggestedActionsProps) {
+function PureSuggestedActions({ setInput }: SuggestedActionsProps) {
   return (
     <Tabs defaultValue="create" className="w-full">
       <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-5 w-full bg-transparent">
@@ -146,26 +138,36 @@ function PureSuggestedActions({
       </TabsList>
 
       {tabs.map((tab, index) => (
-        <TabsContent key={`tab-content-${index}`} value={tab.name} className="mt-10 md:mt-3">
+        <TabsContent
+          key={`tab-content-${index}`}
+          value={tab.name}
+          className="mt-10 md:mt-3"
+        >
           <div className="grid grid-cols-1 gap-1">
             {tab.actions.map((suggestedAction, index) => (
-              <>
+              <div key={`suggested-action-${suggestedAction.title}-${index}`}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ delay: 0.05 * index }}
-                  key={`suggested-action-${suggestedAction.title}-${index}`}
+                  // key={`suggested-action-${suggestedAction.title}-${index}`}
                 >
                   <div
                     typeof="button"
-                    onClick={async () => {
-                      window.history.replaceState({}, "", `/chat/${chatId}`);
-                      append({
-                        role: "user",
-                        content: suggestedAction.action,
-                      });
-                      handleSubmit();
+                    // onClick={async () => {
+                    //   window.history.replaceState({}, "", `/chat/${chatId}`);
+                    //   append({
+                    //     role: "user",
+                    //     content: suggestedAction.action,
+                    //   });
+                    //   handleSubmit();
+                    // }}
+                    onClick={() => {
+                      // window.history.replaceState({}, "", `/chat/${chatId}`);
+                      setInput(suggestedAction.title);
+                      // append({ role: "user", content: suggestedAction.action });
+                      // handleSubmit();
                     }}
                     className="text-left rounded-xl hover:bg-accent px-3 py-2 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start hover:cursor-pointer"
                   >
@@ -173,7 +175,7 @@ function PureSuggestedActions({
                   </div>
                 </motion.div>
                 <Separator />
-              </>
+              </div>
             ))}
           </div>
         </TabsContent>
@@ -184,7 +186,6 @@ function PureSuggestedActions({
 
 export const SuggestedActions = memo(
   PureSuggestedActions,
-  (prevProps, nextProps) =>
-    prevProps.chatId === nextProps.chatId 
+  // (prevProps, nextProps) => prevProps.chatId === nextProps.chatId
   // && prevProps.selectedVisibilityType === nextProps.selectedVisibilityType
 );

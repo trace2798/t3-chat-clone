@@ -1,13 +1,12 @@
-import type { UIMessage } from "ai";
-import { PreviewMessage, ThinkingMessage } from "./message";
-import { Greeting } from "./greeting";
-import { memo } from "react";
-import equal from "fast-deep-equal";
-import type { UseChatHelpers } from "@ai-sdk/react";
-import { motion } from "motion/react";
-import { useMessages } from "@/hooks/use-messages";
-// import { VisibilityType } from "./visibility-selector";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useMessages } from "@/hooks/use-messages";
+import type { UseChatHelpers } from "@ai-sdk/react";
+import type { UIMessage } from "ai";
+import equal from "fast-deep-equal";
+import { motion } from "motion/react";
+import { memo } from "react";
+import { Greeting } from "./greeting";
+import { PreviewMessage, ThinkingMessage } from "./message";
 
 type Vote = Doc<"vote">;
 interface MessagesProps {
@@ -22,6 +21,7 @@ interface MessagesProps {
   append: UseChatHelpers["append"];
   // selectedVisibilityType: VisibilityType;
   handleSubmit: UseChatHelpers["handleSubmit"];
+  setInput: UseChatHelpers["setInput"];
 }
 
 function PureMessages({
@@ -35,6 +35,7 @@ function PureMessages({
   append,
   // selectedVisibilityType,
   handleSubmit,
+  setInput,
 }: MessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -52,14 +53,7 @@ function PureMessages({
       ref={messagesContainerRef}
       className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4 relative"
     >
-      {messages.length === 0 && (
-        <Greeting
-          chatId={chatId}
-          append={append}
-          // selectedVisibilityType={selectedVisibilityType}
-          handleSubmit={handleSubmit}
-        />
-      )}
+      {messages.length === 0 && <Greeting setInput={setInput} />}
 
       {messages.map((message, index) => (
         <PreviewMessage

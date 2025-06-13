@@ -41,6 +41,9 @@ export default async function RootLayout({
   const currentUser = token
     ? await fetchQuery(api.users.getUser, {}, { token })
     : null;
+  const userChats = currentUser
+    ? await fetchQuery(api.chat.getChatByUserId, { userId: currentUser._id })
+    : null;
   return (
     <ConvexAuthNextjsServerProvider>
       <html lang="en" suppressHydrationWarning>
@@ -56,7 +59,7 @@ export default async function RootLayout({
           >
             <ConvexClientProvider>
               <SidebarProvider className="">
-                 <AppSidebar currentUser={currentUser} />
+                <AppSidebar currentUser={currentUser} userChats={userChats as any} />
                 <SidebarInset className="">
                   <main>
                     <Toaster />

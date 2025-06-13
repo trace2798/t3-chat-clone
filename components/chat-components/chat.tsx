@@ -35,7 +35,6 @@ export function Chat({
   //   ? useQuery(api.chat.getChatBySlug, { slug: slugId })
   //   : null;
 
-
   const {
     messages,
     setMessages,
@@ -67,17 +66,14 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const handleFirstSubmit = async () => {
     if (!hasCreatedChat) {
-      // 1) create the chat record
       const { chatId, slug } = await createChat({
-        title: input, // ← pass the prompt as `title`
+        title: input,
         userId: currentUserId,
       });
-      // 2) store it in state and update the URL
       setSlugId(slug);
       setHasCreatedChat(true);
       router.replace(`/chat/${slug}`);
     }
-    // 3) now do the actual send/stream
     realHandleSubmit();
   };
   return (
@@ -93,6 +89,7 @@ export function Chat({
         isArtifactVisible={false}
         append={append}
         handleSubmit={handleFirstSubmit}
+        setInput={setInput}
       />
       <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
         {!isReadonly && (
