@@ -26,10 +26,10 @@ const schema = defineSchema({
     model: v.string(),
     role: v.union(v.literal("user"), v.literal("assistant")),
     search_web: v.boolean(),
-    reasoning: v.optional(v.string()),
     usage: v.optional(v.any()),
     content: v.string(),
-    timestamp: v.float64(),
+    parts: v.optional(v.any()),
+    timestamp:  v.number(),
   })
     .index("by_chat", ["chatId"])
     .index("by_user", ["userId"]),
