@@ -11,6 +11,10 @@ const schema = defineSchema({
     visibility: v.union(v.literal("private"), v.literal("public")),
     updatedAt: v.number(),
     slug: v.string(),
+    isArchived: v.boolean(),
+    isDeleted: v.boolean(),
+    archivedAt: v.optional(v.number()),
+    deletedAt: v.optional(v.number()),
   })
     .index("by_user", ["userId"])
     .index("by_user_parent", ["userId", "parentChat"])
@@ -29,7 +33,7 @@ const schema = defineSchema({
     usage: v.optional(v.any()),
     content: v.string(),
     parts: v.optional(v.any()),
-    timestamp:  v.number(),
+    timestamp: v.number(),
   })
     .index("by_chat", ["chatId"])
     .index("by_user", ["userId"]),

@@ -21,7 +21,7 @@ export default async function ChatSlugPage({
   );
   const chatInfo = await fetchQuery(api.chat.getChatBySlug, { slug });
 
-  if (chatInfo === "Chat not found")
+  if (chatInfo === "Chat not found" )
     return (
       <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100dvh] bg-zinc-800 items-center justify-center space-y-5">
         <h1 className="text-xl text-center">
@@ -36,6 +36,22 @@ export default async function ChatSlugPage({
         </a>
       </div>
     );
+  if (chatInfo.visibility === "private" && chatInfo.userId !== user?._id)
+    return (
+      <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100dvh] bg-zinc-800 items-center justify-center space-y-5">
+        <h1 className="text-xl text-center">
+          Oops Sorry! <br />
+          This is a private chat.
+        </h1>
+        <a href="/">
+          <Button variant={"outline"}>
+            <Home />
+            Back Home
+          </Button>
+        </a>
+      </div>
+    );
+    
   const messages = await fetchQuery(api.message.getMessagesByChatId, {
     chatId: chatInfo._id as string,
   });

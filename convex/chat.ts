@@ -37,6 +37,8 @@ export const createChat = mutation({
       visibility: "public",
       updatedAt: Date.now(),
       slug,
+      isArchived: false,
+      isDeleted: false,
     });
 
     return { chatId, slug };
@@ -82,6 +84,12 @@ export const getChatByUserId = query({
     const chats = await ctx.db
       .query("chat")
       .withIndex("by_user_updatedAt", (q) => q.eq("userId", args.userId))
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("isArchived"), false),
+          q.eq(q.field("isDeleted"), false)
+        )
+      )
       .order("desc")
       .collect();
 
@@ -89,7 +97,78 @@ export const getChatByUserId = query({
   },
 });
 
-export const deleteChatAndMessages = mutation({
+export const archiveChat = mutation({
+  args: { slug: v.string(), userId: v.string() },
+  handler: async (ctx, { slug, userId }) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .collect();
+
+    const chat = chats[0];
+    if (!chat) {
+      return "Chat not found";
+    }
+    if (chat.userId !== userId) {
+      return "Unauthorized";
+    }
+    const chatId = chat._id;
+    await ctx.db.patch(chatId, {
+      isArchived: true,
+      archivedAt: Date.now(),
+    });
+    return "Chat archived";
+  },
+});
+
+export const unarchiveChat = mutation({
+  args: { slug: v.string(), userId: v.string() },
+  handler: async (ctx, { slug, userId }) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .collect();
+
+    const chat = chats[0];
+    if (!chat) {
+      return "Chat not found";
+    }
+    if (chat.userId !== userId) {
+      return "Unauthorized";
+    }
+    const chatId = chat._id;
+    await ctx.db.patch(chatId, {
+      isArchived: false,
+      archivedAt: undefined,
+    });
+    return "Chat unarchived";
+  },
+});
+
+export const softDeleteChat = mutation({
+  args: { slug: v.string(), userId: v.string() },
+  handler: async (ctx, { slug, userId }) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .collect();
+
+    const chat = chats[0];
+    if (!chat) {
+      return "Chat not found";
+    }
+    if (chat.userId !== userId) {
+      return "Unauthorized";
+    }
+    await ctx.db.patch(chat._id, {
+      isDeleted: true,
+      deletedAt: Date.now(),
+    });
+    return "Chat deleted";
+  },
+});
+
+export const permanentlyDeleteChatAndMessages = mutation({
   args: { slug: v.string(), userId: v.string() },
   handler: async (ctx, { slug, userId }) => {
     const chats = await ctx.db

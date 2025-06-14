@@ -1,35 +1,35 @@
 "use client";
 import {
-  SidebarMenuAction,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import Link from "next/link";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { memo } from "react";
+import {
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
 import { useChatVisibility } from "@/hooks/use-chat-visibility";
+import { fetchMutation } from "convex/nextjs";
 import {
   CheckCheckIcon,
-  CircleDot,
+  FileSliders,
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,
   ShareIcon,
   TrashIcon,
 } from "lucide-react";
-import { Doc } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { fetchMutation } from "convex/nextjs";
+import Link from "next/link";
+import { memo } from "react";
 
 type Chat = Doc<"chat">;
 const PureChatItem = ({
@@ -49,7 +49,14 @@ const PureChatItem = ({
   });
 
   const handleDelete = async () => {
-    const deleteResponse = fetchMutation(api.chat.deleteChatAndMessages, {
+    const deleteResponse = fetchMutation(api.chat.softDeleteChat, {
+      slug: chat.slug,
+      userId: currentUserId,
+    });
+    console.log("DELETE RESPONSE:", deleteResponse);
+  };
+  const handleArchive = async () => {
+    const deleteResponse = fetchMutation(api.chat.archiveChat, {
       slug: chat.slug,
       userId: currentUserId,
     });
@@ -110,9 +117,16 @@ const PureChatItem = ({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-
+          <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+            className="cursor-pointer hover:bg-accent hover:text-primary/80"
+            onSelect={() => handleArchive()}
+          >
+            <FileSliders />
+            <span>Archive</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500 hover:bg-accent"
             onSelect={() => handleDelete()}
           >
             <TrashIcon />
