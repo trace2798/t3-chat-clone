@@ -4,7 +4,7 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamText } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 const openrouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY!,
@@ -27,6 +27,15 @@ export async function POST(req: Request) {
     if (chatRecord === "Chat not found") {
       return new Response("Chat not found", { status: 404 });
     }
+    if (chatRecord.isArchived) {
+      return new Response("Chat is archived", { status: 400 });
+    }
+    if (chatRecord.isDeleted) {
+      return new Response("Chat is deleted", { status: 400 });
+    }
+    if (chatRecord.userId !== user._id) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const chatId = chatRecord._id;
 
     const [lastMessage] = messages.slice(-1);
@@ -45,8 +54,9 @@ export async function POST(req: Request) {
       parts: lastMessage.parts,
       timestamp: Date.now(),
     });
-    
+
     const result = streamText({
+      // model: openrouter.chat("google/gemma-3n-e4b-it:free"),
       model: openrouter.chat("deepseek/deepseek-r1-0528:free"),
       messages,
     });
