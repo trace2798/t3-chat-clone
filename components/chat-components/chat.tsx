@@ -59,12 +59,13 @@ export function Chat({
     sendExtraMessageFields: true,
     generateId: generateUUID,
     fetch: fetchWithErrorHandlers,
-    // experimental_prepareRequestBody: (body) => ({
-    //   id: slugId,
-    //   message: body.messages.at(-1),
-    //   selectedChatModel: initialChatModel,
-    //   selectedVisibilityType: visibilityType,
-    // }),
+    experimental_prepareRequestBody: (body) => ({
+      id: slugId,
+      // messages: body.messages,
+      message: body.messages.at(-1),
+      selectedChatModel: initialChatModel,
+      // selectedVisibilityType: visibilityType,
+    }),
     onError: (error) => {
       toast.error(error.message);
     },

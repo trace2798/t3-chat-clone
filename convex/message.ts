@@ -7,12 +7,13 @@ export const saveMessage = mutation({
     chatId: v.id("chat"),
     userId: v.string(),
     model: v.string(),
-    role: v.union(v.literal("user"), v.literal("assistant")),
+    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
     search_web: v.boolean(),
     usage: v.optional(v.any()),
     content: v.string(),
     parts: v.optional(v.any()),
     timestamp: v.number(),
+    attachments: v.optional(v.any()),
   },
   handler: async (
     ctx,
@@ -26,6 +27,7 @@ export const saveMessage = mutation({
       content,
       parts,
       timestamp,
+      attachments,
     }
   ) => {
     return await ctx.db.insert("message", {
@@ -38,6 +40,7 @@ export const saveMessage = mutation({
       content,
       parts,
       timestamp,
+      attachments,
     });
   },
 });

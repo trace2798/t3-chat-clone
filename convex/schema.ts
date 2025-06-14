@@ -28,12 +28,13 @@ const schema = defineSchema({
     chatId: v.id("chat"),
     userId: v.string(),
     model: v.string(),
-    role: v.union(v.literal("user"), v.literal("assistant")),
+    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
     search_web: v.boolean(),
     usage: v.optional(v.any()),
     content: v.string(),
     parts: v.optional(v.any()),
     timestamp: v.number(),
+    attachments: v.optional(v.any()),
   })
     .index("by_chat", ["chatId"])
     .index("by_user", ["userId"]),
@@ -45,6 +46,12 @@ const schema = defineSchema({
   })
     .index("by_chat", ["chatId"])
     .index("by_message", ["messageId"]),
+  stream: defineTable({
+    chatId: v.id("chat"),
+    createdAt: v.number(),
+  })
+    .index("by_chat", ["chatId"])
+    .index("by_chat_createdAt", ["chatId", "createdAt"]),
 });
 
 export default schema;
