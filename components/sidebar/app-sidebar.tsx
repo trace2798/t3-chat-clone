@@ -66,21 +66,6 @@ export function AppSidebar({
       <SidebarContent className="px-3">
         <CreateChat />
         <SearchChat />
-        {/* <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupLabel>Chats</SidebarGroupLabel>
-          <SidebarMenu>
-            {userChats.map((chat) => (
-              <SidebarMenuItem key={chat._id}>
-                <SidebarMenuButton asChild>
-                  <a href={`/chat/${chat.slug}`}>
-                    <span>{chat.title}</span>
-                  </a>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup> */}
-        {/* {currentUser && <SidebarChat userChats={userChats} />} */}
         {currentUser && <SidebarChat currentUserId={currentUser._id} />}
       </SidebarContent>
       <SidebarFooter>

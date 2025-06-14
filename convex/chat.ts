@@ -84,12 +84,35 @@ export const getChatByUserId = query({
     const chats = await ctx.db
       .query("chat")
       .withIndex("by_user_updatedAt", (q) => q.eq("userId", args.userId))
-      .filter((q) =>
-        q.and(
-          q.eq(q.field("isArchived"), false),
-          q.eq(q.field("isDeleted"), false)
-        )
-      )
+      .filter((q) => q.and(q.eq(q.field("isDeleted"), false)))
+      .order("desc")
+      .collect();
+
+    return chats;
+  },
+});
+
+export const getArchivedChatByUserId = query({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_user_updatedAt", (q) => q.eq("userId", args.userId))
+      .filter((q) => q.and(q.eq(q.field("isArchived"), true)))
+      .order("desc")
+      .collect();
+
+    return chats;
+  },
+});
+
+export const getDeletedChatByUserId = query({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_user_updatedAt", (q) => q.eq("userId", args.userId))
+      .filter((q) => q.and(q.eq(q.field("isDeleted"), true)))
       .order("desc")
       .collect();
 
@@ -165,6 +188,29 @@ export const softDeleteChat = mutation({
       deletedAt: Date.now(),
     });
     return "Chat deleted";
+  },
+});
+
+export const restoreSoftDeletedChat = mutation({
+  args: { slug: v.string(), userId: v.string() },
+  handler: async (ctx, { slug, userId }) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .collect();
+
+    const chat = chats[0];
+    if (!chat) {
+      return "Chat not found";
+    }
+    if (chat.userId !== userId) {
+      return "Unauthorized";
+    }
+    await ctx.db.patch(chat._id, {
+      isDeleted: false,
+      deletedAt: undefined,
+    });
+    return "Chat Restored";
   },
 });
 

@@ -60,6 +60,7 @@ function PureMultimodalInput({
   handleSubmit,
   className,
   // selectedVisibilityType,
+
 }: {
   chatId: string;
   input: UseChatHelpers["input"];
@@ -73,6 +74,7 @@ function PureMultimodalInput({
   append: UseChatHelpers["append"];
   handleSubmit: UseChatHelpers["handleSubmit"];
   className?: string;
+
   // selectedVisibilityType: VisibilityType;
 }) {
   const [isSearchMode, setIsSearchMode] = useState(false);
@@ -350,6 +352,7 @@ export const MultimodalInput = memo(
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
+    // if (prevProps.isArchived !== nextProps.isArchived) return false;
     // if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
     //   return false;
 

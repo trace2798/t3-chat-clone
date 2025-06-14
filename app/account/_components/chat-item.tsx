@@ -19,10 +19,7 @@ import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
 import { useChatVisibility } from "@/hooks/use-chat-visibility";
 import { fetchMutation } from "convex/nextjs";
-import { useMutation } from "convex/react";
 import {
-  ArchiveIcon,
-  ArchiveRestoreIcon,
   CheckCheckIcon,
   FileSliders,
   GlobeIcon,
@@ -32,23 +29,18 @@ import {
   TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { memo } from "react";
-import { toast } from "sonner";
 
 type Chat = Doc<"chat">;
 const PureChatItem = ({
   chat,
-  isActive,
   setOpenMobile,
   currentUserId,
 }: {
   chat: Chat;
-  isActive: boolean;
   setOpenMobile: (open: boolean) => void;
   currentUserId: string;
 }) => {
-  const router = useRouter();
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat._id,
     initialVisibilityType: chat.visibility,
@@ -60,23 +52,18 @@ const PureChatItem = ({
       userId: currentUserId,
     });
     console.log("DELETE RESPONSE:", deleteResponse);
-    router.refresh();
+  };
+  const handleArchive = async () => {
+    const deleteResponse = fetchMutation(api.chat.archiveChat, {
+      slug: chat.slug,
+      userId: currentUserId,
+    });
+    console.log("DELETE RESPONSE:", deleteResponse);
   };
 
-  const archive = useMutation(api.chat.archiveChat);
-  const unarchive = useMutation(api.chat.unarchiveChat);
-  const handleToggleArchive = () => {
-    if (chat.isArchived) {
-      unarchive({ slug: chat.slug, userId: currentUserId });
-      toast.success("Chat Unarchived!");
-    } else {
-      archive({ slug: chat.slug, userId: currentUserId });
-      toast.success("Chat Archived!");
-    }
-  };
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isActive}>
+      <SidebarMenuButton asChild>
         <Link href={`/chat/${chat.slug}`} onClick={() => setOpenMobile(false)}>
           <span>{chat.title}</span>
         </Link>
@@ -84,10 +71,7 @@ const PureChatItem = ({
 
       <DropdownMenu modal={true}>
         <DropdownMenuTrigger asChild>
-          <SidebarMenuAction
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5 hover:cursor-pointer"
-            showOnHover={!isActive}
-          >
+          <SidebarMenuAction className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5 hover:cursor-pointer">
             <MoreHorizontalIcon />
             <span className="sr-only">More</span>
           </SidebarMenuAction>
@@ -130,14 +114,14 @@ const PureChatItem = ({
           </DropdownMenuSub>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onSelect={handleToggleArchive}
-            className="hover:cursor-pointer hover:bg-accent"
+            className="cursor-pointer hover:bg-accent hover:text-primary/80"
+            onSelect={() => handleArchive()}
           >
-            {chat.isArchived ? <ArchiveRestoreIcon /> : <ArchiveIcon />}
-            <span>{chat.isArchived ? "Unarchive" : "Archive"}</span>
+            <FileSliders />
+            <span>Archive</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500 hover:bg-accent "
+            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500 hover:bg-accent"
             onSelect={() => handleDelete()}
           >
             <TrashIcon />
@@ -150,7 +134,6 @@ const PureChatItem = ({
 };
 
 export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
-  if (prevProps.isActive !== nextProps.isActive) return false;
-  if (prevProps.chat.isArchived !== nextProps.chat.isArchived) return false;
+//   if (prevProps.isActive !== nextProps.isActive) return false;
   return true;
 });

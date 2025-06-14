@@ -10,6 +10,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { MultimodalInput } from "./input-box";
 import { Messages } from "./messages";
+import { Button } from "../ui/button";
+import { ArchiveRestoreIcon } from "lucide-react";
+import { fetchMutation } from "convex/nextjs";
 
 export function Chat({
   id,
@@ -18,6 +21,7 @@ export function Chat({
   isReadonly,
   currentUserId,
   autoResume,
+  isArchived,
 }: {
   id: string;
   initialMessages: Array<UIMessage>;
@@ -25,6 +29,7 @@ export function Chat({
   isReadonly: boolean;
   currentUserId: string;
   autoResume: boolean;
+  isArchived?: boolean;
 }) {
   const router = useRouter();
   const [slugId, setSlugId] = useState(id || "");
@@ -35,6 +40,7 @@ export function Chat({
     api.chat.getChatBySlug,
     slugId ? { slug: slugId } : "skip"
   );
+  if (chatInfo === "Chat not found") return null;
   // console.log("Chat Info", chatInfo);
   const {
     messages,
@@ -77,6 +83,16 @@ export function Chat({
     }
     realHandleSubmit();
   };
+
+  const handleUnArchive = async () => {
+    await fetchMutation(api.chat.unarchiveChat, {
+      slug: slugId,
+      userId: currentUserId,
+    });
+    toast.success("Chat Unarchived!");
+    router.refresh();
+  };
+  const effectiveReadOnly = isReadonly || chatInfo?.isArchived === true;
   return (
     <div className="flex flex-col min-w-0 h-dvh bg-background">
       <Messages
@@ -92,7 +108,7 @@ export function Chat({
         setInput={setInput}
       />
       <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
-        {!isReadonly && (
+        {!effectiveReadOnly && (
           <MultimodalInput
             chatId={slugId}
             input={input}
@@ -108,6 +124,22 @@ export function Chat({
           />
         )}
       </form>
+      {chatInfo && chatInfo.isArchived === true && (
+        <div className=" absolute bottom-20 flex flex-col space-y-3 p-4 w-full justify-center items-center">
+          <p className="text-sm text-muted-foreground w-full max-w-sm text-center">
+            This chat is archived. You can still view the messages, but you
+            cannot send new messages.
+          </p>
+          <Button
+            size={"sm"}
+            variant={"outline"}
+            onClick={() => handleUnArchive()}
+          >
+            <ArchiveRestoreIcon />
+            UnArchive Chat
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
