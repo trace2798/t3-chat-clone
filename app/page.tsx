@@ -11,7 +11,7 @@ export default async function Home() {
     {},
     { token: await convexAuthNextjsToken() }
   );
-  console.log(user);
+  // console.log(user);
   const id = "";
   return (
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100vdh] bg-zinc-800">

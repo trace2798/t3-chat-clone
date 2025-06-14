@@ -84,8 +84,33 @@ export const getChatByUserId = query({
       .withIndex("by_user_updatedAt", (q) => q.eq("userId", args.userId))
       .order("desc")
       .collect();
-    console.log("CHATS inside api:", chats);
 
     return chats;
+  },
+});
+
+export const deleteChatAndMessages = mutation({
+  args: { slug: v.string(), userId: v.string() },
+  handler: async (ctx, { slug, userId }) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .collect();
+
+    const chat = chats[0];
+    if (!chat) {
+      return "Chat not found";
+    }
+    if (chat.userId !== userId) {
+      return "Unauthorized";
+    }
+    for await (const message of ctx.db
+      .query("message")
+      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))) {
+      await ctx.db.delete(message._id);
+    }
+
+    await ctx.db.delete(chat._id);
+    return "Chat deleted";
   },
 });

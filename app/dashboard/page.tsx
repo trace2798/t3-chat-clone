@@ -8,7 +8,7 @@ const Page = async ({}) => {
     {},
     { token: await convexAuthNextjsToken() }
   );
-  console.log(user);
+  // console.log(user);
   return (
     <>
       <div className="flex flex-1 flex-col w-full min-h-screen rounded-lg bg-zinc-800">

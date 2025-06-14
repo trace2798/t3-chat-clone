@@ -35,7 +35,7 @@ export function Chat({
     api.chat.getChatBySlug,
     slugId ? { slug: slugId } : "skip"
   );
-  console.log("Chat Info", chatInfo);
+  // console.log("Chat Info", chatInfo);
   const {
     messages,
     setMessages,

@@ -263,7 +263,7 @@ function SidebarTrigger({
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar, isMobile, state } = useSidebar();
 
-  console.log("SidebarTrigger", state);
+  // console.log("SidebarTrigger", state);
   return (
     <div className="flex items-center justify-between pr-3 w-full z-10">
       {state === "collapsed" ? (

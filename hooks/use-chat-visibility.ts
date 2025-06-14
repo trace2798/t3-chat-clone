@@ -62,7 +62,7 @@ export function useChatVisibility({
   chatId: string | undefined;
   initialVisibilityType: VisibilityType;
 }) {
-  console.log("chatId", chatId);
+  // console.log("chatId", chatId);
   let visibilityFromDb: "public" | "private" | undefined = undefined;
 
   if (chatId) {

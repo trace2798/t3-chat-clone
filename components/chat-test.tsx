@@ -6,6 +6,7 @@ import { useChat } from "@ai-sdk/react";
 export default function DemoChat() {
   const { messages, input, handleInputChange, handleSubmit, status, stop } =
     useChat({
+
       onFinish: (message) => {
         console.log(message);
       },

@@ -44,7 +44,7 @@ export function AppSidebar({
   userChats,
   ...props
 }: AppSidebarProps) {
-  console.log("CURRENT USER Sidebar:", currentUser);
+  // console.log("CURRENT USER Sidebar:", currentUser);
   const data = currentUser;
 
   return (
