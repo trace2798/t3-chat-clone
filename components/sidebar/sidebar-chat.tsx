@@ -50,8 +50,9 @@ const SidebarChat = ({ currentUserId }: { currentUserId: string }) => {
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
         <SidebarGroupLabel>Chats</SidebarGroupLabel>
         <SidebarMenu>
-          {userChats.map((chat) => (
+          {userChats.map((chat, index) => (
             <ChatItem
+              key={chat._id}
               chat={chat}
               isActive={pathname === `/chat/${chat.slug}`}
               currentUserId={currentUserId}
