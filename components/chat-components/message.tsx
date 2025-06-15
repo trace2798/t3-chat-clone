@@ -37,7 +37,7 @@ const PurePreviewMessage = ({
   reload,
   isReadonly,
   requiresScrollPadding,
-  currentUserId
+  currentUserId,
 }: {
   chatId: string;
   message: UIMessage;

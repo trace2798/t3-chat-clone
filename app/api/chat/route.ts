@@ -133,7 +133,7 @@ export async function POST(req: Request) {
           //         // "requestSuggestions",
           //       ],
           experimental_transform: smoothStream({ chunking: "word" }),
-          experimental_generateMessageId: generateUUID,
+          // experimental_generateMessageId: generateUUID,
           // tools: {
           //   getWeather,
           //   // createDocument: createDocument({ session, dataStream }),

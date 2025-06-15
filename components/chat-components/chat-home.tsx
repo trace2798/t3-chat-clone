@@ -6,7 +6,6 @@ import { useMutation } from "convex/react";
 import { UIMessage, Attachment } from "ai";
 import { toast } from "sonner";
 import { useChat } from "@ai-sdk/react";
-
 import { api } from "@/convex/_generated/api";
 import { fetchWithErrorHandlers } from "@/lib/utils";
 import { Messages } from "./messages";
@@ -43,7 +42,6 @@ export function ChatHome({
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
-
     fetch: fetchWithErrorHandlers,
     experimental_prepareRequestBody: (body) => ({
       id: chatId,
@@ -65,9 +63,6 @@ export function ChatHome({
     }
   }, [chatId, realHandleSubmit]);
   const handleFirstSubmit = async () => {
-    // setInput("");
-    // setAttachments([]);
-
     try {
       const { slug } = await createChat({
         title: input,
@@ -76,11 +71,6 @@ export function ChatHome({
       setChatId(slug);
     } catch (err: any) {
       console.error("Failed to start chat:", err);
-      //   setSubmitError(err.message || "Something went wrong — please try again.");
-
-      //   setMessages(previous);
-    } finally {
-      //   setIsSubmitting(false);
     }
   };
 
@@ -119,7 +109,6 @@ export function ChatHome({
           messages={messages}
           setMessages={setMessages}
           append={append}
-          //   disabled={isSubmitting}
         />
       </form>
     </div>

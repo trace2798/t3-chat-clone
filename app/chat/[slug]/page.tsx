@@ -4,11 +4,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
-
-// import { Attachment, UIMessage } from "ai";
-import { fetchQuery, preloadedQueryResult } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import { Home } from "lucide-react";
-import { preloadQuery } from "convex/nextjs";
 export default async function ChatSlugPage({
   params,
 }: {
@@ -21,8 +18,7 @@ export default async function ChatSlugPage({
     { token: await convexAuthNextjsToken() }
   );
   const chatInfo = await fetchQuery(api.chat.getChatBySlug, { slug });
-  // const preloadedChat = await preloadQuery(api.chat.getChatBySlug, { slug });
-  // const chatInfo = preloadedQueryResult(preloadedChat);
+
   if (!chatInfo)
     return (
       <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100dvh] bg-zinc-800 items-center justify-center space-y-5">
@@ -59,8 +55,6 @@ export default async function ChatSlugPage({
       <Chat
         key={slug}
         chatInfo={chatInfo}
-        // id={slug}
-        // initialMessages={convertToUIMessages(messages)}
         initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={true}
         currentUserId={user?._id as Id<"users">}
@@ -74,8 +68,6 @@ export default async function ChatSlugPage({
       <Chat
         key={slug}
         chatInfo={chatInfo}
-        // id={slug}
-        // initialMessages={convertToUIMessages(messages)}
         initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={false}
         currentUserId={user?._id as Id<"users">}
