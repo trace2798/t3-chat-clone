@@ -14,10 +14,10 @@ import {
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
 import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
+import { getWeather } from "@/lib/ai/tools/get-weather";
 import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
 import { geolocation } from "@vercel/functions";
-import { getWeather } from "@/lib/ai/tools/get-weather";
 
 export const maxDuration = 60;
 
@@ -67,7 +67,8 @@ export async function POST(req: Request) {
 
     const modelTag = isReasoning
       ? "deepseek/deepseek-r1-0528:free"
-      : "google/gemma-3n-e4b-it:free";
+      // : "google/gemma-3n-e4b-it:free";
+      : "mistralai/mistral-small-3.1-24b-instruct:free";
 
     //  model: togetherai("deepseek-ai/DeepSeek-R1"),
     const modelUse = isReasoning
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
           }),
           middleware: extractReasoningMiddleware({ tagName: "think" }),
         })
-      : openrouter.chat("google/gemma-3n-e4b-it:free");
+      : openrouter.chat("mistralai/mistral-small-3.1-24b-instruct:free");
     await fetchMutation(api.message.saveMessage, {
       chatId,
       userId: user._id,

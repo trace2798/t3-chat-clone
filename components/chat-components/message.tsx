@@ -37,6 +37,7 @@ const PurePreviewMessage = ({
   reload,
   isReadonly,
   requiresScrollPadding,
+  currentUserId
 }: {
   chatId: string;
   message: UIMessage;
@@ -46,6 +47,7 @@ const PurePreviewMessage = ({
   reload: UseChatHelpers["reload"];
   isReadonly: boolean;
   requiresScrollPadding: boolean;
+  currentUserId?: string;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
 
@@ -236,6 +238,7 @@ const PurePreviewMessage = ({
                 message={message}
                 vote={vote}
                 isLoading={isLoading}
+                currentUserId={currentUserId}
               />
             )}
           </div>

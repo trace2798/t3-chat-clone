@@ -41,7 +41,6 @@ const schema = defineSchema({
   vote: defineTable({
     chatId: v.id("chat"),
     messageId: v.id("message"),
-    userId: v.string(),
     isUpvoted: v.boolean(),
   })
     .index("by_chat", ["chatId"])

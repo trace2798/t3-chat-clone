@@ -13,6 +13,7 @@ import { Messages } from "./messages";
 import { Button } from "../ui/button";
 import { ArchiveRestoreIcon } from "lucide-react";
 import { fetchMutation } from "convex/nextjs";
+import { useAutoResume } from "@/hooks/use-auto-resume";
 
 export function Chat({
   id,
@@ -41,6 +42,7 @@ export function Chat({
     slugId ? { slug: slugId } : "skip"
   );
   if (chatInfo === "Chat not found") return null;
+
   // console.log("Chat Info", chatInfo);
   const {
     messages,
@@ -52,6 +54,8 @@ export function Chat({
     status,
     stop,
     reload,
+    experimental_resume,
+    data,
   } = useChat({
     id: slugId,
     initialMessages,
@@ -61,7 +65,6 @@ export function Chat({
     fetch: fetchWithErrorHandlers,
     experimental_prepareRequestBody: (body) => ({
       id: slugId,
-      // messages: body.messages,
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
       // selectedVisibilityType: visibilityType,
@@ -72,6 +75,7 @@ export function Chat({
   });
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+
   const handleFirstSubmit = async () => {
     if (!hasCreatedChat) {
       const { chatId, slug } = await createChat({
@@ -94,6 +98,15 @@ export function Chat({
     router.refresh();
   };
   const effectiveReadOnly = isReadonly || chatInfo?.isArchived === true;
+
+  useAutoResume({
+    autoResume,
+    initialMessages,
+    experimental_resume,
+    data,
+    setMessages,
+  });
+
   return (
     <div className="flex flex-col min-w-0 h-dvh bg-background">
       <Messages
@@ -107,6 +120,7 @@ export function Chat({
         isArtifactVisible={false}
         append={append}
         setInput={setInput}
+        currentUserId={currentUserId}
       />
       <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
         {!effectiveReadOnly && (

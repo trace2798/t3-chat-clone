@@ -1,6 +1,3 @@
-import type { Message } from "ai";
-import { useSWRConfig } from "swr";
-import { useCopyToClipboard } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -8,33 +5,38 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { memo } from "react";
+import { api } from "@/convex/_generated/api";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import type { Message } from "ai";
+import { fetchMutation } from "convex/nextjs";
 import equal from "fast-deep-equal";
-import { toast } from "sonner";
 import { CopyIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
-import { Doc } from "@/convex/_generated/dataModel";
+import { memo } from "react";
+import { toast } from "sonner";
+import { useCopyToClipboard } from "usehooks-ts";
 type Vote = Doc<"vote">;
 export function PureMessageActions({
   chatId,
   message,
   vote,
   isLoading,
+  currentUserId,
 }: {
   chatId: string;
   message: Message;
-  //   vote: Vote | undefined;
-  vote: any;
+  vote: Vote | undefined;
   isLoading: boolean;
+  currentUserId?: string;
 }) {
-  const { mutate } = useSWRConfig();
   const [_, copyToClipboard] = useCopyToClipboard();
 
   if (isLoading) return null;
   if (message.role === "user") return null;
-
+  console.log("VOTES Message action", vote);
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-row gap-2">
+        {vote && <>{vote.isUpvoted ? <ThumbsUpIcon /> : <ThumbsDownIcon />}</>}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -70,13 +72,19 @@ export function PureMessageActions({
               disabled={vote?.isUpvoted}
               variant="outline"
               onClick={async () => {
-                const upvote = fetch("/api/vote", {
-                  method: "PATCH",
-                  body: JSON.stringify({
-                    chatId,
-                    messageId: message.id,
-                    type: "up",
-                  }),
+                // const upvote = fetch("/api/vote", {
+                //   method: "PATCH",
+                //   body: JSON.stringify({
+                //     chatId,
+                //     messageId: message.id,
+                //     type: "up",
+                //   }),
+                // });
+                const update = await fetchMutation(api.votes.createVote, {
+                  slug: chatId,
+                  userId: currentUserId as Id<"users">,
+                  messageId: message.id as Id<"message">,
+                  type: "upvote",
                 });
 
                 // toast.promise(upvote, {
@@ -123,13 +131,11 @@ export function PureMessageActions({
               variant="outline"
               disabled={vote && !vote.isUpvoted}
               onClick={async () => {
-                const downvote = fetch("/api/vote", {
-                  method: "PATCH",
-                  body: JSON.stringify({
-                    chatId,
-                    messageId: message.id,
-                    type: "down",
-                  }),
+                const update = await fetchMutation(api.votes.createVote, {
+                  slug: chatId,
+                  userId: currentUserId as Id<"users">,
+                  messageId: message.id as Id<"message">,
+                  type: "downvote",
                 });
 
                 // toast.promise(downvote, {
