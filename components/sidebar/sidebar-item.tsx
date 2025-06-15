@@ -60,7 +60,7 @@ const PureChatItem = ({
       userId: currentUserId,
     });
     console.log("DELETE RESPONSE:", deleteResponse);
-    router.refresh();
+    router.push("/");
   };
 
   const archive = useMutation(api.chat.archiveChat);

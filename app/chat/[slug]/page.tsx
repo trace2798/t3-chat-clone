@@ -1,15 +1,13 @@
 import { Chat } from "@/components/chat-components/chat";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
-import { Doc, Id } from "@/convex/_generated/dataModel";
+import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 
-import { Attachment, UIMessage } from "ai";
+// import { Attachment, UIMessage } from "ai";
 import { fetchQuery } from "convex/nextjs";
 import { Home } from "lucide-react";
-
-type DBMessage = Doc<"message">;
 
 export default async function ChatSlugPage({
   params,
@@ -55,27 +53,12 @@ export default async function ChatSlugPage({
       </div>
     );
 
-  const messages = await fetchQuery(api.message.getMessagesByChatId, {
-    chatId: chatInfo._id as string,
-  });
-  function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {
-    return messages.map((message) => ({
-      id: message._id,
-      parts: message.parts as UIMessage["parts"],
-      role: message.role as UIMessage["role"],
-      // Note: content will soon be deprecated in @ai-sdk/react
-      content: "",
-      createdAt: new Date(message._creationTime),
-      experimental_attachments:
-        (message.attachments as Array<Attachment>) ?? [],
-    }));
-  }
   if (chatInfo.isArchived === true) {
     return (
       <Chat
         key={slug}
-        id={slug}
-        initialMessages={convertToUIMessages(messages)}
+        // id={slug}
+        // initialMessages={convertToUIMessages(messages)}
         initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={true}
         currentUserId={user?._id as Id<"users">}
@@ -88,8 +71,8 @@ export default async function ChatSlugPage({
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100dvh] bg-zinc-800">
       <Chat
         key={slug}
-        id={slug}
-        initialMessages={convertToUIMessages(messages)}
+        // id={slug}
+        // initialMessages={convertToUIMessages(messages)}
         initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={false}
         currentUserId={user?._id as Id<"users">}

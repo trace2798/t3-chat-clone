@@ -1,4 +1,4 @@
-import { Chat } from "@/components/chat-components/chat";
+import { ChatHome } from "@/components/chat-components/chat-home";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";
@@ -11,18 +11,24 @@ export default async function Home() {
     {},
     { token: await convexAuthNextjsToken() }
   );
-  const id = "";
+  // const id = "";
   return (
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100vdh] bg-zinc-800">
-      <Chat
-        key={id}
-        id={id}
-        initialMessages={[]}
+      {/* <Chat
+        key={"home-chat"}
+        // id={id}
+        // initialMessages={[]}
         initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={false}
         currentUserId={user?._id as Id<"users">}
-        autoResume={true}
+        autoResume={false}
+      /> */}
+      <ChatHome
+        currentUserId={user?._id as Id<"users">}
+        initialChatModel={DEFAULT_CHAT_MODEL}
+        initialMessages={[]}
       />
+      {/* <DemoChat /> */}
     </div>
   );
 }

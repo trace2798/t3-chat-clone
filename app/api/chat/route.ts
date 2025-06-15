@@ -43,7 +43,10 @@ export async function POST(req: Request) {
     }
 
     const { id: slug, selectedChatModel, message } = await req.json();
-
+    console.log("data FROM FE");
+    console.log("SLUG FE", slug);
+    console.log("selectedChatModel FE", selectedChatModel);
+    console.log("message FE", message);
     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
     if (chatRecord === "Chat not found") {
       return new Response("Chat not found", { status: 404 });
@@ -61,14 +64,15 @@ export async function POST(req: Request) {
 
     const lastMessage = message;
     if (!lastMessage) {
+      console.error("No message provided");
       return new Response("No message provided", { status: 400 });
     }
     const isReasoning = selectedChatModel === "chat-model-reasoning";
 
     const modelTag = isReasoning
       ? "deepseek/deepseek-r1-0528:free"
-      // : "google/gemma-3n-e4b-it:free";
-      : "mistralai/mistral-small-3.1-24b-instruct:free";
+      : // : "google/gemma-3n-e4b-it:free";
+        "mistralai/mistral-small-3.1-24b-instruct:free";
 
     //  model: togetherai("deepseek-ai/DeepSeek-R1"),
     const modelUse = isReasoning
@@ -116,26 +120,26 @@ export async function POST(req: Request) {
           system: systemPrompt({ selectedChatModel, requestHints }),
           messages,
           maxSteps: 5,
-          experimental_activeTools:
-            selectedChatModel === "chat-model-reasoning"
-              ? []
-              : [
-                  "getWeather",
-                  // "createDocument",
-                  // "updateDocument",
-                  // "requestSuggestions",
-                ],
+          // experimental_activeTools:
+          //   selectedChatModel === "chat-model-reasoning"
+          //     ? []
+          //     : [
+          //         "getWeather",
+          //         // "createDocument",
+          //         // "updateDocument",
+          //         // "requestSuggestions",
+          //       ],
           experimental_transform: smoothStream({ chunking: "word" }),
           experimental_generateMessageId: generateUUID,
-          tools: {
-            getWeather,
-            // createDocument: createDocument({ session, dataStream }),
-            // updateDocument: updateDocument({ session, dataStream }),
-            // requestSuggestions: requestSuggestions({
-            //   session,
-            //   dataStream,
-            // }),
-          },
+          // tools: {
+          //   getWeather,
+          //   // createDocument: createDocument({ session, dataStream }),
+          //   // updateDocument: updateDocument({ session, dataStream }),
+          //   // requestSuggestions: requestSuggestions({
+          //   //   session,
+          //   //   dataStream,
+          //   // }),
+          // },
           onFinish: async ({ response }) => {
             if (user._id) {
               try {
