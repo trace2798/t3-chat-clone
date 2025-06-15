@@ -12,16 +12,12 @@ import {
   wrapLanguageModel,
 } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
-import {
-  createResumableStreamContext,
-  type ResumableStreamContext,
-} from "resumable-stream";
-import { after } from "next/server";
+
+import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
 import { ChatSDKError } from "@/lib/errors";
-import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
-import { geolocation } from "@vercel/functions";
-import { util } from "zod";
 import { createTogetherAI } from "@ai-sdk/togetherai";
+import { geolocation } from "@vercel/functions";
+import { getWeather } from "@/lib/ai/tools/get-weather";
 
 export const maxDuration = 60;
 
@@ -31,30 +27,8 @@ const openrouter = createOpenRouter({
 
 const togetherai = createTogetherAI({
   apiKey: process.env.TOGETHER_AI_API ?? "",
-  // deepseek-ai/DeepSeek-R1
 });
 
-// let globalStreamContext: ResumableStreamContext | null = null;
-
-// function getStreamContext() {
-//   if (!globalStreamContext) {
-//     try {
-//       globalStreamContext = createResumableStreamContext({
-//         waitUntil: after,
-//       });
-//     } catch (error: any) {
-//       if (error.message.includes("REDIS_URL")) {
-//         console.log(
-//           " > Resumable streams are disabled due to missing REDIS_URL"
-//         );
-//       } else {
-//         console.error(error);
-//       }
-//     }
-//   }
-
-//   return globalStreamContext;
-// }
 export async function POST(req: Request) {
   try {
     console.group("API → POST /api/chat");
@@ -63,12 +37,11 @@ export async function POST(req: Request) {
       {},
       { token: await convexAuthNextjsToken() }
     );
-    // console.log(user);
+
     if (!user) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    // const { id: slug, messages } = await req.json();
     const { id: slug, selectedChatModel, message } = await req.json();
 
     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
@@ -95,9 +68,13 @@ export async function POST(req: Request) {
     const modelTag = isReasoning
       ? "deepseek/deepseek-r1-0528:free"
       : "google/gemma-3n-e4b-it:free";
+
+    //  model: togetherai("deepseek-ai/DeepSeek-R1"),
     const modelUse = isReasoning
       ? wrapLanguageModel({
-          model: togetherai("deepseek-ai/DeepSeek-R1"),
+          model: openrouter.chat("deepseek/deepseek-r1-0528:free", {
+            reasoning: { effort: "low" },
+          }),
           middleware: extractReasoningMiddleware({ tagName: "think" }),
         })
       : openrouter.chat("google/gemma-3n-e4b-it:free");
@@ -113,8 +90,7 @@ export async function POST(req: Request) {
       attachments: lastMessage.attachments || [],
       timestamp: Date.now(),
     });
-    // const streamId = generateUUID();
-    // await createStreamId({ streamId, chatId: id });
+
     const streamId = await fetchMutation(api.stream.createStream, { chatId });
     console.log("Stream ID:", streamId);
 
@@ -128,7 +104,6 @@ export async function POST(req: Request) {
     // const messages = [] as any;
     const previousMessages = [] as any;
     const messages = appendClientMessage({
-      // @ts-expect-error: todo add type conversion from DBMessage[] to UIMessage[]
       messages: previousMessages,
       message,
     });
@@ -137,30 +112,29 @@ export async function POST(req: Request) {
       execute: (dataStream) => {
         const result = streamText({
           model: modelUse,
-          // model: openrouter.chat("google/gemma-3n-e4b-it:free"),
-          // system: systemPrompt({ selectedChatModel, requestHints }),
+          system: systemPrompt({ selectedChatModel, requestHints }),
           messages,
           maxSteps: 5,
-          // experimental_activeTools:
-          //   selectedChatModel === "chat-model-reasoning"
-          //     ? []
-          //     : [
-          //         "getWeather",
-          //         "createDocument",
-          //         "updateDocument",
-          //         "requestSuggestions",
-          //       ],
+          experimental_activeTools:
+            selectedChatModel === "chat-model-reasoning"
+              ? []
+              : [
+                  "getWeather",
+                  // "createDocument",
+                  // "updateDocument",
+                  // "requestSuggestions",
+                ],
           experimental_transform: smoothStream({ chunking: "word" }),
           experimental_generateMessageId: generateUUID,
-          // tools: {
-          //   getWeather,
-          //   createDocument: createDocument({ session, dataStream }),
-          //   updateDocument: updateDocument({ session, dataStream }),
-          //   requestSuggestions: requestSuggestions({
-          //     session,
-          //     dataStream,
-          //   }),
-          // },
+          tools: {
+            getWeather,
+            // createDocument: createDocument({ session, dataStream }),
+            // updateDocument: updateDocument({ session, dataStream }),
+            // requestSuggestions: requestSuggestions({
+            //   session,
+            //   dataStream,
+            // }),
+          },
           onFinish: async ({ response }) => {
             if (user._id) {
               try {

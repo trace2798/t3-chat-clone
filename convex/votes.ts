@@ -10,3 +10,5 @@ export const getVotesByChatId = query({
       .collect();
   },
 });
+
+
