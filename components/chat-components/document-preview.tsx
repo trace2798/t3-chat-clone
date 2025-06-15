@@ -8,7 +8,7 @@ import {
   useMemo,
   useRef,
 } from 'react';
-import { ArtifactKind, UIArtifact } from './artifact';
+import { ArtifactKind, UIArtifact } from '../artifact/artifact';
 
 import { cn, fetcher } from '@/lib/utils';
 import { Document } from '@/lib/db/schema';

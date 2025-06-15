@@ -12,9 +12,9 @@ import {
 import useSWR, { useSWRConfig } from "swr";
 import { useDebounceCallback, useWindowSize } from "usehooks-ts";
 import { fetcher } from "@/lib/utils";
-import { MultimodalInput } from "./input-box";
-import { Toolbar } from "./toolbar";
-import { VersionFooter } from "./version-footer";
+import { MultimodalInput } from "../chat-components/input-box";
+import { Toolbar } from "../chat-components/toolbar";
+import { VersionFooter } from "../chat-components/version-footer";
 import { ArtifactActions } from "./artifact-actions";
 import { ArtifactCloseButton } from "./artifact-close-button";
 import { ArtifactMessages } from "./artifact-messages";
@@ -26,7 +26,7 @@ import { useArtifact } from "@/hooks/use-artifact";
 // import { textArtifact } from '@/artifacts/text/client';
 import equal from "fast-deep-equal";
 import type { UseChatHelpers } from "@ai-sdk/react";
-import type { VisibilityType } from "./visibility-selector";
+import type { VisibilityType } from "../chat-components/visibility-selector";
 import { Doc } from "@/convex/_generated/dataModel";
 
 export const artifactDefinitions = [

@@ -27,8 +27,8 @@ import {
 } from '@/components/ui/tooltip';
 
 
-import { artifactDefinitions, ArtifactKind } from './artifact';
-import { ArtifactToolbarItem } from './create-artifact';
+import { artifactDefinitions, ArtifactKind } from '../artifact/artifact';
+import { ArtifactToolbarItem } from '../artifact/create-artifact';
 import { UseChatHelpers } from '@ai-sdk/react';
 import { cn } from '@/lib/utils';
 import { ArrowUpIcon, StopCircleIcon, SunMedium } from 'lucide-react';
