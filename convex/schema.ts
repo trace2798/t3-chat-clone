@@ -28,7 +28,11 @@ const schema = defineSchema({
     chatId: v.id("chat"),
     userId: v.string(),
     model: v.string(),
-    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
+    role: v.union(
+      v.literal("user"),
+      v.literal("assistant"),
+      v.literal("system")
+    ),
     search_web: v.boolean(),
     usage: v.optional(v.any()),
     content: v.string(),
@@ -51,6 +55,26 @@ const schema = defineSchema({
   })
     .index("by_chat", ["chatId"])
     .index("by_chat_createdAt", ["chatId", "createdAt"]),
+  document: defineTable({
+    title: v.string(),
+    content: v.optional(v.string()),
+    kind: v.union(
+      v.literal("text"),
+      v.literal("code"),
+      v.literal("image"),
+      v.literal("sheet")
+    ),
+    userId: v.string(),
+  }),
+  suggestions: defineTable({
+    documentId: v.id("documents"),
+    documentCreatedAt: v.number(),
+    originalText: v.string(),
+    suggestedText: v.string(),
+    description: v.optional(v.string()),
+    isResolved: v.boolean(),
+    userId: v.string(),
+  }).index("by_documentId", ["documentId"]),
 });
 
 export default schema;
