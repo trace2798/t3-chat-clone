@@ -12,6 +12,25 @@ export const getVotesByChatId = query({
   },
 });
 
+export const getVotesByChatSlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const chats = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .collect();
+    const chat = chats[0];
+    if (!chat) {
+      throw new Error("Chat not found");
+    }
+    const chatId: Id<"chat"> = chat._id;
+    console.log("chat inside getVotesByChatSlug ", chat);
+    return await ctx.db
+      .query("vote")
+      .withIndex("by_chat", (q) => q.eq("chatId", chatId))
+      .collect();
+  },
+});
 export const createVote = mutation({
   args: {
     slug: v.string(),

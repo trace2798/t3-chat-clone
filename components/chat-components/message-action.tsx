@@ -36,7 +36,6 @@ export function PureMessageActions({
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-row gap-2">
-        {vote && <>{vote.isUpvoted ? <ThumbsUpIcon /> : <ThumbsDownIcon />}</>}
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -72,49 +71,15 @@ export function PureMessageActions({
               disabled={vote?.isUpvoted}
               variant="outline"
               onClick={async () => {
-                // const upvote = fetch("/api/vote", {
-                //   method: "PATCH",
-                //   body: JSON.stringify({
-                //     chatId,
-                //     messageId: message.id,
-                //     type: "up",
-                //   }),
-                // });
                 const update = await fetchMutation(api.votes.createVote, {
                   slug: chatId,
                   userId: currentUserId as Id<"users">,
                   messageId: message.id as Id<"message">,
                   type: "upvote",
                 });
-
-                // toast.promise(upvote, {
-                //   loading: "Upvoting Response...",
-                //   success: () => {
-                //     mutate<Array<Vote>>(
-                //       `/api/vote?chatId=${chatId}`,
-                //       (currentVotes) => {
-                //         if (!currentVotes) return [];
-
-                //         const votesWithoutCurrent = currentVotes.filter(
-                //           (vote) => vote.messageId !== message.id
-                //         );
-
-                //         return [
-                //           ...votesWithoutCurrent,
-                //           {
-                //             chatId,
-                //             messageId: message.id,
-                //             isUpvoted: true,
-                //           },
-                //         ];
-                //       },
-                //       { revalidate: false }
-                //     );
-
-                //     return "Upvoted Response!";
-                //   },
-                //   error: "Failed to upvote response.",
-                // });
+                if (update) {
+                  toast.success("Upvoted!");
+                }
               }}
             >
               <ThumbsUpIcon />
@@ -137,35 +102,9 @@ export function PureMessageActions({
                   messageId: message.id as Id<"message">,
                   type: "downvote",
                 });
-
-                // toast.promise(downvote, {
-                //   loading: "Downvoting Response...",
-                //   success: () => {
-                //     mutate<Array<Vote>>(
-                //       `/api/vote?chatId=${chatId}`,
-                //       (currentVotes) => {
-                //         if (!currentVotes) return [];
-
-                //         const votesWithoutCurrent = currentVotes.filter(
-                //           (vote) => vote.messageId !== message.id
-                //         );
-
-                //         return [
-                //           ...votesWithoutCurrent,
-                //           {
-                //             chatId,
-                //             messageId: message.id,
-                //             isUpvoted: false,
-                //           },
-                //         ];
-                //       },
-                //       { revalidate: false }
-                //     );
-
-                //     return "Downvoted Response!";
-                //   },
-                //   error: "Failed to downvote response.",
-                // });
+                if (update) {
+                  toast.success("Downvoted!");
+                }
               }}
             >
               <ThumbsDownIcon />

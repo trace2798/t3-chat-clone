@@ -67,7 +67,6 @@ export function Chat({
       id: slugId,
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
-      // selectedVisibilityType: visibilityType,
     }),
     onError: (error) => {
       toast.error(error.message);
@@ -106,13 +105,22 @@ export function Chat({
     data,
     setMessages,
   });
+  const votes = useQuery(api.votes.getVotesByChatSlug, {
+    slug: slugId,
+  });
+  if (votes === undefined) {
+    // Still loading
+    return <></>;
+  }
 
+  console.log("Votes Query", votes);
+  console.log("slugId", slugId);
   return (
     <div className="flex flex-col min-w-0 h-dvh bg-background">
       <Messages
         chatId={slugId}
         status={status}
-        votes={undefined}
+        votes={votes}
         messages={messages}
         setMessages={setMessages}
         reload={reload}
