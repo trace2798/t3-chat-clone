@@ -64,16 +64,16 @@ export function generateSlug(title: string) {
 export const getChatBySlug = query({
   args: { slug: v.string() },
   handler: async (ctx, args) => {
-    const chats = await ctx.db
+    const chat = await ctx.db
       .query("chat")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
-      .collect();
+      .first();
 
-    const chat = chats[0];
-    if (!chat) {
-      return "Chat not found";
-    }
-
+    // const chat = chats[0];
+    // if (!chat) {
+    //   return "Chat not found";
+    // }
+    console.log("CHAT SLUG API CONVEX", chat);
     return chat;
   },
 });

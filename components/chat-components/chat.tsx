@@ -1,202 +1,14 @@
-// "use client";
-
-// import { api } from "@/convex/_generated/api";
-// import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
-// import { useChat } from "@ai-sdk/react";
-// import { Attachment, UIMessage } from "ai";
-// import { useMutation, useQuery } from "convex/react";
-// import { useRouter } from "next/navigation";
-// import { useState } from "react";
-// import { toast } from "sonner";
-// import { MultimodalInput } from "./input-box";
-// import { Messages } from "./messages";
-// import { Button } from "../ui/button";
-// import { ArchiveRestoreIcon } from "lucide-react";
-// import { fetchMutation } from "convex/nextjs";
-// import { useAutoResume } from "@/hooks/use-auto-resume";
-// import { Doc } from "@/convex/_generated/dataModel";
-// type DBMessage = Doc<"message">;
-// export function Chat({
-//   id,
-//   // initialMessages,
-//   initialChatModel,
-//   isReadonly,
-//   currentUserId,
-//   autoResume,
-//   isArchived,
-// }: {
-//   id: string;
-//   // initialMessages: Array<UIMessage>;
-//   initialChatModel: string;
-//   isReadonly: boolean;
-//   currentUserId: string;
-//   autoResume: boolean;
-//   isArchived?: boolean;
-// }) {
-//   const router = useRouter();
-//   const [slugId, setSlugId] = useState(id || "");
-//   const [hasCreatedChat, setHasCreatedChat] = useState(Boolean(id));
-
-//   const createChat = useMutation(api.chat.createChat);
-//   const chatInfo = useQuery(
-//     api.chat.getChatBySlug,
-//     slugId ? { slug: slugId } : "skip"
-//   );
-//   if (chatInfo === "Chat not found") return null;
-//   const messagesFromDB = useQuery(
-//     api.message.getMessagesByChatId,
-//     chatInfo?._id ? { chatId: chatInfo._id } : "skip"
-//   );
-//   if (!chatInfo?._id || messagesFromDB === undefined) {
-//     return <p>Loading messages…</p>;
-//   }
-//   function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {
-//     return messages.map((message) => ({
-//       id: message._id,
-//       parts: message.parts as UIMessage["parts"],
-//       role: message.role as UIMessage["role"],
-//       // Note: content will soon be deprecated in @ai-sdk/react
-//       content: "",
-//       createdAt: new Date(message._creationTime),
-//       experimental_attachments:
-//         (message.attachments as Array<Attachment>) ?? [],
-//     }));
-//   }
-//   // console.log("Chat Info", chatInfo);
-//   const uiMessages = convertToUIMessages(messagesFromDB);
-//   const {
-//     messages,
-//     setMessages,
-//     handleSubmit: realHandleSubmit,
-//     input,
-//     setInput,
-//     append,
-//     status,
-//     stop,
-//     reload,
-//     experimental_resume,
-//     data,
-//   } = useChat({
-//     id: slugId,
-//     initialMessages: uiMessages,
-//     experimental_throttle: 100,
-//     sendExtraMessageFields: true,
-//     generateId: generateUUID,
-//     fetch: fetchWithErrorHandlers,
-//     experimental_prepareRequestBody: (body) => ({
-//       id: slugId,
-//       message: body.messages.at(-1),
-//       selectedChatModel: initialChatModel,
-//     }),
-//     onError: (error) => {
-//       toast.error(error.message);
-//     },
-//   });
-
-//   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
-
-//   const handleFirstSubmit = async () => {
-//     if (!hasCreatedChat) {
-//       const { chatId, slug } = await createChat({
-//         title: input,
-//         userId: currentUserId,
-//       });
-//       setSlugId(slug);
-//       setHasCreatedChat(true);
-//       router.replace(`/chat/${slug}`);
-//     }
-//     realHandleSubmit();
-//   };
-
-//   const handleUnArchive = async () => {
-//     await fetchMutation(api.chat.unarchiveChat, {
-//       slug: slugId,
-//       userId: currentUserId,
-//     });
-//     toast.success("Chat Unarchived!");
-//     router.refresh();
-//   };
-//   const effectiveReadOnly = isReadonly || chatInfo?.isArchived === true;
-
-//   useAutoResume({
-//     autoResume,
-//     initialMessages: uiMessages,
-//     experimental_resume,
-//     data,
-//     setMessages,
-//   });
-//   const votes = useQuery(
-//     api.votes.getVotesByChatSlug,
-//     slugId ? { slug: slugId } : "skip"
-//   );
-
-//   if (slugId && votes === undefined) {
-//     return <></>;
-//   }
-
-//   console.log("Votes Query", votes);
-//   console.log("slugId", slugId);
-//   return (
-//     <div className="flex flex-col min-w-0 h-dvh bg-background">
-//       <Messages
-//         chatId={slugId}
-//         status={status}
-//         votes={votes}
-//         messages={messages}
-//         setMessages={setMessages}
-//         reload={reload}
-//         isReadonly={isReadonly}
-//         isArtifactVisible={false}
-//         append={append}
-//         setInput={setInput}
-//         currentUserId={currentUserId}
-//       />
-//       <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
-//         {!effectiveReadOnly && (
-//           <MultimodalInput
-//             chatId={slugId}
-//             input={input}
-//             setInput={setInput}
-//             handleSubmit={handleFirstSubmit}
-//             status={status}
-//             stop={stop}
-//             attachments={attachments}
-//             setAttachments={setAttachments}
-//             messages={messages}
-//             setMessages={setMessages}
-//             append={append}
-//           />
-//         )}
-//       </form>
-//       {chatInfo && chatInfo.isArchived === true && (
-//         <div className=" absolute bottom-20 flex flex-col space-y-3 p-4 w-full justify-center items-center">
-//           <p className="text-sm text-muted-foreground w-full max-w-sm text-center">
-//             This chat is archived. You can still view the messages, but you
-//             cannot send new messages.
-//           </p>
-//           <Button
-//             size={"sm"}
-//             variant={"outline"}
-//             onClick={() => handleUnArchive()}
-//           >
-//             <ArchiveRestoreIcon />
-//             UnArchive Chat
-//           </Button>
-//         </div>
-//       )}
-//     </div>
-//   );
-// }
+// // components/chat-components/Chat.tsx
 // "use client";
 
 // import React, { useState } from "react";
-// import { useParams, usePathname, useRouter } from "next/navigation";
+// import { useParams, useRouter } from "next/navigation";
 // import { useQuery, useMutation } from "convex/react";
+
 // import { fetchMutation } from "convex/nextjs";
 // import { useChat } from "@ai-sdk/react";
-// import { Attachment, UIMessage } from "ai";
 // import { toast } from "sonner";
-
+// import { Attachment, UIMessage } from "ai";
 // import { api } from "@/convex/_generated/api";
 // import { Doc } from "@/convex/_generated/dataModel";
 // import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
@@ -204,49 +16,37 @@
 // import { MultimodalInput } from "./input-box";
 // import { Messages } from "./messages";
 // import { Button } from "../ui/button";
-// import { ArchiveRestoreIcon } from "lucide-react";
+// import { ArchiveRestoreIcon, Loader } from "lucide-react";
 
 // type DBMessage = Doc<"message">;
 
 // export function Chat({
-//   id: initialSlug,
+//   preloadedChat,
 //   initialChatModel,
 //   isReadonly,
 //   currentUserId,
 //   autoResume,
 //   isArchived,
 // }: {
-//   id: string;
+//   preloadedChat: Doc<"chat">;
 //   initialChatModel: string;
 //   isReadonly: boolean;
 //   currentUserId: string;
 //   autoResume: boolean;
 //   isArchived?: boolean;
 // }) {
-//   const params = useParams();
-//   const chatSlug = params.slug;
-//   console.log("chatSlug PArams", chatSlug);
+//   const params = useParams<{ slug: string }>();
+//   const slug = params.slug!;
 //   const router = useRouter();
-//   const [slug, setSlug] = useState(initialSlug || "");
 
-//   const [hasCreatedChat, setHasCreatedChat] = useState(Boolean(initialSlug));
+//   const chatInfo = preloadedChat;
+//   console.log("CHAT INFO FROM CHAT COMPONENT:", chatInfo);
 
-//   const createChat = useMutation(api.chat.createChat);
+//   const messagesFromDB = useQuery(api.message.getMessagesByChatId, {
+//     chatId: chatInfo._id,
+//   });
+//   const votes = useQuery(api.votes.getVotesByChatSlug, { slug });
 
-//   const chatInfo = useQuery(api.chat.getChatBySlug, slug ? { slug } : "skip");
-
-//   const messagesFromDB = useQuery(
-//     api.message.getMessagesByChatId,
-//     chatInfo?._id ? { chatId: chatInfo._id } : "skip"
-//   );
-
-//   // fetch votes for message list
-//   const votes = useQuery(
-//     api.votes.getVotesByChatSlug,
-//     slug ? { slug } : "skip"
-//   );
-
-//   // convert DB rows into `UIMessage[]`
 //   const convertToUIMessages = (msgs: DBMessage[]): UIMessage[] =>
 //     msgs.map((m) => ({
 //       id: m._id,
@@ -256,13 +56,10 @@
 //       createdAt: new Date(m._creationTime),
 //       experimental_attachments: (m.attachments as Attachment[]) || [],
 //     }));
-
-//   // once loaded, seed useChat with these
 //   const initialMessages = messagesFromDB
 //     ? convertToUIMessages(messagesFromDB)
 //     : [];
 
-//   // wire up the AI chat
 //   const {
 //     messages,
 //     setMessages,
@@ -290,6 +87,7 @@
 //     onError: (err) => toast.error(err.message),
 //   });
 
+//   // 6) Auto-resume hook
 //   const [attachments, setAttachments] = useState<Attachment[]>([]);
 //   useAutoResume({
 //     autoResume,
@@ -299,36 +97,31 @@
 //     setMessages,
 //   });
 
-//   // ─── 2. CONDITIONAL RENDERING AFTER HOOKS ────────────────────────────────
-//   // if the chat slug is invalid
-//   if (chatInfo === "Chat not found") {
-//     return null;
+//   if (!messagesFromDB || votes === undefined) {
+//     return (
+//       <p className="w-full h-full min-h-screen flex flex-col justify-center items-center">
+//         Getting chat Ready
+//         <span className="animate-spin mt-5">
+//           <Loader size={18} />
+//         </span>
+//       </p>
+//     );
 //   }
 
-//   // still loading chat metadata or messages
-//   if (!chatInfo?._id || messagesFromDB === undefined) {
-//     return <p className="p-4 text-center">Loading chat…</p>;
-//   }
-
-//   // still loading votes
-//   if (slug && votes === undefined) {
-//     return <p className="p-4 text-center">Loading votes…</p>;
-//   }
-
-//   // ─── 3. EVENT HANDLERS ───────────────────────────────────────────────────
+//   const createChat = useMutation(api.chat.createChat);
 //   const handleFirstSubmit = async () => {
-//     if (!hasCreatedChat) {
-//       const { chatId, slug: newSlug } = await createChat({
+//     if (!chatInfo) {
+//       const { slug: newSlug } = await createChat({
 //         title: input,
 //         userId: currentUserId,
 //       });
-//       setSlug(newSlug);
-//       setHasCreatedChat(true);
 //       router.replace(`/chat/${newSlug}`);
+//       return;
 //     }
 //     realHandleSubmit();
 //   };
 
+//   // 9) Unarchive
 //   const handleUnArchive = async () => {
 //     await fetchMutation(api.chat.unarchiveChat, {
 //       slug,
@@ -340,24 +133,29 @@
 
 //   const effectiveReadOnly = isReadonly || chatInfo.isArchived === true;
 
-//   // ─── 4. FINAL RENDER ─────────────────────────────────────────────────────
 //   return (
-//     <div className="flex flex-col min-w-0 h-dvh bg-background">
+//     <div className="flex flex-col h-full bg-background">
 //       <Messages
 //         chatId={slug}
 //         status={status}
-//         votes={votes!}
+//         votes={votes}
 //         messages={messages}
 //         setMessages={setMessages}
 //         reload={reload}
-//         isReadonly={isReadonly}
+//         isReadonly={effectiveReadOnly}
 //         isArtifactVisible={false}
 //         append={append}
 //         setInput={setInput}
 //         currentUserId={currentUserId}
 //       />
 
-//       <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
+//       <form
+//         onSubmit={(e) => {
+//           e.preventDefault();
+//           handleFirstSubmit();
+//         }}
+//         className="flex mx-auto px-4 pb-4 gap-2 w-full max-w-3xl"
+//       >
 //         {!effectiveReadOnly && (
 //           <MultimodalInput
 //             chatId={slug}
@@ -375,79 +173,66 @@
 //         )}
 //       </form>
 
-//       {chatInfo.isArchived === true && (
-//         <div className="absolute bottom-20 flex flex-col space-y-3 p-4 w-full justify-center items-center">
-//           <p className="text-sm text-muted-foreground w-full max-w-sm text-center">
+//       {chatInfo.isArchived && (
+//         <div className="absolute bottom-0 flex flex-col items-center p-4 space-y-3 w-full">
+//           <p className="text-sm text-muted-foreground text-center max-w-sm">
 //             This chat is archived. You can still view messages, but cannot send
 //             new ones.
 //           </p>
 //           <Button size="sm" variant="outline" onClick={handleUnArchive}>
-//             <ArchiveRestoreIcon />
-//             Unarchive Chat
+//             <ArchiveRestoreIcon /> Unarchive Chat
 //           </Button>
 //         </div>
 //       )}
 //     </div>
 //   );
 // }
-
+// components/chat-components/Chat.tsx
 "use client";
-
-import React, { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
-import { fetchMutation } from "convex/nextjs";
-import { useChat } from "@ai-sdk/react";
-import { toast } from "sonner";
-import { Attachment, UIMessage } from "ai";
 
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
-import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { useAutoResume } from "@/hooks/use-auto-resume";
+import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
+import { useChat } from "@ai-sdk/react";
+import { Attachment, UIMessage } from "ai";
+import { fetchMutation } from "convex/nextjs";
+import { useQuery } from "convex/react";
+import { ArchiveRestoreIcon, Loader } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "../ui/button";
 import { MultimodalInput } from "./input-box";
 import { Messages } from "./messages";
-import { Button } from "../ui/button";
-import { ArchiveRestoreIcon } from "lucide-react";
 
 type DBMessage = Doc<"message">;
 
 export function Chat({
+  chatInfo,
   initialChatModel,
   isReadonly,
   currentUserId,
   autoResume,
   isArchived,
 }: {
+  chatInfo: Doc<"chat">;
   initialChatModel: string;
   isReadonly: boolean;
   currentUserId: string;
   autoResume: boolean;
   isArchived?: boolean;
 }) {
-  // 1. Read the slug from the URL
-  const params = useParams<{ slug: string }>();
-  if (!params?.slug) {
-    return <p className="p-4 text-center">Loading chat…</p>;
-  }
-  const slug = params.slug;
-
-  // 2. ALL HOOKS AT THE TOP LEVEL
+  const { slug } = useParams<{ slug: string }>()!;
   const router = useRouter();
-  const createChat = useMutation(api.chat.createChat);
 
-  const chatInfo = useQuery(api.chat.getChatBySlug, slug ? { slug } : "skip");
-
-  const messagesFromDB = useQuery(
-    api.message.getMessagesByChatId,
-    chatInfo?._id ? { chatId: chatInfo._id } : "skip"
-  );
-
-  const votes = useQuery(
-    api.votes.getVotesByChatSlug,
-    slug ? { slug } : "skip"
-  );
-
+  // —————— ALL HOOKS AT THE TOP ——————
+  // 2) Reactive data fetching
+  const messagesFromDB = useQuery(api.message.getMessagesByChatId, {
+    chatId: chatInfo._id,
+  });
+  const votes = useQuery(api.votes.getVotesByChatSlug, { slug });
+  // 3) Convert DB messages to UIMessages
   const convertToUIMessages = (msgs: DBMessage[]): UIMessage[] =>
     msgs.map((m) => ({
       id: m._id,
@@ -457,7 +242,6 @@ export function Chat({
       createdAt: new Date(m._creationTime),
       experimental_attachments: (m.attachments as Attachment[]) || [],
     }));
-
   const initialMessages = messagesFromDB
     ? convertToUIMessages(messagesFromDB)
     : [];
@@ -465,7 +249,7 @@ export function Chat({
   const {
     messages,
     setMessages,
-    handleSubmit: realHandleSubmit,
+    handleSubmit,
     input,
     setInput,
     append,
@@ -497,41 +281,30 @@ export function Chat({
     data,
     setMessages,
   });
-
-  if (chatInfo === "Chat not found") {
-    return null;
+  if (!messagesFromDB || votes === undefined) {
+    return (
+      <p className="w-full h-full min-h-screen flex flex-col justify-center items-center">
+        Getting chat ready…
+        <span className="animate-spin mt-5">
+          <Loader size={24} />
+        </span>
+      </p>
+    );
   }
-  if (!chatInfo?._id || messagesFromDB === undefined) {
-    return <p className="p-4 text-center">Loading messages…</p>;
-  }
-  if (votes === undefined) {
-    return <p className="p-4 text-center">Loading votes…</p>;
-  }
-
-  const handleFirstSubmit = async () => {
-    if (!chatInfo) {
-      const { slug: newSlug } = await createChat({
-        title: input,
-        userId: currentUserId,
-      });
-      router.replace(`/chat/${newSlug}`);
-    }
-    realHandleSubmit();
-  };
 
   const handleUnArchive = async () => {
     await fetchMutation(api.chat.unarchiveChat, {
       slug,
       userId: currentUserId,
     });
-    toast.success("Chat Unarchived!");
+    toast.success("Chat unarchived!");
     router.refresh();
   };
 
   const effectiveReadOnly = isReadonly || chatInfo.isArchived === true;
 
   return (
-    <div className="flex flex-col min-w-0 h-dvh bg-background">
+    <div className="flex flex-col h-full bg-background">
       <Messages
         chatId={slug}
         status={status}
@@ -546,13 +319,19 @@ export function Chat({
         currentUserId={currentUserId}
       />
 
-      <form className="flex mx-auto px-4 bg-background pb-0 gap-2 w-full md:max-w-3xl">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        className="flex mx-auto px-4 gap-2 w-full max-w-3xl"
+      >
         {!effectiveReadOnly && (
           <MultimodalInput
             chatId={slug}
             input={input}
             setInput={setInput}
-            handleSubmit={handleFirstSubmit}
+            handleSubmit={handleSubmit}
             status={status}
             stop={stop}
             attachments={attachments}
@@ -565,14 +344,12 @@ export function Chat({
       </form>
 
       {chatInfo.isArchived && (
-        <div className="absolute bottom-0 bg-transparent  flex flex-col space-y-3 p-4 w-full justify-center items-center">
-          <p className="text-sm text-muted-foreground w-full max-w-sm text-center">
-            This chat is archived. You can still view messages, but cannot send
-            new ones.
+        <div className="absolute bottom-0 flex flex-col items-center p-4 space-y-3 w-full">
+          <p className="text-sm text-muted-foreground text-center max-w-sm">
+            This chat is archived—you can view messages, but not send new ones.
           </p>
           <Button size="sm" variant="outline" onClick={handleUnArchive}>
-            <ArchiveRestoreIcon />
-            Unarchive Chat
+            <ArchiveRestoreIcon /> Unarchive Chat
           </Button>
         </div>
       )}

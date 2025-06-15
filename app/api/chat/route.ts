@@ -48,9 +48,12 @@ export async function POST(req: Request) {
     console.log("selectedChatModel FE", selectedChatModel);
     console.log("message FE", message);
     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
-    if (chatRecord === "Chat not found") {
+    if (!chatRecord) {
       return new Response("Chat not found", { status: 404 });
     }
+    // if (chatRecord === "Chat not found") {
+    //   return new Response("Chat not found", { status: 404 });
+    // }
     if (chatRecord.isArchived) {
       return new Response("Chat is archived", { status: 400 });
     }
