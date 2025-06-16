@@ -98,6 +98,9 @@ export async function POST(req: Request) {
       attachments: lastMessage.attachments || [],
       timestamp: Date.now(),
     });
+    await fetchMutation(api.chat.updateChatUpdatedAt, {
+      chatId,
+    });
 
     const streamId = await fetchMutation(api.stream.createStream, { chatId });
     console.log("Stream ID:", streamId);
@@ -174,6 +177,9 @@ export async function POST(req: Request) {
                   parts: assistantMessage.parts,
                   attachments: assistantMessage.experimental_attachments ?? [],
                   timestamp: Date.now(),
+                });
+                await fetchMutation(api.chat.updateChatUpdatedAt, {
+                  chatId,
                 });
               } catch (_) {
                 console.error("Failed to save chat");

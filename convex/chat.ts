@@ -332,3 +332,13 @@ export const branchChat = mutation({
     };
   },
 });
+
+export const updateChatUpdatedAt = mutation({
+  args: { chatId: v.id("chat") },
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.chatId, {
+      updatedAt: Date.now(),
+    });
+    return "Chat archived";
+  },
+});
