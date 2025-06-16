@@ -24,7 +24,6 @@ import {
   ArchiveIcon,
   ArchiveRestoreIcon,
   CheckCheckIcon,
-  FileSliders,
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,

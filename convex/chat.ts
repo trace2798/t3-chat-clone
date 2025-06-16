@@ -277,30 +277,58 @@ export const branchChat = mutation({
       .query("chat")
       .withIndex("by_slug", (q) => q.eq("slug", args.chatSlug))
       .first();
+
     console.log("CONVER BRANCH testing chat info", chat);
     if (!chat) {
       return "Chat not found";
     }
-    const messageInfo = await ctx.db.get(args.messageId);
-    console.log("CONVER BRANCH testing message info", messageInfo);
-    // const messagesBefore = await ctx.db
-    //   .query("message")
-    //   .withIndex("by_chat", (q) =>
-    //     q.eq("chatId", chat._id).lt("createdAt", messageInfo.createdAt)
-    //   )
-    //   .collect();
-    // const slug = generateSlug(args.title);
-
-    // const chatId = await ctx.db.insert("chat", {
-    //   ...args,
-    //   visibility: "public",
-    //   updatedAt: Date.now(),
-    //   slug,
-    //   isArchived: false,
-    //   isDeleted: false,
-    // });
-
-    // return { chatId, slug };
-    return "Branching chat";
+    if (chat?.userId !== args.userId) {
+      return "Unauthorized";
+    }
+    const selectedMessageInfo = await ctx.db.get(args.messageId);
+    if (!selectedMessageInfo) {
+      return "Message not found";
+    }
+    console.log("CONVER BRANCH testing message info", selectedMessageInfo);
+    const history = await ctx.db
+      .query("message")
+      .withIndex("by_chat_timestamp", (q) =>
+        q
+          .eq("chatId", selectedMessageInfo.chatId)
+          .lte("timestamp", selectedMessageInfo.timestamp)
+      )
+      .order("asc")
+      .collect();
+    console.log("HISTORY", history);
+    const slug = generateSlug(selectedMessageInfo.content);
+    console.log("SLUG", slug);
+    const newChatId = await ctx.db.insert("chat", {
+      title: selectedMessageInfo.content,
+      userId: args.userId,
+      parentChat: chat._id,
+      visibility: chat.visibility,
+      updatedAt: Date.now(),
+      slug: slug,
+      isArchived: false,
+      isDeleted: false,
+    });
+    for (const m of history) {
+      await ctx.db.insert("message", {
+        chatId: newChatId,
+        userId: m.userId,
+        model: m.model,
+        role: m.role,
+        search_web: m.search_web,
+        usage: m.usage ?? null,
+        content: m.content,
+        parts: m.parts ?? null,
+        timestamp: m.timestamp,
+        attachments: m.attachments ?? null,
+      });
+    }
+    return {
+      chatId: newChatId,
+      chatSlug: slug,
+    };
   },
 });

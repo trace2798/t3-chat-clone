@@ -41,7 +41,8 @@ const schema = defineSchema({
     attachments: v.optional(v.any()),
   })
     .index("by_chat", ["chatId"])
-    .index("by_user", ["userId"]),
+    .index("by_user", ["userId"])
+    .index("by_chat_timestamp", ["chatId", "timestamp"]),
   vote: defineTable({
     chatId: v.id("chat"),
     messageId: v.id("message"),
