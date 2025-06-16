@@ -22,7 +22,7 @@ const schema = defineSchema({
     .index("by_user_updatedAt", ["userId", "updatedAt"])
     .searchIndex("search_title", {
       searchField: "title",
-      filterFields: ["userId", "visibility"],
+      filterFields: ["userId", "visibility", "isDeleted"],
     }),
   message: defineTable({
     chatId: v.id("chat"),

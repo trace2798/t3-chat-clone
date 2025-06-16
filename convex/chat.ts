@@ -246,7 +246,10 @@ export const getChatSearch = query({
     const results = await ctx.db
       .query("chat")
       .withSearchIndex("search_title", (q) =>
-        q.search("title", args.query).eq("userId", args.userId)
+        q
+          .search("title", args.query)
+          .eq("userId", args.userId)
+          .eq("isDeleted", false)
       )
       .take(20);
     console.log("CONVER SEARCH");
