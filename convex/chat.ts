@@ -239,3 +239,17 @@ export const permanentlyDeleteChatAndMessages = mutation({
     return "Chat deleted";
   },
 });
+
+export const getChatSearch = query({
+  args: { userId: v.string(), query: v.string() },
+  handler: async (ctx, args) => {
+    const results = await ctx.db
+      .query("chat")
+      .withSearchIndex("search_title", (q) =>
+        q.search("title", args.query).eq("userId", args.userId)
+      )
+      .take(20);
+    console.log("CONVER SEARCH");
+    return results;
+  },
+});

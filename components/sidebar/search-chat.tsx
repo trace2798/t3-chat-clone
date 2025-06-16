@@ -1,15 +1,7 @@
 "use client";
 
+import { Search, User } from "lucide-react";
 import * as React from "react";
-import {
-  Calculator,
-  Calendar,
-  CreditCard,
-  Search,
-  Settings,
-  Smile,
-  User,
-} from "lucide-react";
 
 import {
   CommandDialog,
@@ -18,16 +10,35 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useSidebar } from "../ui/sidebar";
-import { cn } from "@/lib/utils";
 
-export function SearchChat() {
+import { useDebounce } from "use-debounce";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+export function SearchChat({ currentUserId }: { currentUserId?: string }) {
+  const router = useRouter();
   const [open, setOpen] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [isMounted, setIsMounted] = React.useState(false);
+  // debounce the term by 3000ms
+  const [debouncedTerm] = useDebounce(searchTerm, 3000);
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const { state } = useSidebar();
+  const chats =
+    useQuery(api.chat.getChatSearch, {
+      userId: currentUserId as string,
+      query: debouncedTerm,
+    }) ?? [];
+  console.log("CHATS", chats);
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
@@ -40,13 +51,14 @@ export function SearchChat() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <>
       <Button
-        // size={"icon"}
-        // variant={"ghost"}
-        // onClick={() => setOpen(true)}
-        // className="size-7"
+        disabled={!currentUserId}
         size={state === "expanded" ? "sm" : "icon"}
         variant={"ghost"}
         onClick={() => setOpen(true)}
@@ -59,41 +71,36 @@ export function SearchChat() {
         {state === "expanded" && "Search Chat"}
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
-        <CommandInput placeholder="Type a command or search..." />
+        <CommandInput
+          placeholder="Search Chat..."
+          value={searchTerm}
+          onValueChange={setSearchTerm}
+        />
+
         <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-          <CommandGroup heading="Suggestions">
-            <CommandItem>
-              <Calendar />
-              <span>Calendar</span>
-            </CommandItem>
-            <CommandItem>
-              <Smile />
-              <span>Search Emoji</span>
-            </CommandItem>
-            <CommandItem>
-              <Calculator />
-              <span>Calculator</span>
-            </CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>
-              <User />
-              <span>Profile</span>
-              <CommandShortcut>⌘P</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <CreditCard />
-              <span>Billing</span>
-              <CommandShortcut>⌘B</CommandShortcut>
-            </CommandItem>
-            <CommandItem>
-              <Settings />
-              <span>Settings</span>
-              <CommandShortcut>⌘S</CommandShortcut>
-            </CommandItem>
-          </CommandGroup>
+          {searchTerm.length === 0 && (
+            <CommandEmpty>Start typing to search chats.</CommandEmpty>
+          )}
+          {searchTerm.length > 0 && chats.length === 0 && (
+            <CommandEmpty>No results found.</CommandEmpty>
+          )}
+          {chats.length > 0 && (
+            <CommandGroup heading={`Chats (${chats.length})`}>
+              {chats.map((chat) => (
+                <Link key={chat._id.toString()} href={`/chat/${chat.slug}`}>
+                  <CommandItem
+                    value={chat.title}
+                    onSelect={() => setOpen(false)}
+                    className="hover:cursor-pointer"
+                  >
+                    <User className="mr-2 h-4 w-4" />
+                    <span>{chat.title}</span>
+                    <CommandShortcut>↵</CommandShortcut>
+                  </CommandItem>
+                </Link>
+              ))}
+            </CommandGroup>
+          )}
         </CommandList>
       </CommandDialog>
     </>

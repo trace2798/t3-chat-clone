@@ -65,7 +65,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent className="px-3">
         <CreateChat />
-        <SearchChat />
+        <SearchChat currentUserId={currentUser?._id} />
         {currentUser && <SidebarChat currentUserId={currentUser._id} />}
       </SidebarContent>
       <SidebarFooter>
