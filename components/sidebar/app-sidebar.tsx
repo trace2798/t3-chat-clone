@@ -57,7 +57,7 @@ export function AppSidebar({
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="/">
-                <span className="text-base font-semibold">T3 Chat</span>
+                <span className="text-base font-semibold">AI Chat</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
