@@ -38,6 +38,14 @@ export function PureMessageActions({
   if (isLoading) return null;
   if (message.role === "user") return null;
   console.log("VOTES Message action", vote);
+  const handleBranchChat = () => {
+    const branchChat = fetchMutation(api.chat.branchChat, {
+      chatSlug: chatId,
+      messageId: message.id as Id<"message">,
+      userId: currentUserId as Id<"users">,
+    });
+    console.log("BRANCH CHAT FE:", branchChat);
+  };
   return (
     <TooltipProvider delayDuration={0}>
       <div className="flex flex-row gap-2">
@@ -123,18 +131,7 @@ export function PureMessageActions({
               data-testid="message-branch"
               className="py-1 px-2 h-fit text-muted-foreground !pointer-events-auto"
               variant="outline"
-              // disabled={vote && !vote.isUpvoted}
-              onClick={async () => {
-                // const update = await fetchMutation(api.votes.createVote, {
-                //   slug: chatId,
-                //   userId: currentUserId as Id<"users">,
-                //   messageId: message.id as Id<"message">,
-                //   type: "downvote",
-                // });
-                // if (update) {
-                //   toast.success("Downvoted!");
-                // }
-              }}
+              onClick={() => handleBranchChat()}
             >
               <GitBranchPlus size={10} />
             </Button>

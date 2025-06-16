@@ -1,12 +1,8 @@
 "use client";
 
 import type { UIMessage } from "ai";
-
 import { AnimatePresence, motion } from "motion/react";
 import { memo, useState } from "react";
-// import type { Vote } from '@/lib/db/schema';
-// import { DocumentToolCall, DocumentToolResult } from './document';
-
 import { Markdown } from "./markdown";
 import { MessageActions } from "./message-action";
 import { PreviewAttachment } from "./preview-attachment";
@@ -149,9 +145,6 @@ const PurePreviewMessage = ({
                                 data-testid="message-edit-button"
                                 variant="ghost"
                                 className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
-                                // onClick={() => {
-                                //   setMode("edit");
-                                // }}
                                 onClick={() => handleBranchChat()}
                               >
                                 <GitBranchPlus size={10} />

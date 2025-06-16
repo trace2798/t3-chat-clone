@@ -51,9 +51,6 @@ export async function POST(req: Request) {
     if (!chatRecord) {
       return new Response("Chat not found", { status: 404 });
     }
-    // if (chatRecord === "Chat not found") {
-    //   return new Response("Chat not found", { status: 404 });
-    // }
     if (chatRecord.isArchived) {
       return new Response("Chat is archived", { status: 400 });
     }
