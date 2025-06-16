@@ -1,4 +1,5 @@
 // import type { ArtifactKind } from '@/components/artifact';
+import { ArtifactKind } from '@/components/artifact/artifact';
 import type { Geo } from '@vercel/functions';
 
 
@@ -98,26 +99,26 @@ export const sheetPrompt = `
 You are a spreadsheet creation assistant. Create a spreadsheet in csv format based on the given prompt. The spreadsheet should contain meaningful column headers and data.
 `;
 
-// export const updateDocumentPrompt = (
-//   currentContent: string | null,
-//   type: ArtifactKind,
-// ) =>
-//   type === 'text'
-//     ? `\
-// Improve the following contents of the document based on the given prompt.
+export const updateDocumentPrompt = (
+  currentContent: string | null,
+  type: ArtifactKind,
+) =>
+  type === 'text'
+    ? `\
+Improve the following contents of the document based on the given prompt.
 
-// ${currentContent}
-// `
-//     : type === 'code'
-//       ? `\
-// Improve the following code snippet based on the given prompt.
+${currentContent}
+`
+    : type === 'code'
+      ? `\
+Improve the following code snippet based on the given prompt.
 
-// ${currentContent}
-// `
-//       : type === 'sheet'
-//         ? `\
-// Improve the following spreadsheet based on the given prompt.
+${currentContent}
+`
+      : type === 'sheet'
+        ? `\
+Improve the following spreadsheet based on the given prompt.
 
-// ${currentContent}
-// `
-//         : '';
+${currentContent}
+`
+        : '';

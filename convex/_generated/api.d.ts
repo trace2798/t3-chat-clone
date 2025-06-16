@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as auth from "../auth.js";
 import type * as chat from "../chat.js";
+import type * as document from "../document.js";
 import type * as http from "../http.js";
 import type * as message from "../message.js";
 import type * as stream from "../stream.js";
@@ -32,6 +33,7 @@ import type * as votes from "../votes.js";
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   chat: typeof chat;
+  document: typeof document;
   http: typeof http;
   message: typeof message;
   stream: typeof stream;

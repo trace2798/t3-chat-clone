@@ -57,7 +57,7 @@ const schema = defineSchema({
     .index("by_chat_createdAt", ["chatId", "createdAt"]),
   document: defineTable({
     title: v.string(),
-    content: v.optional(v.string()),
+    content: v.string(),
     kind: v.union(
       v.literal("text"),
       v.literal("code"),
