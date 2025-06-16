@@ -16,11 +16,11 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { useSidebar } from "../ui/sidebar";
 
-import { useDebounce } from "use-debounce";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
+import { useQuery } from "convex/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useDebounce } from "use-debounce";
 
 export function SearchChat({ currentUserId }: { currentUserId?: string }) {
   const router = useRouter();
@@ -84,6 +84,7 @@ export function SearchChat({ currentUserId }: { currentUserId?: string }) {
           {searchTerm.length > 0 && chats.length === 0 && (
             <CommandEmpty>No results found.</CommandEmpty>
           )}
+
           {chats.length > 0 && (
             <CommandGroup heading={`Chats (${chats.length})`}>
               {chats.map((chat) => (

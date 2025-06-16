@@ -10,7 +10,12 @@ import { Doc, Id } from "@/convex/_generated/dataModel";
 import type { Message } from "ai";
 import { fetchMutation } from "convex/nextjs";
 import equal from "fast-deep-equal";
-import { CopyIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import {
+  CopyIcon,
+  GitBranchPlus,
+  ThumbsDownIcon,
+  ThumbsUpIcon,
+} from "lucide-react";
 import { memo } from "react";
 import { toast } from "sonner";
 import { useCopyToClipboard } from "usehooks-ts";
@@ -111,6 +116,30 @@ export function PureMessageActions({
             </Button>
           </TooltipTrigger>
           <TooltipContent>Downvote Response</TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              data-testid="message-branch"
+              className="py-1 px-2 h-fit text-muted-foreground !pointer-events-auto"
+              variant="outline"
+              // disabled={vote && !vote.isUpvoted}
+              onClick={async () => {
+                // const update = await fetchMutation(api.votes.createVote, {
+                //   slug: chatId,
+                //   userId: currentUserId as Id<"users">,
+                //   messageId: message.id as Id<"message">,
+                //   type: "downvote",
+                // });
+                // if (update) {
+                //   toast.success("Downvoted!");
+                // }
+              }}
+            >
+              <GitBranchPlus size={10} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Create Branch</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>

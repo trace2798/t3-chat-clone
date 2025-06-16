@@ -23,8 +23,10 @@ import { MessageEditor } from "./message-editor";
 import { DocumentPreview } from "./document-preview";
 import { MessageReasoning } from "./message-reasoning";
 import type { UseChatHelpers } from "@ai-sdk/react";
-import { PencilIcon, SparklesIcon } from "lucide-react";
-import { Doc } from "@/convex/_generated/dataModel";
+import { GitBranchPlus, PencilIcon, SparklesIcon } from "lucide-react";
+import { Doc, Id } from "@/convex/_generated/dataModel";
+import { fetchMutation } from "convex/nextjs";
+import { api } from "@/convex/_generated/api";
 
 type Vote = Doc<"vote">;
 
@@ -50,6 +52,15 @@ const PurePreviewMessage = ({
   currentUserId?: string;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
+
+  const handleBranchChat = () => {
+    const branchChat = fetchMutation(api.chat.branchChat, {
+      chatSlug: chatId,
+      messageId: message.id as Id<"message">,
+      userId: currentUserId as Id<"users">,
+    });
+    console.log("BRANCH CHAT FE:", branchChat);
+  };
 
   return (
     <AnimatePresence>
@@ -116,21 +127,39 @@ const PurePreviewMessage = ({
                   return (
                     <div key={key} className="flex flex-row gap-2 items-start">
                       {message.role === "user" && !isReadonly && (
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              data-testid="message-edit-button"
-                              variant="ghost"
-                              className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
-                              onClick={() => {
-                                setMode("edit");
-                              }}
-                            >
-                              <PencilIcon />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>Edit message</TooltipContent>
-                        </Tooltip>
+                        <div>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                data-testid="message-edit-button"
+                                variant="ghost"
+                                className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
+                                onClick={() => {
+                                  setMode("edit");
+                                }}
+                              >
+                                <PencilIcon size={10} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Edit message</TooltipContent>
+                          </Tooltip>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                data-testid="message-edit-button"
+                                variant="ghost"
+                                className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
+                                // onClick={() => {
+                                //   setMode("edit");
+                                // }}
+                                onClick={() => handleBranchChat()}
+                              >
+                                <GitBranchPlus size={10} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Create Branch</TooltipContent>
+                          </Tooltip>
+                        </div>
                       )}
 
                       <div

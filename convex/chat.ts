@@ -256,3 +256,51 @@ export const getChatSearch = query({
     return results;
   },
 });
+
+export const branchChat = mutation({
+  args: {
+    chatSlug: v.string(),
+    messageId: v.id("message"),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    console.log(
+      "CONVER BRANCH testing",
+      "Message ID",
+      args.messageId,
+      "User ID",
+      args.userId,
+      "chatId",
+      args.chatSlug
+    );
+    const chat = await ctx.db
+      .query("chat")
+      .withIndex("by_slug", (q) => q.eq("slug", args.chatSlug))
+      .first();
+    console.log("CONVER BRANCH testing chat info", chat);
+    if (!chat) {
+      return "Chat not found";
+    }
+    const messageInfo = await ctx.db.get(args.messageId);
+    console.log("CONVER BRANCH testing message info", messageInfo);
+    // const messagesBefore = await ctx.db
+    //   .query("message")
+    //   .withIndex("by_chat", (q) =>
+    //     q.eq("chatId", chat._id).lt("createdAt", messageInfo.createdAt)
+    //   )
+    //   .collect();
+    // const slug = generateSlug(args.title);
+
+    // const chatId = await ctx.db.insert("chat", {
+    //   ...args,
+    //   visibility: "public",
+    //   updatedAt: Date.now(),
+    //   slug,
+    //   isArchived: false,
+    //   isDeleted: false,
+    // });
+
+    // return { chatId, slug };
+    return "Branching chat";
+  },
+});
