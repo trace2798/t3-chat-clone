@@ -48,7 +48,7 @@ const PurePreviewMessage = ({
   currentUserId?: string;
 }) => {
   const [mode, setMode] = useState<"view" | "edit">("view");
-
+  const loneImageRegex = /^\s*!\[.*?\]\((https?:\/\/[^\s)]+)\)\s*$/;
   const handleBranchChat = () => {
     const branchChat = fetchMutation(api.chat.branchChat, {
       chatSlug: chatId,
@@ -119,6 +119,21 @@ const PurePreviewMessage = ({
               }
 
               if (type === "text") {
+                const text = part.text;
+                const match = text.trim().match(loneImageRegex);
+                // If it's exactly a Markdown image and matches the tool result URL, skip it:
+                if (
+                  match &&
+                  message.parts.some(
+                    (p) =>
+                      p.type === "tool-invocation" &&
+                      p.toolInvocation.state === "result" &&
+                      // Compare captured URL with tool result
+                      p.toolInvocation.result.url === match[1]
+                  )
+                ) {
+                  return null;
+                }
                 if (mode === "view") {
                   return (
                     <div key={key} className="flex flex-row gap-2 items-start">
@@ -185,72 +200,40 @@ const PurePreviewMessage = ({
                 }
               }
 
-              //   if (type === 'tool-invocation') {
-              //     const { toolInvocation } = part;
-              //     const { toolName, toolCallId, state } = toolInvocation;
+              if (type === "tool-invocation") {
+                const { toolInvocation } = part;
+                const { toolName, toolCallId, state, args } = toolInvocation;
 
-              //     if (state === 'call') {
-              //       const { args } = toolInvocation;
+                if (state === "call") {
+                  return (
+                    <div
+                      key={toolCallId}
+                      className="flex items-center justify-center p-4 bg-gray-100 rounded"
+                    >
+                      {toolName === "generateImageTool" ? (
+                        <span className="animate-pulse text-gray-500">
+                          Generating image for “{args.prompt}”…
+                        </span>
+                      ) : null}
+                    </div>
+                  );
+                }
 
-              //       return (
-              //         <div
-              //           key={toolCallId}
-              //           className={cn({
-              //             skeleton: ['getWeather'].includes(toolName),
-              //           })}
-              //         >
-              //           {toolName === 'getWeather' ? (
-              //             <Weather />
-              //           ) : toolName === 'createDocument' ? (
-              //             <DocumentPreview isReadonly={isReadonly} args={args} />
-              //           ) : toolName === 'updateDocument' ? (
-              //             <DocumentToolCall
-              //               type="update"
-              //               args={args}
-              //               isReadonly={isReadonly}
-              //             />
-              //           ) : toolName === 'requestSuggestions' ? (
-              //             <DocumentToolCall
-              //               type="request-suggestions"
-              //               args={args}
-              //               isReadonly={isReadonly}
-              //             />
-              //           ) : null}
-              //         </div>
-              //       );
-              //     }
-
-              //     if (state === 'result') {
-              //       const { result } = toolInvocation;
-
-              //       return (
-              //         <div key={toolCallId}>
-              //           {toolName === 'getWeather' ? (
-              //             <Weather weatherAtLocation={result} />
-              //           ) : toolName === 'createDocument' ? (
-              //             <DocumentPreview
-              //               isReadonly={isReadonly}
-              //               result={result}
-              //             />
-              //           ) : toolName === 'updateDocument' ? (
-              //             <DocumentToolResult
-              //               type="update"
-              //               result={result}
-              //               isReadonly={isReadonly}
-              //             />
-              //           ) : toolName === 'requestSuggestions' ? (
-              //             <DocumentToolResult
-              //               type="request-suggestions"
-              //               result={result}
-              //               isReadonly={isReadonly}
-              //             />
-              //           ) : (
-              //             <pre>{JSON.stringify(result, null, 2)}</pre>
-              //           )}
-              //         </div>
-              //       );
-              //     }
-              //   }
+                if (state === "result") {
+                  const { result } = toolInvocation;
+                  return (
+                    <div key={toolCallId} className="my-4">
+                      {toolName === "generateImageTool" ? (
+                        <img
+                          src={result.url}
+                          alt={args.prompt}
+                          className="max-w-full rounded shadow"
+                        />
+                      ) : null}
+                    </div>
+                  );
+                }
+              }
             })}
 
             {!isReadonly && (

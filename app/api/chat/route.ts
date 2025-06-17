@@ -14,13 +14,14 @@ import {
   wrapLanguageModel,
 } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
-
+import { Doc } from "@/convex/_generated/dataModel";
 import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
 import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
+import { getWeather } from "@/lib/ai/tools/get-weather";
+import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
 import { geolocation } from "@vercel/functions";
-import { Console } from "@/components/artifact/console";
-import { Doc } from "@/convex/_generated/dataModel";
+
 type DBMessage = Doc<"message">;
 export const maxDuration = 60;
 
@@ -158,15 +159,16 @@ export async function POST(req: Request) {
           //       ],
           experimental_transform: smoothStream({ chunking: "word" }),
           // experimental_generateMessageId: generateUUID,
-          // tools: {
-          //   getWeather,
-          //   // createDocument: createDocument({ session, dataStream }),
-          //   // updateDocument: updateDocument({ session, dataStream }),
-          //   // requestSuggestions: requestSuggestions({
-          //   //   session,
-          //   //   dataStream,
-          //   // }),
-          // },
+          tools: {
+            // getWeather,
+            generateImageTool,
+            // createDocument: createDocument({ session, dataStream }),
+            // updateDocument: updateDocument({ session, dataStream }),
+            // requestSuggestions: requestSuggestions({
+            //   session,
+            //   dataStream,
+            // }),
+          },
           onFinish: async ({ response }) => {
             if (user._id) {
               try {
@@ -253,82 +255,3 @@ export async function POST(req: Request) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
-
-//working code
-// import { api } from "@/convex/_generated/api";
-// import { ChatSDKError } from "@/lib/errors";
-// import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
-// import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-// import { streamText } from "ai";
-// import { fetchMutation, fetchQuery } from "convex/nextjs";
-
-// export const maxDuration = 60;
-
-// const openrouter = createOpenRouter({
-//   apiKey: process.env.OPENROUTER_API_KEY!,
-// });
-
-// export async function POST(req: Request) {
-//   try {
-//     const user = await fetchQuery(
-//       api.users.getUser,
-//       {},
-//       { token: await convexAuthNextjsToken() }
-//     );
-//     // console.log(user);
-//     if (!user) {
-//       return new Response("Unauthorized", { status: 401 });
-//     }
-
-//     const { id: slug, selectedChatModel, message } = await req.json();
-//     console.log("selectedChatModel", selectedChatModel);
-
-//     console.log("Experimental Message", message);
-//     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
-//     if (chatRecord === "Chat not found") {
-//       return new Response("Chat not found", { status: 404 });
-//     }
-//     if (chatRecord.isArchived) {
-//       return new Response("Chat is archived", { status: 400 });
-//     }
-//     if (chatRecord.isDeleted) {
-//       return new Response("Chat is deleted", { status: 400 });
-//     }
-//     if (chatRecord.userId !== user._id) {
-//       return new Response("Unauthorized", { status: 401 });
-//     }
-//     const chatId = chatRecord._id;
-
-//     const lastMessage = message;
-//     if (!lastMessage) {
-//       return new Response("No message provided", { status: 400 });
-//     }
-
-//     await fetchMutation(api.message.saveMessage, {
-//       chatId,
-//       userId: user._id,
-//       model: "deepseek/deepseek-r1-0528:free",
-//       role: lastMessage.role,
-//       search_web: false,
-//       usage: lastMessage.usage,
-//       content: lastMessage.content,
-//       parts: lastMessage.parts,
-//       attachments: lastMessage.attachments || [],
-//       timestamp: Date.now(),
-//     });
-
-//     const result = streamText({
-//       // model: openrouter.chat("google/gemma-3n-e4b-it:free"),
-//       model: openrouter.chat("deepseek/deepseek-r1-0528:free"),
-//       messages: [lastMessage],
-//     });
-//     return result.toDataStreamResponse();
-//   } catch (error) {
-//     if (error instanceof ChatSDKError) {
-//       return error.toResponse();
-//     }
-
-//     console.error("Error API", error);
-//     return new Response("Internal Server Error", { status: 500 });
-//   }
-// }
