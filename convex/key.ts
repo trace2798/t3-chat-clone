@@ -12,7 +12,8 @@ export const getKeyByUserId = query({
     if (!openRouterKey) {
       return false;
     }
-    return true;
+
+    return openRouterKey._creationTime;
   },
 });
 
