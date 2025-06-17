@@ -7,7 +7,11 @@ export const saveMessage = mutation({
     chatId: v.id("chat"),
     userId: v.string(),
     model: v.string(),
-    role: v.union(v.literal("user"), v.literal("assistant"), v.literal("system")),
+    role: v.union(
+      v.literal("user"),
+      v.literal("assistant"),
+      v.literal("system")
+    ),
     search_web: v.boolean(),
     usage: v.optional(v.any()),
     content: v.string(),
@@ -58,5 +62,21 @@ export const getMessagesByChatId = query({
     // }
 
     return messages;
+  },
+});
+
+export const getLast10Messages = query({
+  args: {
+    chatId: v.id("chat"),
+  },
+  handler: async (ctx, { chatId }) => {
+    const messages = await ctx.db
+      .query("message")
+      .withIndex("by_chat_timestamp", (q) => q.eq("chatId", chatId))
+      .order("desc")
+      .take(10);
+
+    // Optionally, reverse to get them in chronological order (oldest to newest)
+    return messages.reverse();
   },
 });

@@ -5,10 +5,12 @@ import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import {
   appendClientMessage,
   appendResponseMessages,
+  Attachment,
   createDataStream,
   extractReasoningMiddleware,
   smoothStream,
   streamText,
+  UIMessage,
   wrapLanguageModel,
 } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
@@ -18,7 +20,8 @@ import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
 import { geolocation } from "@vercel/functions";
 import { Console } from "@/components/artifact/console";
-
+import { Doc } from "@/convex/_generated/dataModel";
+type DBMessage = Doc<"message">;
 export const maxDuration = 60;
 
 const openrouter = createOpenRouter({
@@ -73,6 +76,27 @@ export async function POST(req: Request) {
       console.error("No message provided");
       return new Response("No message provided", { status: 400 });
     }
+
+    const dbMessages = await fetchQuery(api.message.getLast10Messages, {
+      chatId: chatId,
+    });
+
+    const convertToUIMessages = (msgs: DBMessage[]): UIMessage[] =>
+      msgs.map((m) => ({
+        id: m._id,
+        parts: m.parts as UIMessage["parts"],
+        role: m.role as UIMessage["role"],
+        content: "",
+        createdAt: new Date(m._creationTime),
+        experimental_attachments: (m.attachments as Attachment[]) || [],
+      }));
+
+    const uiFromDB = dbMessages ? convertToUIMessages(dbMessages) : [];
+    console.log("uiFromDB", uiFromDB);
+    const messages = appendClientMessage({
+      messages: uiFromDB,
+      message,
+    });
     const isReasoning = selectedChatModel === "chat-model-reasoning";
 
     const modelTag = isReasoning
@@ -94,7 +118,7 @@ export async function POST(req: Request) {
       userId: user._id,
       model: modelTag,
       role: lastMessage.role,
-      search_web: false,
+      search_web: searchWeb,
       usage: lastMessage.usage,
       content: lastMessage.content,
       parts: lastMessage.parts,
@@ -115,12 +139,6 @@ export async function POST(req: Request) {
       city,
       country,
     };
-    // const messages = [] as any;
-    const previousMessages = [] as any;
-    const messages = appendClientMessage({
-      messages: previousMessages,
-      message,
-    });
 
     const stream = createDataStream({
       execute: (dataStream) => {
@@ -174,7 +192,7 @@ export async function POST(req: Request) {
                     | "assistant"
                     | "user"
                     | "system",
-                  search_web: false,
+                  search_web: searchWeb,
                   usage: [],
                   content: lastMessage.content,
                   parts: assistantMessage.parts,
