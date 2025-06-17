@@ -1,18 +1,14 @@
 "use client";
 
-import {
-  CheckIcon,
-  ChevronsUpDownIcon
-} from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import * as React from "react";
-
 import {
   CommandDialog,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList
+  CommandList,
 } from "@/components/ui/command";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";

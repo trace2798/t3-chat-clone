@@ -19,7 +19,6 @@ import { useLocalStorage, useWindowSize } from "usehooks-ts";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PreviewAttachment } from "./preview-attachment";
-
 import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
 import { cn } from "@/lib/utils";
 import type { UseChatHelpers } from "@ai-sdk/react";
@@ -336,20 +335,6 @@ function PureMultimodalInput({
                 </Button>
               )}
             </div>
-
-            {/* <div className=" p-2 w-fit flex flex-row space-x-2 items-center justify-end">
-              <Dictaphone input={input} setInput={setInput} />
-              {status === "submitted" ? (
-                <StopButton stop={stop} setMessages={setMessages} />
-              ) : (
-                
-                <SendButton
-                  input={input}
-                  submitForm={submitForm}
-                  uploadQueue={uploadQueue}
-                />
-              )}
-            </div> */}
             <div className="p-2 w-fit flex flex-row space-x-2 items-center justify-end">
               <Dictaphone input={input} setInput={setInput} />
 

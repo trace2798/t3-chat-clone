@@ -5,6 +5,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { fetchQuery } from "convex/nextjs";
+import { redirect } from "next/navigation";
 
 export default async function Home() {
   const user = await fetchQuery(
@@ -12,25 +13,14 @@ export default async function Home() {
     {},
     { token: await convexAuthNextjsToken() }
   );
-  // const id = "";
+
   return (
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100vdh] bg-zinc-800">
-      {/* <Chat
-        key={"home-chat"}
-        // id={id}
-        // initialMessages={[]}
-        initialChatModel={DEFAULT_CHAT_MODEL}
-        isReadonly={false}
-        currentUserId={user?._id as Id<"users">}
-        autoResume={false}
-      /> */}
       <ChatHome
         currentUserId={user?._id as Id<"users">}
         initialChatModel={DEFAULT_CHAT_MODEL}
         initialMessages={[]}
       />
-      {/* <SearchDemo/> */}
-      {/* <DemoChat /> */}
     </div>
   );
 }

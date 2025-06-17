@@ -13,7 +13,7 @@ export const getKeyByUserId = query({
       return false;
     }
 
-    return openRouterKey._creationTime;
+    return true;
   },
 });
 
@@ -26,5 +26,23 @@ export const addOpenRouterKey = mutation({
       updatedAt: Date.now(),
     });
     return openRouterKey;
+  },
+});
+
+export const deleteKey = mutation({
+  args: { userId: v.id("users") },
+  handler: async (ctx, { userId }) => {
+    const key = await ctx.db
+      .query("userApiKeys")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .first();
+    if (!key) {
+      return "Key not found";
+    }
+    if (key.userId !== userId) {
+      return "Unauthorized";
+    }
+    await ctx.db.delete(key._id);
+    return "Key deleted";
   },
 });

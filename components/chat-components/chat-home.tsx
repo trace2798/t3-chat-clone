@@ -97,21 +97,20 @@ export function ChatHome({
         }}
         className="flex mx-auto px-4 gap-2 w-full max-w-3xl"
       >
-           <MultimodalInput
-            chatId={chatId}
-            input={input}
-            setInput={setInput}
-            handleSubmit={handleFirstSubmit}
-            status={status}
-            stop={stop}
-            attachments={attachments}
-            setAttachments={setAttachments}
-            messages={messages}
-            setMessages={setMessages}
-            append={append}
-            // disabled={true}
-          />
-        
+        <MultimodalInput
+          chatId={chatId}
+          input={input}
+          setInput={setInput}
+          handleSubmit={handleFirstSubmit}
+          status={status}
+          stop={stop}
+          attachments={attachments}
+          setAttachments={setAttachments}
+          messages={messages}
+          setMessages={setMessages}
+          append={append}
+          currentUserId={currentUserId}
+        />
       </form>
     </div>
   );

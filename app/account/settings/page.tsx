@@ -11,12 +11,14 @@ const Page = async ({}) => {
     { token: await convexAuthNextjsToken() }
   );
   if (!user) redirect("/signin");
+  console.log("About to fetch key for userId:", user._id);
 
   const keyInfo = await fetchQuery(
     api.key.getKeyByUserId,
     { userId: user._id },
     { token: await convexAuthNextjsToken() }
   );
+
   console.log("CONVEX KEY INFO", keyInfo);
   return (
     <>

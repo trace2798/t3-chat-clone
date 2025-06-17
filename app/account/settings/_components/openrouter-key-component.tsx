@@ -1,10 +1,12 @@
 import {
   Card,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import AddOpenRouterKeyForm from "./add-openrouter-key-form";
+import DeleteKeyButton from "./delete-key-button";
 
 const OpenRouterAddKeyComponent = ({
   keyInfo,
@@ -21,10 +23,13 @@ const OpenRouterAddKeyComponent = ({
             <CardHeader>
               <CardTitle>OpenRouter Key Information</CardTitle>
               <CardDescription>
-                You have added an OpenRouter key on{" "}
-                {new Date(keyInfo as number).toLocaleString()}
+                You have added an OpenRouter key.
               </CardDescription>
             </CardHeader>
+            <CardFooter>
+
+            <DeleteKeyButton currentUserId={currentUserId} />
+            </CardFooter>
           </Card>
         ) : (
           <AddOpenRouterKeyForm currentUserId={currentUserId} />
