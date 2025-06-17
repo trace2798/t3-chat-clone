@@ -3,7 +3,6 @@ import { z } from "zod";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { nanoid } from "nanoid";
 
-// Validate incoming file
 const FileSchema = z.object({
   file: z
     .instanceof(Blob)
@@ -15,7 +14,6 @@ const FileSchema = z.object({
     }),
 });
 
-// Cloudflare R2 S3-compatible client
 const R2 = new S3Client({
   region: "auto",
   endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
@@ -33,32 +31,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
     }
 
-    // Validate file size & type
     const parsed = FileSchema.safeParse({ file });
     if (!parsed.success) {
       const message = parsed.error.errors.map((e) => e.message).join(", ");
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    // Extract filename, buffer, and determine contentType
     const filename = (formData.get("file") as File).name;
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     const contentType = file.type;
 
-    // Generate a unique key (you can include subfolders)
     const key = `uploads/${nanoid()}-${filename}`;
 
-    // Upload to R2
-    // await R2.send(
-    //   new PutObjectCommand({
-    //     Bucket: process.env.R2_BUCKET_NAME!,
-    //     Key: key,
-    //     Body: buffer,
-    //     ContentType: contentType,
-    //     // Optional: set ACL or metadata
-    //   })
-    // );
     await R2.send(
       new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME,

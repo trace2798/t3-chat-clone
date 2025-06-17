@@ -123,7 +123,7 @@ export async function POST(req: Request) {
       usage: lastMessage.usage,
       content: lastMessage.content,
       parts: lastMessage.parts,
-      attachments: lastMessage.attachments || [],
+      attachments: lastMessage.experimental_attachments || [],
       timestamp: Date.now(),
     });
     await fetchMutation(api.chat.updateChatUpdatedAt, {
