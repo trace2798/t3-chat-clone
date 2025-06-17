@@ -23,8 +23,8 @@ const PermanentlyDeleteChatButton = ({
   currentUserId: string;
 }) => {
   const router = useRouter();
-  const handlePermanentlyDeleteChat = () => {
-    fetchMutation(api.chat.permanentlyDeleteChatAndMessages, {
+  const handlePermanentlyDeleteChat = async () => {
+    await fetchMutation(api.chat.permanentlyDeleteChatAndMessages, {
       slug: slug,
       userId: currentUserId,
     });
