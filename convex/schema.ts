@@ -4,6 +4,17 @@ import { v } from "convex/values";
 
 const schema = defineSchema({
   ...authTables,
+  users: defineTable({
+    name: v.optional(v.string()),
+    image: v.optional(v.string()),
+    email: v.optional(v.string()),
+    emailVerificationTime: v.optional(v.number()),
+    phone: v.optional(v.string()),
+    phoneVerificationTime: v.optional(v.number()),
+    isAnonymous: v.optional(v.boolean()),
+  })
+    .index("email", ["email"])
+    .index("phone", ["phone"]),
   chat: defineTable({
     title: v.string(),
     userId: v.string(),
@@ -76,6 +87,11 @@ const schema = defineSchema({
     isResolved: v.boolean(),
     userId: v.string(),
   }).index("by_documentId", ["documentId"]),
+  userApiKeys: defineTable({
+    userId: v.id("users"),
+    openRouterKey: v.string(),
+    updatedAt: v.optional(v.number()),
+  }).index("by_user", ["userId"]),
 });
 
 export default schema;

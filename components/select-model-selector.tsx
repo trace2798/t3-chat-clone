@@ -1,11 +1,8 @@
 "use client";
 
 import {
-  Calculator,
-  Calendar,
   CheckIcon,
-  ChevronsUpDownIcon,
-  Smile,
+  ChevronsUpDownIcon
 } from "lucide-react";
 import * as React from "react";
 
@@ -15,13 +12,19 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-  CommandList,
-  CommandSeparator,
+  CommandList
 } from "@/components/ui/command";
-import { Button, buttonVariants } from "./ui/button";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex/react";
+import { buttonVariants } from "./ui/button";
 
-export function SelectModelSelector() {
+export function SelectModelSelector({
+  currentUserId,
+}: {
+  currentUserId: string;
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -41,6 +44,10 @@ export function SelectModelSelector() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
+  const key = useQuery(api.key.getKeyByUserId, {
+    userId: currentUserId as Id<"users">,
+  });
+  console.log("CONVEX KEY", key);
   return (
     <>
       <div
@@ -68,7 +75,7 @@ export function SelectModelSelector() {
             {models.map((framework) => (
               <CommandItem
                 key={framework.value}
-                value={framework.label} // use label for better matching
+                value={framework.label}
                 onSelect={() => {
                   setValue(framework.value);
                   setOpen(false);

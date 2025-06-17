@@ -6,6 +6,7 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  Settings2,
   Sparkles,
 } from "lucide-react";
 
@@ -91,11 +92,12 @@ export function NavUser({
                   Account
                 </DropdownMenuItem>
               </Link>
-
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
+              <Link href={"/account/settings"} prefetch={false}>
+                <DropdownMenuItem className="hover:cursor-pointer hover:bg-accent">
+                  <Settings2 />
+                  Settings
+                </DropdownMenuItem>
+              </Link>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

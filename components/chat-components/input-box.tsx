@@ -312,7 +312,7 @@ function PureMultimodalInput({
           </div>
           <div className=" w-full flex justify-between items-center ">
             <div className=" p-2 w-fit flex flex-row justify-start items-center space-x-2">
-              <SelectModelSelector />
+              <SelectModelSelector currentUserId={currentUserId || ""} />
               <SearchButton
                 triggerSearch={() => {
                   setIsSearchMode((prev) => !prev);
