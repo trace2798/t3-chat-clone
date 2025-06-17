@@ -139,12 +139,13 @@ export async function POST(req: Request) {
       city,
       country,
     };
+    const systemPrompt = `You are a friendly assistant! Keep your responses concise and helpful. You have access to the internet through getSearchResultsTool, but only use this tool if user requests it. You have the ability to generate image through the generateImageTool. Both tool should never be used together. Always use one tool per request. If you use generateImageTool, do not use getSearchResultsTool. If you use getSearchResultsTool, do not use generateImageTool. Should I use getSearchResultsTool? ${searchWeb}`;
 
     const stream = createDataStream({
       execute: (dataStream) => {
         const result = streamText({
           model: modelUse,
-          system: systemPrompt({ selectedChatModel, requestHints }),
+          system: systemPrompt,
           messages,
           maxSteps: 5,
           // experimental_activeTools:
@@ -157,7 +158,6 @@ export async function POST(req: Request) {
           //         // "requestSuggestions",
           //       ],
           experimental_transform: smoothStream({ chunking: "word" }),
-          // experimental_generateMessageId: generateUUID,
           tools: {
             generateImageTool,
             getSearchResultsTool,
