@@ -7,7 +7,7 @@ export function SignInWithGitHub() {
   const { signIn } = useAuthActions();
   return (
     <Button
-      className="flex-1"
+      className="flex-1 w-full"
       variant="outline"
       type="button"
       onClick={() => signIn("github")}

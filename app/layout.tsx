@@ -59,12 +59,23 @@ export default async function RootLayout({
           >
             <ConvexClientProvider>
               <SidebarProvider className="">
-                <AppSidebar currentUser={currentUser} userChats={userChats as any} />
+                {/* {currentUser ? (
+                  <AppSidebar
+                    currentUser={currentUser}
+                    userChats={userChats as any}
+                  />
+                ) : (
+                  <div>Login</div>
+                )} */}
+                 <AppSidebar
+                    currentUser={currentUser}
+                    userChats={userChats as any}
+                  />
                 <SidebarInset className="">
                   <main>
                     <Toaster />
                     <div className="flex w-full">
-                      <SidebarTrigger className="" />
+                      <SidebarTrigger className="" currentUser={currentUser} />
                     </div>
                     {children}
                   </main>

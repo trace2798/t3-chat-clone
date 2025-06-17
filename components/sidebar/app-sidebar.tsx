@@ -9,6 +9,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
@@ -19,6 +20,7 @@ import { SignOut } from "../auth/sign-out";
 import CreateChat from "./create-chat";
 import { SearchChat } from "./search-chat";
 import SidebarChat from "./sidebar-chat";
+import { Skeleton } from "../ui/skeleton";
 
 export interface ChatItem {
   _creationTime: number;
@@ -44,9 +46,39 @@ export function AppSidebar({
   userChats,
   ...props
 }: AppSidebarProps) {
-  // console.log("CURRENT USER Sidebar:", currentUser);
-  const data = currentUser;
-
+  if (!currentUser) {
+    <Sidebar collapsible="offcanvas" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <a href="/">
+                <span className="text-base font-semibold">AI Chat</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent className="px-3">
+        <SidebarGroup>
+          <SidebarGroupLabel>Chats</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-6 w-full" />
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter>
+        {currentUser ? <SignOut /> : <SignInWithGitHub />}
+      </SidebarFooter>
+    </Sidebar>;
+  }
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -64,8 +96,8 @@ export function AppSidebar({
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="px-3">
-        <CreateChat />
-        <SearchChat currentUserId={currentUser?._id} />
+        {currentUser && <CreateChat />}
+        {currentUser && <SearchChat currentUserId={currentUser?._id} />}
         {currentUser && <SidebarChat currentUserId={currentUser._id} />}
       </SidebarContent>
       <SidebarFooter>

@@ -27,8 +27,9 @@ import {
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,
+  Share2,
   ShareIcon,
-  TrashIcon
+  TrashIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -127,6 +128,36 @@ const PureChatItem = ({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
+          {chat.visibility === "public" ? (
+            <DropdownMenuItem
+              onSelect={() => {}}
+              className="hover:cursor-pointer hover:bg-accent"
+            >
+              <ShareIcon />
+              <span>Copy Link</span>
+            </DropdownMenuItem>
+          ) : null}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onSelect={() => {
+              navigator.clipboard
+                .writeText(`${window.location.origin}/chat/${chat.slug}`)
+                .then(() => {
+                  toast.success("Link Copied");
+                })
+                .catch((err) => {
+                  console.error("Copy failed", err);
+                  toast.error("Failed to copy link");
+                });
+            }}
+            className="hover:cursor-pointer hover:bg-accent"
+            disabled={chat.visibility === "private"}
+          >
+            <Share2 />
+            <span>
+              {chat.visibility === "public" ? "Share Link" : "Share Link"}
+            </span>
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={handleToggleArchive}

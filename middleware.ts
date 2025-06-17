@@ -4,23 +4,43 @@ import {
   nextjsMiddlewareRedirect,
 } from "@convex-dev/auth/nextjs/server";
 
+// public
 const isSignInPage = createRouteMatcher(["/signin"]);
-const isProtectedRoute = createRouteMatcher(["/product(.*)"]);
+const isSharePage = createRouteMatcher(["/share(.*)"]);
+
+// private
+const isChatPage = createRouteMatcher(["/chat(.*)"]);
+const isAccountPage = createRouteMatcher(["/account(.*)"]);
 
 export default convexAuthNextjsMiddleware(
   async (request, { convexAuth }) => {
-    if (isSignInPage(request) && (await convexAuth.isAuthenticated())) {
-      return nextjsMiddlewareRedirect(request, "/product");
+    const authed = await convexAuth.isAuthenticated();
+    if (isSignInPage(request) && authed) {
+      return nextjsMiddlewareRedirect(request, "/chat");
     }
-    if (isProtectedRoute(request) && !(await convexAuth.isAuthenticated())) {
+    if (isSignInPage(request) || isSharePage(request)) {
+      return; // continue on through
+    }
+
+    if (isChatPage(request) && !authed) {
+      return nextjsMiddlewareRedirect(request, "/signin");
+    }
+    if (isAccountPage(request) && !authed) {
       return nextjsMiddlewareRedirect(request, "/signin");
     }
   },
-  { cookieConfig: { maxAge: 60 * 60 * 24 * 30 } }
+  {
+    cookieConfig: {
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+    },
+  }
 );
 
 export const config = {
-  // The following matcher runs middleware on all routes
-  // except static assets.
-  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    // apply to all pages & API routes except static files
+    "/((?!.*\\..*|_next).*)",
+    "/",
+    "/api/:path*",
+  ],
 };

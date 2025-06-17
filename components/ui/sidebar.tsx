@@ -2,7 +2,7 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import { cva, VariantProps } from "class-variance-authority";
-import { PanelLeftIcon } from "lucide-react";
+import { ForkKnife, PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -256,14 +256,63 @@ function Sidebar({
   );
 }
 
+interface SidebarTriggerProps extends React.ComponentProps<typeof Button> {
+  currentUser: any | null; // or undefined, or a partial, etc.
+}
+
 function SidebarTrigger({
+  currentUser,
   className,
   onClick,
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: SidebarTriggerProps) {
   const { toggleSidebar, isMobile, state } = useSidebar();
 
-  // console.log("SidebarTrigger", state);
+  if (!currentUser) {
+    return (
+      <div className="flex items-center justify-between pr-3 w-full z-10">
+        {state === "collapsed" ? (
+          <div className="flex items-center gap-2">
+            <Button
+              data-sidebar="trigger"
+              data-slot="sidebar-trigger"
+              variant="ghost"
+              size="icon"
+              className={cn("size-7", className)}
+              onClick={(event) => {
+                onClick?.(event);
+                toggleSidebar();
+              }}
+              {...props}
+            >
+              <PanelLeftIcon />
+              <span className="sr-only">Toggle Sidebar</span>
+            </Button>
+            <CreateChat />
+            <SearchChat />
+          </div>
+        ) : (
+          <Button
+            data-sidebar="trigger"
+            data-slot="sidebar-trigger"
+            variant="ghost"
+            size="icon"
+            className={cn("size-7", className)}
+            onClick={(event) => {
+              onClick?.(event);
+              toggleSidebar();
+            }}
+            {...props}
+          >
+            <PanelLeftIcon />
+            <span className="sr-only">Toggle Sidebar</span>
+          </Button>
+        )}
+        
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center justify-between pr-3 w-full z-10">
       {state === "collapsed" ? (
@@ -304,7 +353,7 @@ function SidebarTrigger({
         </Button>
       )}
       <Avatar className="size-5">
-        <AvatarImage src="https://github.com/shadcn.png" />
+        <AvatarImage src={currentUser.avatarUrl || "/default.png"} />
       </Avatar>
     </div>
   );

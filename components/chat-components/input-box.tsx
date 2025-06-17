@@ -1,7 +1,5 @@
 "use client";
-
 import type { Attachment, UIMessage } from "ai";
-
 import type React from "react";
 import {
   memo,
@@ -18,8 +16,6 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
-
-// import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { PreviewAttachment } from "./preview-attachment";
@@ -37,7 +33,7 @@ import {
   StopCircle,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { CommandDialogDemo } from "../command-model-selector";
+import { SelectModelSelector } from "../select-model-selector";
 import {
   HoverCard,
   HoverCardContent,
@@ -45,6 +41,8 @@ import {
 } from "../ui/hover-card";
 import { useSidebar } from "../ui/sidebar";
 import type { VisibilityType } from "./visibility-selector";
+import { SignInWithGitHub } from "@/app/(auth)/signin/_components/signin-github";
+import Link from "next/link";
 
 function PureMultimodalInput({
   chatId,
@@ -59,8 +57,7 @@ function PureMultimodalInput({
   append,
   handleSubmit,
   className,
-  // selectedVisibilityType,
-
+  currentUserId,
 }: {
   chatId: string;
   input: UseChatHelpers["input"];
@@ -74,8 +71,7 @@ function PureMultimodalInput({
   append: UseChatHelpers["append"];
   handleSubmit: UseChatHelpers["handleSubmit"];
   className?: string;
-
-  // selectedVisibilityType: VisibilityType;
+  currentUserId?: boolean;
 }) {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -316,7 +312,7 @@ function PureMultimodalInput({
           </div>
           <div className=" w-full flex justify-between items-center ">
             <div className=" p-2 w-fit flex flex-row justify-start items-center space-x-2">
-              <CommandDialogDemo />
+              <SelectModelSelector />
               <SearchButton
                 triggerSearch={() => {
                   setIsSearchMode((prev) => !prev);
@@ -327,16 +323,35 @@ function PureMultimodalInput({
               <AttachmentsButton fileInputRef={fileInputRef} status={status} />
             </div>
 
-            <div className=" p-2 w-fit flex flex-row space-x-2 items-center justify-end">
+            {/* <div className=" p-2 w-fit flex flex-row space-x-2 items-center justify-end">
               <Dictaphone input={input} setInput={setInput} />
               {status === "submitted" ? (
                 <StopButton stop={stop} setMessages={setMessages} />
               ) : (
+                
                 <SendButton
                   input={input}
                   submitForm={submitForm}
                   uploadQueue={uploadQueue}
                 />
+              )}
+            </div> */}
+            <div className="p-2 w-fit flex flex-row space-x-2 items-center justify-end">
+              <Dictaphone input={input} setInput={setInput} />
+
+              {status === "submitted" ? (
+                <StopButton stop={stop} setMessages={setMessages} />
+              ) : currentUserId ? (
+                <SendButton
+                  input={input}
+                  submitForm={submitForm}
+                  uploadQueue={uploadQueue}
+                />
+              ) : (
+                // <SignInWithGitHub />
+                <Link href={"/signin"}>
+                  <Button className="h-6">Login to send a message</Button>
+                </Link>
               )}
             </div>
           </div>

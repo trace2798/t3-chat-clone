@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { generateUUID, getTrailingMessageId } from "@/lib/utils";
+import { getTrailingMessageId } from "@/lib/utils";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import {
@@ -14,7 +14,6 @@ import {
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
 import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
-import { getWeather } from "@/lib/ai/tools/get-weather";
 import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
 import { geolocation } from "@vercel/functions";
@@ -229,6 +228,11 @@ export async function POST(req: Request) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
+
+
+
+
+
 
 //working code
 // import { api } from "@/convex/_generated/api";

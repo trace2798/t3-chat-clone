@@ -252,7 +252,7 @@ export const getChatSearch = query({
           .eq("isDeleted", false)
       )
       .take(20);
-    console.log("CONVER SEARCH");
+    console.log("CONVER SEARCH", results);
     return results;
   },
 });

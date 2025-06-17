@@ -2,7 +2,6 @@
 
 import { Search, User } from "lucide-react";
 import * as React from "react";
-
 import {
   CommandDialog,
   CommandEmpty,
@@ -26,18 +25,26 @@ export function SearchChat({ currentUserId }: { currentUserId?: string }) {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
-  const [isMounted, setIsMounted] = React.useState(false);
+  // const [isMounted, setIsMounted] = React.useState(false);
   // debounce the term by 3000ms
   const [debouncedTerm] = useDebounce(searchTerm, 3000);
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  // React.useEffect(() => {
+  //   setIsMounted(true);
+  // }, []);
   const { state } = useSidebar();
+  // const chats =
+  //   useQuery(api.chat.getChatSearch, {
+  //     userId: currentUserId as string,
+  //     query: debouncedTerm,
+  //   }) ?? [];
   const chats =
-    useQuery(api.chat.getChatSearch, {
-      userId: currentUserId as string,
-      query: debouncedTerm,
-    }) ?? [];
+    useQuery(
+      api.chat.getChatSearch,
+      // Pass args object only when we have both userId and a non-empty query
+      currentUserId && debouncedTerm
+        ? { userId: currentUserId, query: debouncedTerm }
+        : "skip"
+    ) ?? [];
   console.log("CHATS", chats);
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -51,9 +58,9 @@ export function SearchChat({ currentUserId }: { currentUserId?: string }) {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  if (!isMounted) {
-    return null;
-  }
+  // if (!isMounted) {
+  //   return null;
+  // }
 
   return (
     <>

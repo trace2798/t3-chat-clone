@@ -21,7 +21,7 @@ import {
 import { Button, buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 
-export function CommandDialogDemo() {
+export function SelectModelSelector() {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
