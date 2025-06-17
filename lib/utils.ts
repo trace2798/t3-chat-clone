@@ -91,8 +91,19 @@ export function getTrailingMessageId({
   return trailingMessage.id;
 }
 
+// export function sanitizeText(text: string) {
+//   console.log("Sanitize Text",text);
+//   return text.replace("<has_function_call>", "");
+// }
 export function sanitizeText(text: string) {
-  return text.replace("<has_function_call>", "");
+  return text
+    // remove any leftover function‐call placeholder
+    .replace("<has_function_call>", "")
+    // strip out standalone ![alt](url) image tags
+    .replace(/!\[[^\]]*\]\((?:https?:\/\/[^\s)]+)\)/g, "")
+    // collapse any accidental double‐spaces or leading/trailing whitespace
+    .trim()
+    .replace(/ {2,}/g, " ");
 }
 
 
