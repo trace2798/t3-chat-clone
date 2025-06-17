@@ -6,7 +6,6 @@ import { memo, useState } from "react";
 import { Markdown } from "./markdown";
 import { MessageActions } from "./message-action";
 import { PreviewAttachment } from "./preview-attachment";
-import { Weather } from "./weather";
 import equal from "fast-deep-equal";
 import { cn, sanitizeText } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
