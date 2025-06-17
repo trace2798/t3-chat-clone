@@ -24,6 +24,8 @@ import {
   ArchiveIcon,
   ArchiveRestoreIcon,
   CheckCheckIcon,
+  Eye,
+  EyeClosedIcon,
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,
@@ -96,8 +98,14 @@ const PureChatItem = ({
         <DropdownMenuContent side="bottom" align="end">
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className="cursor-pointer">
-              <ShareIcon size={18} />
-              <span>Share</span>
+              <div className="flex space-x-1 w-full items-center">
+                {chat.visibility === "public" ? (
+                  <Eye size={12} />
+                ) : (
+                  <EyeClosedIcon size={12} />
+                )}
+                <span>Visibility</span>
+              </div>
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
@@ -141,7 +149,7 @@ const PureChatItem = ({
           <DropdownMenuItem
             onSelect={() => {
               navigator.clipboard
-                .writeText(`${window.location.origin}/chat/${chat.slug}`)
+                .writeText(`${window.location.origin}/share/${chat.slug}`)
                 .then(() => {
                   toast.success("Link Copied");
                 })
