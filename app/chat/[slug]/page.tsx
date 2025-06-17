@@ -1,4 +1,5 @@
 import { Chat } from "@/components/chat-components/chat";
+import { SearchDemo } from "@/components/search-demo";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -73,6 +74,7 @@ export default async function ChatSlugPage({
         currentUserId={user?._id as Id<"users">}
         autoResume={false}
       />
+      <SearchDemo/>
     </div>
   );
 }

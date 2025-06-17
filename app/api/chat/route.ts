@@ -18,7 +18,6 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
 import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
-import { getWeather } from "@/lib/ai/tools/get-weather";
 import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
 import { geolocation } from "@vercel/functions";
 
@@ -102,8 +101,7 @@ export async function POST(req: Request) {
 
     const modelTag = isReasoning
       ? "deepseek/deepseek-r1-0528:free"
-      : // : "google/gemma-3n-e4b-it:free";
-        "mistralai/mistral-small-3.1-24b-instruct:free";
+      : "mistralai/mistral-small-3.1-24b-instruct:free";
 
     //  model: togetherai("deepseek-ai/DeepSeek-R1"),
     const modelUse = isReasoning
