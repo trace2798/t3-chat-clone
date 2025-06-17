@@ -1,5 +1,21 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
+import { cn } from "@/lib/utils";
+import type { UseChatHelpers } from "@ai-sdk/react";
 import type { Attachment, UIMessage } from "ai";
+import equal from "fast-deep-equal";
+import {
+  ArrowDown,
+  ArrowUp,
+  Globe,
+  Mic,
+  PaperclipIcon,
+  StopCircle,
+} from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import type React from "react";
 import {
   memo,
@@ -16,22 +32,6 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 import { toast } from "sonner";
 import { useLocalStorage, useWindowSize } from "usehooks-ts";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { PreviewAttachment } from "./preview-attachment";
-import { useScrollToBottom } from "@/hooks/use-scroll-to-bottom";
-import { cn } from "@/lib/utils";
-import type { UseChatHelpers } from "@ai-sdk/react";
-import equal from "fast-deep-equal";
-import {
-  ArrowDown,
-  ArrowUp,
-  Globe,
-  Mic,
-  PaperclipIcon,
-  StopCircle,
-} from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 import { SelectModelSelector } from "../select-model-selector";
 import {
   HoverCard,
@@ -39,9 +39,7 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { useSidebar } from "../ui/sidebar";
-import type { VisibilityType } from "./visibility-selector";
-import { SignInWithGitHub } from "@/app/(auth)/signin/_components/signin-github";
-import Link from "next/link";
+import { PreviewAttachment } from "./preview-attachment";
 
 function PureMultimodalInput({
   chatId,
@@ -57,6 +55,8 @@ function PureMultimodalInput({
   handleSubmit,
   className,
   currentUserId,
+  isSearchMode,
+  onSearchModeChange,
 }: {
   chatId: string;
   input: UseChatHelpers["input"];
@@ -71,8 +71,12 @@ function PureMultimodalInput({
   handleSubmit: UseChatHelpers["handleSubmit"];
   className?: string;
   currentUserId?: string;
+
+  isSearchMode: boolean;
+  onSearchModeChange: (flag: boolean) => void;
 }) {
-  const [isSearchMode, setIsSearchMode] = useState(false);
+  // const [isSearchMode, setIsSearchMode] = useState(false);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
 
@@ -126,13 +130,11 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    // window.history.replaceState({}, "", `/chat/${chatId}`);
-
     handleSubmit(undefined, {
       experimental_attachments: attachments,
-      // body: {
-      //   isSearch: isSearchMode,
-      // },
+      body: {
+        isSearch: isSearchMode,
+      },
     });
 
     setAttachments([]);
@@ -154,13 +156,13 @@ function PureMultimodalInput({
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-
+    console.log("FormData", formData);
     try {
-      const response = await fetch("/api/files/upload", {
+      const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
-
+      console.log("Response Upload", response);
       if (response.ok) {
         const data = await response.json();
         const { url, pathname, contentType } = data;
@@ -172,6 +174,7 @@ function PureMultimodalInput({
         };
       }
       const { error } = await response.json();
+      console.log("Error Upload", error);
       toast.error(error);
     } catch (error) {
       toast.error("Failed to upload file, please try again!");
@@ -313,9 +316,10 @@ function PureMultimodalInput({
             <div className=" p-2 w-fit flex flex-row justify-start items-center space-x-2">
               <SelectModelSelector currentUserId={currentUserId || ""} />
               <SearchButton
-                triggerSearch={() => {
-                  setIsSearchMode((prev) => !prev);
-                }}
+                // triggerSearch={() => {
+                //   setIsSearchMode((prev) => !prev);
+                // }}
+                triggerSearch={() => onSearchModeChange(!isSearchMode)}
                 disabled={status !== "ready"}
                 isActive={isSearchMode}
               />
@@ -366,6 +370,7 @@ export const MultimodalInput = memo(
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
+    if (prevProps.isSearchMode !== nextProps.isSearchMode) return false;
     // if (prevProps.isArchived !== nextProps.isArchived) return false;
     // if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
     //   return false;

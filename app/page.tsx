@@ -1,5 +1,6 @@
 import { ChatHome } from "@/components/chat-components/chat-home";
 import { SearchDemo } from "@/components/search-demo";
+import UploadButtonComponent from "@/components/upload-button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";

@@ -17,6 +17,7 @@ import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
 import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
 import { geolocation } from "@vercel/functions";
+import { Console } from "@/components/artifact/console";
 
 export const maxDuration = 60;
 
@@ -41,7 +42,13 @@ export async function POST(req: Request) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const { id: slug, selectedChatModel, message } = await req.json();
+    const {
+      id: slug,
+      selectedChatModel,
+      message,
+      searchWeb,
+    } = await req.json();
+    console.log("search_web testing", searchWeb);
     console.log("data FROM FE");
     console.log("SLUG FE", slug);
     console.log("selectedChatModel FE", selectedChatModel);
@@ -228,11 +235,6 @@ export async function POST(req: Request) {
     return new Response("Internal Server Error", { status: 500 });
   }
 }
-
-
-
-
-
 
 //working code
 // import { api } from "@/convex/_generated/api";

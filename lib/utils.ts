@@ -2,7 +2,6 @@ import { CoreAssistantMessage, CoreToolMessage, UIMessage } from "ai";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ChatSDKError, type ErrorCode } from "./errors";
-import { customAlphabet } from "nanoid";
 
 type Document = {
   id: string;

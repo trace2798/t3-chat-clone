@@ -35,12 +35,10 @@ export function Chat({
 }) {
   const { slug } = useParams<{ slug: string }>()!;
   const router = useRouter();
-
-
+  const [searchWeb, setSearchWeb] = useState(false);
   const dbMessages = useQuery(api.message.getMessagesByChatId, {
     chatId: chatInfo._id,
   });
-
 
   const convertToUIMessages = (msgs: DBMessage[]): UIMessage[] =>
     msgs.map((m) => ({
@@ -53,7 +51,6 @@ export function Chat({
     }));
 
   const uiFromDB = dbMessages ? convertToUIMessages(dbMessages) : [];
-
 
   const {
     messages,
@@ -78,6 +75,7 @@ export function Chat({
       id: slug,
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
+      searchWeb,
     }),
     onError: (err) => toast.error(err.message),
   });
@@ -154,6 +152,8 @@ export function Chat({
             setMessages={setMessages}
             append={append}
             currentUserId={currentUserId}
+            isSearchMode={searchWeb}
+            onSearchModeChange={setSearchWeb}
           />
         )}
       </form>
