@@ -136,15 +136,6 @@ const PureChatItem = ({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          {chat.visibility === "public" ? (
-            <DropdownMenuItem
-              onSelect={() => {}}
-              className="hover:cursor-pointer hover:bg-accent"
-            >
-              <ShareIcon />
-              <span>Copy Link</span>
-            </DropdownMenuItem>
-          ) : null}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={() => {

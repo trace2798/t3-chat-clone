@@ -19,10 +19,5 @@ export default async function ShareLayout({
     ? await fetchQuery(api.users.getUser, {}, { token })
     : null;
 
-  return (
-    <div className="w-full">
-      {currentUser ? "Signed in" : "Not signed in"}
-      {children}
-    </div>
-  );
+  return <div className="w-full">{children}</div>;
 }

@@ -71,7 +71,7 @@ function PureMultimodalInput({
   append: UseChatHelpers["append"];
   handleSubmit: UseChatHelpers["handleSubmit"];
   className?: string;
-  currentUserId?: boolean;
+  currentUserId?: string;
 }) {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -320,7 +320,21 @@ function PureMultimodalInput({
                 disabled={status !== "ready"}
                 isActive={isSearchMode}
               />
-              <AttachmentsButton fileInputRef={fileInputRef} status={status} />
+              {currentUserId ? (
+                <AttachmentsButton
+                  fileInputRef={fileInputRef}
+                  status={status}
+                />
+              ) : (
+                <Button
+                  data-testid="attachments-button"
+                  className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent"
+                  disabled={!currentUserId}
+                  variant="ghost"
+                >
+                  <PaperclipIcon size={14} />
+                </Button>
+              )}
             </div>
 
             {/* <div className=" p-2 w-fit flex flex-row space-x-2 items-center justify-end">
