@@ -20,6 +20,7 @@ import { ChatSDKError } from "@/lib/errors";
 import { createTogetherAI } from "@ai-sdk/togetherai";
 import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
 import { geolocation } from "@vercel/functions";
+import { getSearchResultsTool } from "@/lib/ai/tools/get-search-results";
 
 type DBMessage = Doc<"message">;
 export const maxDuration = 60;
@@ -92,7 +93,7 @@ export async function POST(req: Request) {
       }));
 
     const uiFromDB = dbMessages ? convertToUIMessages(dbMessages) : [];
-    console.log("uiFromDB", uiFromDB);
+    // console.log("uiFromDB", uiFromDB);
     const messages = appendClientMessage({
       messages: uiFromDB,
       message,
@@ -158,8 +159,8 @@ export async function POST(req: Request) {
           experimental_transform: smoothStream({ chunking: "word" }),
           // experimental_generateMessageId: generateUUID,
           tools: {
-            // getWeather,
             generateImageTool,
+            getSearchResultsTool,
             // createDocument: createDocument({ session, dataStream }),
             // updateDocument: updateDocument({ session, dataStream }),
             // requestSuggestions: requestSuggestions({

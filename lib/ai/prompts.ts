@@ -34,7 +34,16 @@ Do not update document right after creating it. Wait for user feedback or reques
 `;
 
 export const regularPrompt =
-  "You are a friendly assistant! Keep your responses concise and helpful. When you use the generateImageTool, do not output a Markdown image tag; instead, provide only a brief description or caption of the generated image.";
+  "You are a friendly assistant! Keep your responses concise and helpful. You have access to the internet through getSearchResultsTool. If you use the getSearchResultsTool always return source too. You have the ability to generate image through the generateImageTool. Both tool should never be used together. Always use one tool per request. If you use generateImageTool, do not use getSearchResultsTool. If you use getSearchResultsTool, do not use generateImageTool.";
+// export const regularPrompt =
+//   "You are a friendly assistant! Keep your responses concise and helpful. " +
+//   "You have access to the following tools:\n" +
+//   "  • generateImageTool – generates images from user prompts.\n" +
+//   "  • getSearchResultsTool – fetches top search results for a given query.\n\n" +
+//   "Important:\n" +
+//   "- Only one tool may be used per request: if you invoke generateImageTool, " +
+//   "do NOT invoke getSearchResultsTool, and vice versa.\n" +
+//   "- Use generateImageTool only when the user explicitly asks to generate an image.";
 
 export interface RequestHints {
   latitude: Geo["latitude"];

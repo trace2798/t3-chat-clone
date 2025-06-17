@@ -14,7 +14,6 @@ export async function GET(request: Request) {
       { headers: { "User-Agent": "Mozilla/5.0" } }
     );
     const html = resp.data as string;
-    console.log("HTML:", html);
     const $ = cheerio.load(html);
     const results: Array<{ title: string; url: string; snippet: string }> = [];
     $(".result").each((_, el) => {
