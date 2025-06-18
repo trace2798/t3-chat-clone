@@ -23,8 +23,8 @@ export function ChatHome({
   const [selectedModel, setSelectedModel] = useState(
     "google/gemini-2.5-flash-lite-preview-06-17"
   );
-  const [searchWeb, setSearchWeb] = useState(true);
-  const [generateImage, setGenerateImage] = useState(true);
+  const [searchWeb, setSearchWeb] = useState(false);
+  const [generateImage, setGenerateImage] = useState(false);
   const [chatId, setChatId] = useState<string>("");
 
   const [attachments, setAttachments] = useState<Attachment[]>([]);

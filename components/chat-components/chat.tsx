@@ -37,8 +37,8 @@ export function Chat({
   const [selectedModel, setSelectedModel] = useState(
     "google/gemini-2.5-flash-lite-preview-06-17"
   );
-  const [searchWeb, setSearchWeb] = useState(true);
-  const [generateImage, setGenerateImage] = useState(true);
+  const [searchWeb, setSearchWeb] = useState(false);
+  const [generateImage, setGenerateImage] = useState(false);
   const dbMessages = useQuery(api.message.getMessagesByChatId, {
     chatId: chatInfo._id,
   });
