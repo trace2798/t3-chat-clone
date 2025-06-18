@@ -44,9 +44,13 @@ export function SelectModelSelector({
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const key = useQuery(api.key.getKeyByUserId, {
-    userId: currentUserId as Id<"users">,
-  });
+  // const key = useQuery(api.key.getKeyByUserId, {
+  //   userId: currentUserId as Id<"users">,
+  // });
+  const key = useQuery(
+    api.key.getKeyByUserId,
+    currentUserId ? { userId: currentUserId as Id<"users"> } : "skip"
+  );
   console.log("CONVEX KEY", key);
   return (
     <>
