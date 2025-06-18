@@ -36,6 +36,7 @@ export function Chat({
   const { slug } = useParams<{ slug: string }>()!;
   const router = useRouter();
   const [searchWeb, setSearchWeb] = useState(false);
+  const [generateImage, setGenerateImage] = useState(false);
   const dbMessages = useQuery(api.message.getMessagesByChatId, {
     chatId: chatInfo._id,
   });
@@ -76,6 +77,7 @@ export function Chat({
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
       searchWeb,
+      generateImage,
     }),
     onError: (err) => toast.error(err.message),
   });
@@ -154,6 +156,8 @@ export function Chat({
             currentUserId={currentUserId}
             isSearchMode={searchWeb}
             onSearchModeChange={setSearchWeb}
+            isImageMode={generateImage}
+            onImageModeChange={setGenerateImage}
           />
         )}
       </form>

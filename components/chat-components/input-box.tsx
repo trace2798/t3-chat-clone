@@ -10,6 +10,7 @@ import {
   ArrowDown,
   ArrowUp,
   Globe,
+  Image,
   Mic,
   PaperclipIcon,
   StopCircle,
@@ -57,6 +58,8 @@ function PureMultimodalInput({
   currentUserId,
   isSearchMode,
   onSearchModeChange,
+  isImageMode,
+  onImageModeChange,
 }: {
   chatId: string;
   input: UseChatHelpers["input"];
@@ -74,6 +77,8 @@ function PureMultimodalInput({
 
   isSearchMode: boolean;
   onSearchModeChange: (flag: boolean) => void;
+  isImageMode: boolean;
+  onImageModeChange: (flag: boolean) => void;
 }) {
   // const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -134,6 +139,7 @@ function PureMultimodalInput({
       experimental_attachments: attachments,
       body: {
         isSearch: isSearchMode,
+        isImage: isImageMode,
       },
     });
 
@@ -315,13 +321,32 @@ function PureMultimodalInput({
           <div className=" w-full flex justify-between items-center ">
             <div className=" p-2 w-fit flex flex-row justify-start items-center space-x-2">
               <SelectModelSelector currentUserId={currentUserId || ""} />
-              <SearchButton
-                // triggerSearch={() => {
-                //   setIsSearchMode((prev) => !prev);
-                // }}
+              {/* <SearchButton
                 triggerSearch={() => onSearchModeChange(!isSearchMode)}
                 disabled={status !== "ready"}
                 isActive={isSearchMode}
+              /> */}
+
+              <SearchButton
+                triggerSearch={() => {
+                  onSearchModeChange(!isSearchMode);
+                  if (!isSearchMode) onImageModeChange(false);
+                }}
+                disabled={status !== "ready"}
+                isActive={isSearchMode}
+              />
+              {/* <GenerateImageButton
+                triggerImage={() => onImageModeChange(!isImageMode)}
+                disabled={status !== "ready"}
+                isActive={isImageMode}
+              /> */}
+              <GenerateImageButton
+                triggerImage={() => {
+                  onImageModeChange(!isImageMode);
+                  if (!isImageMode) onSearchModeChange(false);
+                }}
+                disabled={status !== "ready"}
+                isActive={isImageMode}
               />
               {currentUserId ? (
                 <AttachmentsButton
@@ -371,6 +396,7 @@ export const MultimodalInput = memo(
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
     if (prevProps.isSearchMode !== nextProps.isSearchMode) return false;
+    if (prevProps.isImageMode !== nextProps.isImageMode) return false;
     // if (prevProps.isArchived !== nextProps.isArchived) return false;
     // if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
     //   return false;
@@ -418,7 +444,7 @@ function PureSearchButton({
       size="sm"
       className={cn(
         " p-[2px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent rounded-full",
-        isActive && "text-blue-500"
+        isActive && "text-indigo-400"
       )}
       onClick={(event) => {
         event.preventDefault();
@@ -433,8 +459,40 @@ function PureSearchButton({
   );
 }
 
+function PureGenerateImageButton({
+  triggerImage,
+  disabled,
+  isActive,
+}: {
+  triggerImage: () => void;
+  disabled: boolean;
+  isActive: boolean;
+}) {
+  const { isMobile } = useSidebar();
+  return (
+    <Button
+      data-testid="search-button"
+      size="sm"
+      className={cn(
+        " p-[2px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent rounded-full",
+        isActive && "text-indigo-400"
+      )}
+      onClick={(event) => {
+        event.preventDefault();
+        triggerImage();
+      }}
+      disabled={disabled}
+      variant="outline"
+    >
+      <Image size={14} />
+      <span className={cn(isMobile && "hidden")}>Image</span>
+    </Button>
+  );
+}
+
 const AttachmentsButton = memo(PureAttachmentsButton);
 const SearchButton = memo(PureSearchButton);
+const GenerateImageButton = memo(PureGenerateImageButton);
 
 function PureStopButton({
   stop,

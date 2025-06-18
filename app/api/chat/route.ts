@@ -51,12 +51,14 @@ export async function POST(req: Request) {
       selectedChatModel,
       message,
       searchWeb,
+      generateImage,
     } = await req.json();
     console.log("search_web testing", searchWeb);
     console.log("data FROM FE");
     console.log("SLUG FE", slug);
     console.log("selectedChatModel FE", selectedChatModel);
     console.log("message FE", message);
+    console.log("generateImage FE", generateImage);
     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
     if (!chatRecord) {
       return new Response("Chat not found", { status: 404 });

@@ -23,6 +23,7 @@ export function ChatHome({
   const router = useRouter();
   const createChat = useMutation(api.chat.createChat);
   const [searchWeb, setSearchWeb] = useState(false);
+  const [generateImage, setGenerateImage] = useState(false);
   const [chatId, setChatId] = useState<string>("");
 
   const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -48,6 +49,7 @@ export function ChatHome({
       message: body.messages.at(-1),
       selectedChatModel: initialChatModel,
       searchWeb,
+      generateImage,
     }),
     onFinish: (message) => {
       router.replace(`/chat/${chatId}`);
@@ -113,6 +115,8 @@ export function ChatHome({
           currentUserId={currentUserId}
           isSearchMode={searchWeb}
           onSearchModeChange={setSearchWeb}
+          isImageMode={generateImage}
+          onImageModeChange={setGenerateImage}
         />
       </form>
     </div>
