@@ -19,7 +19,6 @@ export const getSearchResultsTool = tool({
       return [];
     }
 
-    // 2) Fetch
     let resp: Response;
     try {
       resp = await fetch(url);

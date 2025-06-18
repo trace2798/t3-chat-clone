@@ -7,21 +7,15 @@ export interface ChatModel {
 
 export const chatModelsList: Array<ChatModel> = [
   {
-    label: "Meta: Llama 3.2 11B Vision Instruct Free",
-    name: "meta-llama/llama-3.2-11b-vision-instruct:free",
-    category: "vision",
+    label: "Mistral: Mistral Small 3.1 24B",
+    name: "mistralai/mistral-small-3.1-24b-instruct",
+    category: "vision, reasoning",
     tool: true,
   },
   {
-    label: "Meta: Llama 3.2 11B Vision Instruct",
-    name: "meta-llama/llama-3.2-11b-vision-instruct",
-    category: "vision",
-    tool: true,
-  },
-  {
-    label: "Meta: Llama 3.2 90B Vision Instruct",
-    name: "meta-llama/llama-3.2-90b-vision-instruct",
-    category: "vision",
+    label: "Anthropic: Claude Sonnet 4",
+    name: "anthropic/claude-4-sonnet-20250522",
+    category: "reasoning",
     tool: true,
   },
   {
@@ -29,12 +23,6 @@ export const chatModelsList: Array<ChatModel> = [
     name: "google/gemini-2.5-flash-lite-preview-06-17",
     category: "file",
     tool: true,
-  },
-  {
-    label: "DeepSeek: R1 0528 (free)",
-    name: "deepseek/deepseek-r1-0528:free",
-    category: "reasoning",
-    tool: false,
   },
   {
     label: "DeepSeek: R1 0528",
@@ -55,12 +43,6 @@ export const chatModelsList: Array<ChatModel> = [
     tool: true,
   },
   {
-    label: "Meta: Llama 4 Maverick (free)",
-    name: "meta-llama/llama-4-maverick-17b-128e-instruct:free",
-    category: "reasoning, vision",
-    tool: true,
-  },
-  {
     label: "Meta: Llama 4 Scout",
     name: "meta-llama/llama-4-scout",
     category: "reasoning, vision",
@@ -72,16 +54,4 @@ export const chatModelsList: Array<ChatModel> = [
     category: "reasoning",
     tool: true,
   },
-  {
-    label: "Mistral: Mistral Small 3.1 24B",
-    name: "mistralai/mistral-small-3.1-24b-instruct",
-    category: "vision, reasoning",
-    tool: true,
-  },
-  {
-    label: "Anthropic: Claude Sonnet 4",
-    name: "anthropic/claude-4-sonnet-20250522",
-    category: "reasoning",
-    tool: true,
-  }
 ];

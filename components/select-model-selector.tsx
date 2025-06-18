@@ -52,6 +52,7 @@ export function SelectModelSelector({
     currentUserId ? { userId: currentUserId as Id<"users"> } : "skip"
   );
   console.log("CONVEX KEY", key);
+  const hasAnthropicKey = Boolean(key);
   return (
     <>
       <div
@@ -76,25 +77,33 @@ export function SelectModelSelector({
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            {chatModelsList.map((model) => (
-              <CommandItem
-                key={model.name}
-                value={model.name}
-                onSelect={() => {
-                  onSelectModel(model.name);
-                  setOpen(false);
-                }}
-                className="flex items-center justify-between"
-              >
-                <span className="truncate">{model.label}</span>
-                <CheckIcon
+            {chatModelsList.map((model) => {
+              const isAnthropic =
+                model.name === "anthropic/claude-4-sonnet-20250522";
+              const isDisabled = isAnthropic && !hasAnthropicKey;
+
+              return (
+                <CommandItem
+                  key={model.name}
+                  value={model.name}
+                  disabled={isDisabled}
+                  onSelect={() => {
+                    if (isDisabled) return; // no-op when disabled
+                    onSelectModel(model.name); // otherwise, proceed
+                    setOpen(false);
+                  }}
                   className={cn(
-                    "mr-2 h-4 w-4",
-                    value === model.name ? "opacity-100" : "opacity-0"
+                    "flex items-center justify-between",
+                    isDisabled && "opacity-50 cursor-not-allowed" // visual hint
                   )}
-                />
-              </CommandItem>
-            ))}
+                >
+                  <span className="truncate">{model.label}</span>
+                  {value === model.name && (
+                    <CheckIcon className="mr-2 h-4 w-4" />
+                  )}
+                </CommandItem>
+              );
+            })}
           </CommandGroup>
         </CommandList>
       </CommandDialog>
