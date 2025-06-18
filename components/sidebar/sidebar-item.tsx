@@ -61,7 +61,7 @@ const PureChatItem = ({
       slug: chat.slug,
       userId: currentUserId,
     });
-    console.log("DELETE RESPONSE:", deleteResponse);
+    //console.log("DELETE RESPONSE:", deleteResponse);
     router.push("/");
   };
 
@@ -145,7 +145,7 @@ const PureChatItem = ({
                   toast.success("Link Copied");
                 })
                 .catch((err) => {
-                  console.error("Copy failed", err);
+                  //console.error("Copy failed", err);
                   toast.error("Failed to copy link");
                 });
             }}

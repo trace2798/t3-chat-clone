@@ -73,7 +73,7 @@ export const getChatBySlug = query({
     // if (!chat) {
     //   return "Chat not found";
     // }
-    console.log("CHAT SLUG API CONVEX", chat);
+    //console.log("CHAT SLUG API CONVEX", chat);
     return chat;
   },
 });
@@ -252,7 +252,7 @@ export const getChatSearch = query({
           .eq("isDeleted", false)
       )
       .take(20);
-    console.log("CONVER SEARCH", results);
+    //console.log("CONVER SEARCH", results);
     return results;
   },
 });
@@ -264,7 +264,7 @@ export const branchChat = mutation({
     userId: v.string(),
   },
   handler: async (ctx, args) => {
-    console.log(
+    //console.log(
       "CONVER BRANCH testing",
       "Message ID",
       args.messageId,
@@ -278,7 +278,7 @@ export const branchChat = mutation({
       .withIndex("by_slug", (q) => q.eq("slug", args.chatSlug))
       .first();
 
-    console.log("CONVER BRANCH testing chat info", chat);
+    //console.log("CONVER BRANCH testing chat info", chat);
     if (!chat) {
       return "Chat not found";
     }
@@ -289,7 +289,7 @@ export const branchChat = mutation({
     if (!selectedMessageInfo) {
       return "Message not found";
     }
-    console.log("CONVER BRANCH testing message info", selectedMessageInfo);
+    //console.log("CONVER BRANCH testing message info", selectedMessageInfo);
     const history = await ctx.db
       .query("message")
       .withIndex("by_chat_timestamp", (q) =>
@@ -299,9 +299,9 @@ export const branchChat = mutation({
       )
       .order("asc")
       .collect();
-    console.log("HISTORY", history);
+    //console.log("HISTORY", history);
     const slug = generateSlug(selectedMessageInfo.content);
-    console.log("SLUG", slug);
+    //console.log("SLUG", slug);
     const newChatId = await ctx.db.insert("chat", {
       title: selectedMessageInfo.content,
       userId: args.userId,

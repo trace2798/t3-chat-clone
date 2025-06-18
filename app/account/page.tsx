@@ -17,7 +17,7 @@ const Page = async ({}) => {
   const archivedChats = await fetchQuery(api.chat.getArchivedChatByUserId, {
     userId: user._id,
   });
-  console.log("USER CHATS Archived", archivedChats);
+  //console.log("USER CHATS Archived", archivedChats);
   const deletedChats = await fetchQuery(api.chat.getDeletedChatByUserId, {
     userId: user._id,
   });

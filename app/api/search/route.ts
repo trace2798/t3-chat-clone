@@ -30,7 +30,7 @@ export async function GET(request: Request) {
     });
     return NextResponse.json(results);
   } catch (err: any) {
-    console.error("DuckDuckGo scrape error:", err);
+    //console.error("DuckDuckGo scrape error:", err);
     return NextResponse.json(
       { error: "Failed to fetch search results" },
       { status: 500 }

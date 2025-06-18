@@ -66,7 +66,7 @@ const TOOL_MAP: Record<
 
 export async function POST(req: Request) {
   try {
-    console.group("API → POST /api/chat");
+    //console.group("API → POST /api/chat");
     const user = await fetchQuery(
       api.users.getUser,
       {},
@@ -85,12 +85,12 @@ export async function POST(req: Request) {
       generateImage,
     } = await req.json();
 
-    console.log("search_web", searchWeb);
-    console.log("data FROM FE");
-    console.log("SLUG FE", slug);
-    console.log("selectedChatModel FE", selectedChatModel);
-    console.log("message FE", message);
-    console.log("generateImage FE", generateImage);
+    //console.log("search_web", searchWeb);
+    //console.log("data FROM FE");
+    //console.log("SLUG FE", slug);
+    //console.log("selectedChatModel FE", selectedChatModel);
+    //console.log("message FE", message);
+    //console.log("generateImage FE", generateImage);
 
     const modelConfig = chatModelsList.find(
       (m) => m.name === selectedChatModel
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
     const userKey = await fetchQuery(api.key.getKeyByUserId, {
       userId: user._id,
     });
-    console.log("USER OPEN ROUTER KEY", userKey);
+    //console.log("USER OPEN ROUTER KEY", userKey);
     if (
       !userKey &&
       selectedChatModel === "anthropic/claude-4-sonnet-20250522"
@@ -128,7 +128,7 @@ export async function POST(req: Request) {
 
     const lastMessage = message;
     if (!lastMessage) {
-      console.error("No message provided");
+      //console.error("No message provided");
       return new Response("No message provided", { status: 400 });
     }
 
@@ -243,7 +243,7 @@ export async function POST(req: Request) {
                   chatId,
                 });
               } catch (_) {
-                console.error("Failed to save chat");
+                //console.error("Failed to save chat");
               }
             }
           },
@@ -256,8 +256,8 @@ export async function POST(req: Request) {
         });
       },
       onError: (error) => {
-        console.error("Error occurred while streaming");
-        console.error(error);
+        //console.error("Error occurred while streaming");
+        //console.error(error);
         return "Oops, an error occurred!";
       },
     });
@@ -266,12 +266,12 @@ export async function POST(req: Request) {
     if (error instanceof ChatSDKError) {
       return error.toResponse();
     }
-    console.error("Error API", error);
-    console.group("API → ERROR");
-    console.error("Step failed:", error.step || "unknown");
-    console.error("Message:", error.message);
-    console.error("Stack:  ", error.stack);
-    console.groupEnd();
+    //console.error("Error API", error);
+    //console.group("API → ERROR");
+    //console.error("Step failed:", error.step || "unknown");
+    //console.error("Message:", error.message);
+    //console.error("Stack:  ", error.stack);
+    //console.groupEnd();
     return new Response("Internal Server Error", { status: 500 });
   }
 }

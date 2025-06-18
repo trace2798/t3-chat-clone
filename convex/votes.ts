@@ -24,7 +24,7 @@ export const getVotesByChatSlug = query({
       throw new Error("Chat not found");
     }
     const chatId: Id<"chat"> = chat._id;
-    console.log("chat inside getVotesByChatSlug ", chat);
+    //console.log("chat inside getVotesByChatSlug ", chat);
     return await ctx.db
       .query("vote")
       .withIndex("by_chat", (q) => q.eq("chatId", chatId))
@@ -39,7 +39,7 @@ export const createVote = mutation({
     type: v.union(v.literal("upvote"), v.literal("downvote")),
   },
   handler: async (ctx, { slug, userId, messageId, type }) => {
-    console.log("createVote", { slug, userId, messageId, type });
+    //console.log("createVote", { slug, userId, messageId, type });
     const chats = await ctx.db
       .query("chat")
       .withIndex("by_slug", (q) => q.eq("slug", slug))

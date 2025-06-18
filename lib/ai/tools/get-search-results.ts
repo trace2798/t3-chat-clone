@@ -7,7 +7,7 @@ export const getSearchResultsTool = tool({
     query: z.string(),
   }),
   execute: async ({ query }) => {
-    console.log("INSIDE TOOL, query:", query);
+    //console.log("INSIDE TOOL, query:", query);
 
     let base: string;
     let url: string;
@@ -15,7 +15,7 @@ export const getSearchResultsTool = tool({
       base = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
       url = `${base}/api/search?q=${encodeURIComponent(query)}`;
     } catch (err) {
-      console.error("✖️ [URL BUILD ERROR]", err);
+      //console.error("✖️ [URL BUILD ERROR]", err);
       return [];
     }
 
@@ -27,7 +27,7 @@ export const getSearchResultsTool = tool({
         throw new Error(`status ${resp.status}, body: ${text}`);
       }
     } catch (err) {
-      console.error("✖️ [FETCH ERROR]", err);
+      //console.error("✖️ [FETCH ERROR]", err);
       return [];
     }
 
@@ -36,15 +36,15 @@ export const getSearchResultsTool = tool({
     try {
       data = await resp.json();
     } catch (err) {
-      console.error("✖️ [JSON PARSE ERROR]", err);
+      //console.error("✖️ [JSON PARSE ERROR]", err);
       return [];
     }
-    console.log("DATA SEARCH:", data);
+    //console.log("DATA SEARCH:", data);
     // 4) Slice top 6
     try {
       return data.slice(0, 6);
     } catch (err) {
-      console.error("✖️ [SLICE ERROR]", err);
+      //console.error("✖️ [SLICE ERROR]", err);
       return [];
     }
   },

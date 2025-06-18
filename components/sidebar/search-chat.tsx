@@ -45,7 +45,7 @@ export function SearchChat({ currentUserId }: { currentUserId?: string }) {
         ? { userId: currentUserId, query: debouncedTerm }
         : "skip"
     ) ?? [];
-  console.log("CHATS", chats);
+  //console.log("CHATS", chats);
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {

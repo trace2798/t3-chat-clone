@@ -25,17 +25,17 @@ export const generateImageTool = tool({
     prompt: z.string(),
   }),
   execute: async ({ prompt }) => {
-    console.log("INSIDE TOOL", prompt);
+    //console.log("INSIDE TOOL", prompt);
     const { image } = await generateImage({
       model: fal.image("fal-ai/flux-1/schnell"),
       prompt: prompt,
       size: "512x512",
     });
-    console.log("IMAGE Request done");
+    //console.log("IMAGE Request done");
     const buffer = Buffer.from(image.base64!, "base64");
-    console.log("IMAGE BUFFER", buffer);
+    //console.log("IMAGE BUFFER", buffer);
     const key = `images/${nanoid()}.png`;
-    console.log("IMAGE Key", key);
+    //console.log("IMAGE Key", key);
     await R2.send(
       new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME,
@@ -45,7 +45,7 @@ export const generateImageTool = tool({
       })
     );
     const url = `https://pub-218acdd82f954861a52497ffd9d8edf7.r2.dev/${key}`;
-    console.log("IMAGE URL:", url);
+    //console.log("IMAGE URL:", url);
     return {
       url,
       prompt,

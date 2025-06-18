@@ -8,7 +8,7 @@ export const checkKeyByUserId = query({
       .query("userApiKeys")
       .withIndex("by_user", (q) => q.eq("userId", args.userId))
       .first();
-    console.log("CONVEX OPEN ROUTER SERVER", openRouterKey);
+    //console.log("CONVEX OPEN ROUTER SERVER", openRouterKey);
     if (!openRouterKey) {
       return false;
     }
@@ -54,7 +54,7 @@ export const getKeyByUserId = query({
       .query("userApiKeys")
       .withIndex("by_user", (q) => q.eq("userId", args.userId))
       .first();
-    console.log("CONVEX OPEN ROUTER SERVER", openRouterKey);
+    //console.log("CONVEX OPEN ROUTER SERVER", openRouterKey);
     if (!openRouterKey) {
       return null;
     }

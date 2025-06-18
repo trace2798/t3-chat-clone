@@ -12,26 +12,26 @@ import { cn } from '@/lib/utils';
 import { useArtifactSelector } from '@/hooks/use-artifact';
 import { Cross, LoaderIcon, TerminalSquareIcon } from 'lucide-react';
 
-export interface ConsoleOutputContent {
+export interface //consoleOutputContent {
   type: 'text' | 'image';
   value: string;
 }
 
-export interface ConsoleOutput {
+export interface //consoleOutput {
   id: string;
   status: 'in_progress' | 'loading_packages' | 'completed' | 'failed';
-  contents: Array<ConsoleOutputContent>;
+  contents: Array<//consoleOutputContent>;
 }
 
-interface ConsoleProps {
-  consoleOutputs: Array<ConsoleOutput>;
-  setConsoleOutputs: Dispatch<SetStateAction<Array<ConsoleOutput>>>;
+interface //consoleProps {
+  //consoleOutputs: Array<//consoleOutput>;
+  set//consoleOutputs: Dispatch<SetStateAction<Array<//consoleOutput>>>;
 }
 
-export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
+export function //console({ //consoleOutputs, set//consoleOutputs }: //consoleProps) {
   const [height, setHeight] = useState<number>(300);
   const [isResizing, setIsResizing] = useState(false);
-  const consoleEndRef = useRef<HTMLDivElement>(null);
+  const //consoleEndRef = useRef<HTMLDivElement>(null);
 
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
@@ -68,16 +68,16 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
   }, [resize, stopResizing]);
 
   useEffect(() => {
-    consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [consoleOutputs]);
+    //consoleEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [//consoleOutputs]);
 
   useEffect(() => {
     if (!isArtifactVisible) {
-      setConsoleOutputs([]);
+      set//consoleOutputs([]);
     }
-  }, [isArtifactVisible, setConsoleOutputs]);
+  }, [isArtifactVisible, set//consoleOutputs]);
 
-  return consoleOutputs.length > 0 ? (
+  return //consoleOutputs.length > 0 ? (
     <>
       <div
         className="h-2 w-full fixed cursor-ns-resize z-50"
@@ -101,22 +101,22 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
             <div className="text-muted-foreground">
               <TerminalSquareIcon size={16} />
             </div>
-            <div>Console</div>
+            <div>//console</div>
           </div>
           <Button
             variant="ghost"
             className="size-fit p-1 hover:dark:bg-zinc-700 hover:bg-zinc-200"
             size="icon"
-            onClick={() => setConsoleOutputs([])}
+            onClick={() => set//consoleOutputs([])}
           >
             <Cross size={16} />
           </Button>
         </div>
 
         <div>
-          {consoleOutputs.map((consoleOutput, index) => (
+          {//consoleOutputs.map((//consoleOutput, index) => (
             <div
-              key={consoleOutput.id}
+              key={//consoleOutput.id}
               className="px-4 py-2 flex flex-row text-sm border-b dark:border-zinc-700 border-zinc-200 dark:bg-zinc-900 bg-zinc-50 font-mono"
             >
               <div
@@ -124,25 +124,25 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
                   'text-muted-foreground': [
                     'in_progress',
                     'loading_packages',
-                  ].includes(consoleOutput.status),
-                  'text-emerald-500': consoleOutput.status === 'completed',
-                  'text-red-400': consoleOutput.status === 'failed',
+                  ].includes(//consoleOutput.status),
+                  'text-emerald-500': //consoleOutput.status === 'completed',
+                  'text-red-400': //consoleOutput.status === 'failed',
                 })}
               >
                 [{index + 1}]
               </div>
               {['in_progress', 'loading_packages'].includes(
-                consoleOutput.status,
+                //consoleOutput.status,
               ) ? (
                 <div className="flex flex-row gap-2">
                   <div className="animate-spin size-fit self-center mb-auto mt-0.5">
                     <LoaderIcon size={16} />
                   </div>
                   <div className="text-muted-foreground">
-                    {consoleOutput.status === 'in_progress'
+                    {//consoleOutput.status === 'in_progress'
                       ? 'Initializing...'
-                      : consoleOutput.status === 'loading_packages'
-                        ? consoleOutput.contents.map((content) =>
+                      : //consoleOutput.status === 'loading_packages'
+                        ? //consoleOutput.contents.map((content) =>
                             content.type === 'text' ? content.value : null,
                           )
                         : null}
@@ -150,9 +150,9 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
                 </div>
               ) : (
                 <div className="dark:text-zinc-50 text-zinc-900 w-full flex flex-col gap-2 overflow-x-scroll">
-                  {consoleOutput.contents.map((content, index) =>
+                  {//consoleOutput.contents.map((content, index) =>
                     content.type === 'image' ? (
-                      <picture key={`${consoleOutput.id}-${index}`}>
+                      <picture key={`${//consoleOutput.id}-${index}`}>
                         <img
                           src={content.value}
                           alt="output"
@@ -161,7 +161,7 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
                       </picture>
                     ) : (
                       <div
-                        key={`${consoleOutput.id}-${index}`}
+                        key={`${//consoleOutput.id}-${index}`}
                         className="whitespace-pre-line break-words w-full"
                       >
                         {content.value}
@@ -172,7 +172,7 @@ export function Console({ consoleOutputs, setConsoleOutputs }: ConsoleProps) {
               )}
             </div>
           ))}
-          <div ref={consoleEndRef} />
+          <div ref={//consoleEndRef} />
         </div>
       </div>
     </>

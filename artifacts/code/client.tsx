@@ -4,10 +4,10 @@ import { CodeEditor } from '@/components/code/code-editor';
 import { toast } from 'sonner';
 import { generateUUID } from '@/lib/utils';
 import {
-  Console,
-  ConsoleOutput,
-  ConsoleOutputContent,
-} from '../../components/artifact/console';
+  //console,
+  //consoleOutput,
+  //consoleOutputContent,
+} from '../../components/artifact///console';
 import { CopyIcon, LogsIcon, MessageSquareIcon, PlayIcon, RedoIcon, UndoIcon } from 'lucide-react';
 
 const OUTPUT_HANDLERS = {
@@ -57,7 +57,7 @@ function detectRequiredHandlers(code: string): string[] {
 }
 
 interface Metadata {
-  outputs: Array<ConsoleOutput>;
+  outputs: Array<//consoleOutput>;
 }
 
 export const codeArtifact = new Artifact<'code', Metadata>({
@@ -92,9 +92,9 @@ export const codeArtifact = new Artifact<'code', Metadata>({
         </div>
 
         {metadata?.outputs && (
-          <Console
-            consoleOutputs={metadata.outputs}
-            setConsoleOutputs={() => {
+          <//console
+            //consoleOutputs={metadata.outputs}
+            set//consoleOutputs={() => {
               setMetadata({
                 ...metadata,
                 outputs: [],
@@ -112,7 +112,7 @@ export const codeArtifact = new Artifact<'code', Metadata>({
       description: 'Execute code',
       onClick: async ({ content, setMetadata }) => {
         const runId = generateUUID();
-        const outputContent: Array<ConsoleOutputContent> = [];
+        const outputContent: Array<//consoleOutputContent> = [];
 
         setMetadata((metadata) => ({
           ...metadata,

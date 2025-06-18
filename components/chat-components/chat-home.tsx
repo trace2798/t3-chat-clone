@@ -58,7 +58,7 @@ export function ChatHome({
     },
     onError: (err) => {
       toast.error(err.message);
-      console.error("Home Chat Error", err);
+      //console.error("Home Chat Error", err);
     },
   });
   React.useEffect(() => {
@@ -74,7 +74,7 @@ export function ChatHome({
       });
       setChatId(slug);
     } catch (err: any) {
-      console.error("Failed to start chat:", err);
+      //console.error("Failed to start chat:", err);
     }
   };
 

@@ -11,7 +11,7 @@ const Page = async ({}) => {
     { token: await convexAuthNextjsToken() }
   );
   if (!user) redirect("/signin");
-  console.log("About to fetch key for userId:", user._id);
+  //console.log("About to fetch key for userId:", user._id);
 
   const keyInfo = await fetchQuery(
     api.key.checkKeyByUserId,
@@ -19,7 +19,7 @@ const Page = async ({}) => {
     { token: await convexAuthNextjsToken() }
   );
 
-  console.log("CONVEX KEY INFO", keyInfo);
+  //console.log("CONVEX KEY INFO", keyInfo);
   return (
     <>
       <div className="absolute top-0 w-full flex items-center justify-center h-full">

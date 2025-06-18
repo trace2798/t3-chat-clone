@@ -22,7 +22,7 @@ const DeleteKeyButton = ({ currentUserId }: { currentUserId: string }) => {
     const res = await fetchMutation(api.key.deleteKey, {
       userId: currentUserId as Id<"users">,
     });
-    console.log("RES", res);
+    //console.log("RES", res);
     if (res === "Key deleted") {
       toast.success("Key deleted.");
       router.refresh();

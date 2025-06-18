@@ -54,7 +54,7 @@ const PurePreviewMessage = ({
       messageId: message.id as Id<"message">,
       userId: currentUserId as Id<"users">,
     });
-    console.log("BRANCH CHAT FE:", branchChat);
+    //console.log("BRANCH CHAT FE:", branchChat);
   };
 
   return (

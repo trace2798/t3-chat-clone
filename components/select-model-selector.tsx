@@ -48,7 +48,7 @@ export function SelectModelSelector({
     api.key.checkKeyByUserId,
     currentUserId ? { userId: currentUserId as Id<"users"> } : "skip"
   );
-  console.log("CONVEX KEY", key);
+  //console.log("CONVEX KEY", key);
   const hasAnthropicKey = Boolean(key);
   return (
     <>

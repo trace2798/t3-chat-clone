@@ -51,14 +51,14 @@ const PureChatItem = ({
       slug: chat.slug,
       userId: currentUserId,
     });
-    console.log("DELETE RESPONSE:", deleteResponse);
+    //console.log("DELETE RESPONSE:", deleteResponse);
   };
   const handleArchive = async () => {
     const deleteResponse = fetchMutation(api.chat.archiveChat, {
       slug: chat.slug,
       userId: currentUserId,
     });
-    console.log("DELETE RESPONSE:", deleteResponse);
+    //console.log("DELETE RESPONSE:", deleteResponse);
   };
 
   return (

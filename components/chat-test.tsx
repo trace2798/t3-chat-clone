@@ -8,7 +8,7 @@ export default function DemoChat() {
     useChat({
 
       onFinish: (message) => {
-        console.log(message);
+        //console.log(message);
       },
     });
 

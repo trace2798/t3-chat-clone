@@ -22,7 +22,7 @@ export function SearchDemo() {
         throw new Error(body.error || `HTTP ${res.status}`);
       }
       const data = await res.json();
-      console.log("DATA SEARCH:", data)
+      //console.log("DATA SEARCH:", data)
       setResults(data);
     } catch (err: any) {
       setError(err.message);

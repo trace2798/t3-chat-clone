@@ -52,7 +52,7 @@ const AddOpenRouterKeyForm = ({ currentUserId }: { currentUserId: string }) => {
       toast.success("Key added successfully.");
       router.refresh();
     } catch (e) {
-      console.error(e);
+      //console.error(e);
       toast.error(
         "There was an error adding the key. Try again or contact support."
       );

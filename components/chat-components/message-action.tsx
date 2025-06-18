@@ -37,14 +37,14 @@ export function PureMessageActions({
 
   if (isLoading) return null;
   if (message.role === "user") return null;
-  console.log("VOTES Message action", vote);
+  //console.log("VOTES Message action", vote);
   const handleBranchChat = () => {
     const branchChat = fetchMutation(api.chat.branchChat, {
       chatSlug: chatId,
       messageId: message.id as Id<"message">,
       userId: currentUserId as Id<"users">,
     });
-    console.log("BRANCH CHAT FE:", branchChat);
+    //console.log("BRANCH CHAT FE:", branchChat);
   };
   return (
     <TooltipProvider delayDuration={0}>

@@ -164,13 +164,13 @@ function PureMultimodalInput({
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    console.log("FormData", formData);
+    //console.log("FormData", formData);
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
-      console.log("Response Upload", response);
+      //console.log("Response Upload", response);
       if (response.ok) {
         const data = await response.json();
         const { url, pathname, contentType } = data;
@@ -182,7 +182,7 @@ function PureMultimodalInput({
         };
       }
       const { error } = await response.json();
-      console.log("Error Upload", error);
+      //console.log("Error Upload", error);
       toast.error(error);
     } catch (error) {
       toast.error("Failed to upload file, please try again!");
@@ -207,7 +207,7 @@ function PureMultimodalInput({
           ...successfullyUploadedAttachments,
         ]);
       } catch (error) {
-        console.error("Error uploading files!", error);
+        //console.error("Error uploading files!", error);
       } finally {
         setUploadQueue([]);
       }
