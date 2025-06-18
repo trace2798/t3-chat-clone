@@ -5,7 +5,6 @@ import type { UseChatHelpers } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { memo } from "react";
 import { Separator } from "../ui/separator";
-// import type { VisibilityType } from "./visibility-selector";
 
 interface SuggestedActionsProps {
   setInput: UseChatHelpers["setInput"];
