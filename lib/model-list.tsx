@@ -31,12 +31,6 @@ export const chatModelsList: Array<ChatModel> = [
     tool: true,
   },
   {
-    label: "DeepSeek: DeepSeek V3 0324",
-    name: "deepseek/deepseek-chat-v3-0324",
-    category: "reasoning",
-    tool: true,
-  },
-  {
     label: "Meta: Llama 4 Maverick",
     name: "meta-llama/llama-4-maverick",
     category: "reasoning, vision",
@@ -46,12 +40,6 @@ export const chatModelsList: Array<ChatModel> = [
     label: "Meta: Llama 4 Scout",
     name: "meta-llama/llama-4-scout",
     category: "reasoning, vision",
-    tool: true,
-  },
-  {
-    label: "Meta: Llama 3.3 70B Instruct",
-    name: "meta-llama/llama-3.3-70b-instruct",
-    category: "reasoning",
     tool: true,
   },
 ];

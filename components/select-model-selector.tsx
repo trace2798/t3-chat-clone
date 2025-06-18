@@ -44,9 +44,6 @@ export function SelectModelSelector({
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // const key = useQuery(api.key.getKeyByUserId, {
-  //   userId: currentUserId as Id<"users">,
-  // });
   const key = useQuery(
     api.key.checkKeyByUserId,
     currentUserId ? { userId: currentUserId as Id<"users"> } : "skip"

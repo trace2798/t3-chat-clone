@@ -16,14 +16,54 @@ import {
   extractReasoningMiddleware,
   smoothStream,
   streamText,
-  Tool,
   UIMessage,
   wrapLanguageModel,
 } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
+import type { Tool } from "ai";
 
 type DBMessage = Doc<"message">;
 export const maxDuration = 60;
+const TOOL_MAP: Record<
+  string,
+  { tools: Record<string, Tool>; active: string[] }
+> = {
+  // No tools at all for DeepSeek R1
+  "deepseek/deepseek-r1-0528": {
+    tools: {},
+    active: [],
+  },
+
+  // Both image+search for Mistral & Gemini
+  "mistralai/mistral-small-3.1-24b-instruct": {
+    tools: {
+      generateImageTool,
+      getSearchResultsTool,
+    },
+    active: ["generateImageTool", "getSearchResultsTool"],
+  },
+  "google/gemini-2.5-flash-lite-preview-06-17": {
+    tools: {
+      generateImageTool,
+      getSearchResultsTool,
+    },
+    active: ["generateImageTool", "getSearchResultsTool"],
+  },
+
+  // Only search for Llama 4 Maverick & Scout
+  "meta-llama/llama-4-maverick": {
+    tools: {
+      getSearchResultsTool,
+    },
+    active: ["getSearchResultsTool"],
+  },
+  "meta-llama/llama-4-scout": {
+    tools: {
+      getSearchResultsTool,
+    },
+    active: ["getSearchResultsTool"],
+  },
+};
 
 export async function POST(req: Request) {
   try {
@@ -156,16 +196,10 @@ export async function POST(req: Request) {
     await fetchMutation(api.chat.updateChatUpdatedAt, {
       chatId,
     });
-
-    // let systemPrompt = ``;
-    // if (selectedChatModel === "deepseek/deepseek-r1-0528") {
-    //   systemPrompt = `You are a friendly assistant! Keep your responses concise and helpful. You have access to the internet through getSearchResultsTool, but only use this tool if user requests it. You have the ability to generate image through the generateImageTool. Both tool should never be used together.`;
-    // } else {
-    //   systemPrompt = `You are a helpful assistant. You have two tools available:
-    // • getSearchResultsTool: use this to search the web when the user asks you to look something up online.
-    // • generateImageTool: use this to create or generate an image when the user explicitly requests an illustration or picture.
-    // Only invoke **one** tool per response—do not use both together. If the user does not ask for a search or an image, just answer in plain text.`;
-    // }
+    const { tools, active } = TOOL_MAP[selectedChatModel] ?? {
+      tools: {},
+      active: [],
+    };
 
     const stream = createDataStream({
       execute: (dataStream) => {
@@ -174,15 +208,13 @@ export async function POST(req: Request) {
           system: systemPrompt({ selectedChatModel }),
           messages,
           maxSteps: 1,
-          experimental_activeTools:
-            selectedChatModel === "deepseek/deepseek-r1-0528"
-              ? []
-              : ["generateImageTool", "getSearchResultsTool"],
+          experimental_activeTools: active,
           experimental_transform: smoothStream({ chunking: "word" }),
-          tools: {
-            generateImageTool,
-            getSearchResultsTool,
-          },
+          // tools: {
+          //   generateImageTool,
+          //   getSearchResultsTool,
+          // },
+          tools,
           onFinish: async ({ response }) => {
             if (user._id) {
               try {
