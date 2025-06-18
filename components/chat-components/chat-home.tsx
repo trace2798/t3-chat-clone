@@ -12,16 +12,17 @@ import { Messages } from "./messages";
 import { MultimodalInput } from "./input-box";
 
 export function ChatHome({
-  initialChatModel,
   currentUserId,
   initialMessages = [],
 }: {
-  initialChatModel: string;
   currentUserId: string;
   initialMessages?: UIMessage[];
 }) {
   const router = useRouter();
   const createChat = useMutation(api.chat.createChat);
+  const [selectedModel, setSelectedModel] = useState(
+    "deepseek/deepseek-r1-0528:free"
+  );
   const [searchWeb, setSearchWeb] = useState(false);
   const [generateImage, setGenerateImage] = useState(false);
   const [chatId, setChatId] = useState<string>("");
@@ -47,7 +48,7 @@ export function ChatHome({
     experimental_prepareRequestBody: (body) => ({
       id: chatId,
       message: body.messages.at(-1),
-      selectedChatModel: initialChatModel,
+      selectedChatModel: selectedModel,
       searchWeb,
       generateImage,
     }),
@@ -117,6 +118,8 @@ export function ChatHome({
           onSearchModeChange={setSearchWeb}
           isImageMode={generateImage}
           onImageModeChange={setGenerateImage}
+          selectedModel={selectedModel}
+          onModelChange={setSelectedModel}
         />
       </form>
     </div>

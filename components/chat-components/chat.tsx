@@ -20,14 +20,12 @@ type DBMessage = Doc<"message">;
 
 export function Chat({
   chatInfo,
-  initialChatModel,
   isReadonly,
   currentUserId,
   autoResume,
   isArchived,
 }: {
   chatInfo: Doc<"chat">;
-  initialChatModel: string;
   isReadonly: boolean;
   currentUserId: string;
   autoResume: boolean;
@@ -35,6 +33,10 @@ export function Chat({
 }) {
   const { slug } = useParams<{ slug: string }>()!;
   const router = useRouter();
+
+  const [selectedModel, setSelectedModel] = useState(
+    "deepseek/deepseek-r1-0528:free"
+  );
   const [searchWeb, setSearchWeb] = useState(false);
   const [generateImage, setGenerateImage] = useState(false);
   const dbMessages = useQuery(api.message.getMessagesByChatId, {
@@ -75,7 +77,7 @@ export function Chat({
     experimental_prepareRequestBody: (body) => ({
       id: slug,
       message: body.messages.at(-1),
-      selectedChatModel: initialChatModel,
+      selectedChatModel: selectedModel,
       searchWeb,
       generateImage,
     }),
@@ -158,6 +160,8 @@ export function Chat({
             onSearchModeChange={setSearchWeb}
             isImageMode={generateImage}
             onImageModeChange={setGenerateImage}
+            selectedModel={selectedModel}
+            onModelChange={setSelectedModel}
           />
         )}
       </form>

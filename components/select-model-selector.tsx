@@ -15,14 +15,18 @@ import { Id } from "@/convex/_generated/dataModel";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { buttonVariants } from "./ui/button";
+import { chatModelsList } from "@/lib/model-list";
 
 export function SelectModelSelector({
   currentUserId,
+  value,
+  onSelectModel,
 }: {
   currentUserId: string;
+  value: string;
+  onSelectModel: (model: string) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -57,7 +61,7 @@ export function SelectModelSelector({
       >
         <span className="w-fit max-w-[150px] truncate">
           {value
-            ? models.find((model) => model.value === value)?.label
+            ? chatModelsList.find((model) => model.name === value)?.label
             : "Select model..."}
         </span>
         <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -68,21 +72,21 @@ export function SelectModelSelector({
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
-            {models.map((framework) => (
+            {chatModelsList.map((model) => (
               <CommandItem
-                key={framework.value}
-                value={framework.label}
+                key={model.name}
+                value={model.name}
                 onSelect={() => {
-                  setValue(framework.value);
+                  onSelectModel(model.name);
                   setOpen(false);
                 }}
                 className="flex items-center justify-between"
               >
-                <span className="truncate">{framework.label}</span>
+                <span className="truncate">{model.label}</span>
                 <CheckIcon
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value === framework.value ? "opacity-100" : "opacity-0"
+                    value === model.name ? "opacity-100" : "opacity-0"
                   )}
                 />
               </CommandItem>
@@ -93,30 +97,3 @@ export function SelectModelSelector({
     </>
   );
 }
-
-const models = [
-  {
-    value: "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
-    label: "Meta Llama 3.1 8B Instruct Turbo",
-  },
-  {
-    value: "deepseek-ai/DeepSeek-R1-Distill-Llama-70B-free",
-    label: "DeepSeek R1 Distill Llama 70B Free",
-  },
-  {
-    value: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-    label: "Meta Llama 3.2 11B Vision Instruct Turbo",
-  },
-  {
-    value: "meta-llama/Llama-Vision-Free",
-    label: "Meta Llama Vision Free",
-  },
-  {
-    value: "lgai/exaone-3-5-32b-instruct",
-    label: "EXAONE 3.5 32B Instruct",
-  },
-  {
-    value: "lgai/exaone-deep-32b",
-    label: "EXAONE Deep 32B",
-  },
-];

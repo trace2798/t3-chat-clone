@@ -1,5 +1,4 @@
 import { ChatHome } from "@/components/chat-components/chat-home";
-
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DEFAULT_CHAT_MODEL } from "@/lib/models";
@@ -15,11 +14,7 @@ export default async function Home() {
 
   return (
     <div className="absolute inset-0 flex flex-1 flex-col w-full min-h-screen max-h-[100vdh] bg-zinc-800">
-      <ChatHome
-        currentUserId={user?._id as Id<"users">}
-        initialChatModel={DEFAULT_CHAT_MODEL}
-        initialMessages={[]}
-      />
+      <ChatHome currentUserId={user?._id as Id<"users">} initialMessages={[]} />
     </div>
   );
 }

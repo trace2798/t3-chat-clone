@@ -55,7 +55,6 @@ export default async function ChatSlugPage({
       <Chat
         key={slug}
         chatInfo={chatInfo}
-        initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={true}
         currentUserId={user?._id as Id<"users">}
         autoResume={false}
@@ -68,7 +67,6 @@ export default async function ChatSlugPage({
       <Chat
         key={slug}
         chatInfo={chatInfo}
-        initialChatModel={DEFAULT_CHAT_MODEL}
         isReadonly={false}
         currentUserId={user?._id as Id<"users">}
         autoResume={false}

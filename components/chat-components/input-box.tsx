@@ -60,6 +60,8 @@ function PureMultimodalInput({
   onSearchModeChange,
   isImageMode,
   onImageModeChange,
+  selectedModel,
+  onModelChange,
 }: {
   chatId: string;
   input: UseChatHelpers["input"];
@@ -79,6 +81,8 @@ function PureMultimodalInput({
   onSearchModeChange: (flag: boolean) => void;
   isImageMode: boolean;
   onImageModeChange: (flag: boolean) => void;
+  selectedModel: string;
+  onModelChange: (model: string) => void;
 }) {
   // const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -320,13 +324,11 @@ function PureMultimodalInput({
           </div>
           <div className=" w-full flex justify-between items-center ">
             <div className=" p-2 w-fit flex flex-row justify-start items-center space-x-2">
-              <SelectModelSelector currentUserId={currentUserId || ""} />
-              {/* <SearchButton
-                triggerSearch={() => onSearchModeChange(!isSearchMode)}
-                disabled={status !== "ready"}
-                isActive={isSearchMode}
-              /> */}
-
+              <SelectModelSelector
+                currentUserId={currentUserId || ""}
+                value={selectedModel}
+                onSelectModel={onModelChange}
+              />
               <SearchButton
                 triggerSearch={() => {
                   onSearchModeChange(!isSearchMode);
@@ -335,11 +337,6 @@ function PureMultimodalInput({
                 disabled={status !== "ready"}
                 isActive={isSearchMode}
               />
-              {/* <GenerateImageButton
-                triggerImage={() => onImageModeChange(!isImageMode)}
-                disabled={status !== "ready"}
-                isActive={isImageMode}
-              /> */}
               <GenerateImageButton
                 triggerImage={() => {
                   onImageModeChange(!isImageMode);
@@ -376,7 +373,6 @@ function PureMultimodalInput({
                   uploadQueue={uploadQueue}
                 />
               ) : (
-                // <SignInWithGitHub />
                 <Link href={"/signin"}>
                   <Button className="h-6">Login to send a message</Button>
                 </Link>
@@ -397,6 +393,7 @@ export const MultimodalInput = memo(
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
     if (prevProps.isSearchMode !== nextProps.isSearchMode) return false;
     if (prevProps.isImageMode !== nextProps.isImageMode) return false;
+    if (prevProps.selectedModel !== nextProps.selectedModel) return false;
     // if (prevProps.isArchived !== nextProps.isArchived) return false;
     // if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
     //   return false;
@@ -415,6 +412,7 @@ function PureAttachmentsButton({
   return (
     <Button
       data-testid="attachments-button"
+      size="sm"
       className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent"
       onClick={(event) => {
         event.preventDefault();
@@ -423,7 +421,7 @@ function PureAttachmentsButton({
       disabled={status !== "ready"}
       variant="ghost"
     >
-      <PaperclipIcon size={14} />
+      <PaperclipIcon size={10} />
     </Button>
   );
 }
@@ -451,10 +449,10 @@ function PureSearchButton({
         triggerSearch();
       }}
       disabled={disabled}
-      variant="outline"
+      variant="ghost"
     >
       <Globe size={14} />
-      <span className={cn(isMobile && "hidden")}>Search</span>
+      {/* <span className={cn(isMobile && "hidden")}>Search</span> */}
     </Button>
   );
 }
@@ -482,10 +480,10 @@ function PureGenerateImageButton({
         triggerImage();
       }}
       disabled={disabled}
-      variant="outline"
+      variant="ghost"
     >
       <Image size={14} />
-      <span className={cn(isMobile && "hidden")}>Image</span>
+      {/* <span className={cn(isMobile && "hidden")}>Image</span> */}
     </Button>
   );
 }
@@ -565,10 +563,9 @@ export function Dictaphone({ input, setInput }: DictaphoneProps) {
   const wasListening = useRef(false);
 
   useEffect(() => {
-    // When we stop listening, use the final transcript to update input
     if (wasListening.current && !listening) {
       setInput(transcript.trim());
-      resetTranscript(); // optional: clear for next use
+      resetTranscript();
     }
     wasListening.current = listening;
   }, [listening]);
@@ -612,16 +609,3 @@ export function Dictaphone({ input, setInput }: DictaphoneProps) {
     </HoverCard>
   );
 }
-
-const mockAttachments: Attachment[] = [
-  {
-    url: "https://via.placeholder.com/150",
-    name: "placeholder-150.png",
-    contentType: "image/png",
-  },
-  {
-    url: "https://placekitten.com/200/300",
-    name: "cute-kitten.jpg",
-    contentType: "image/jpeg",
-  },
-];
