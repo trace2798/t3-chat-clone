@@ -1,4 +1,10 @@
 import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
+import { systemPrompt } from "@/lib/ai/prompts";
+import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
+import { getSearchResultsTool } from "@/lib/ai/tools/get-search-results";
+import { ChatSDKError } from "@/lib/errors";
+import { chatModelsList } from "@/lib/model-list";
 import { getTrailingMessageId } from "@/lib/utils";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
@@ -10,29 +16,14 @@ import {
   extractReasoningMiddleware,
   smoothStream,
   streamText,
+  Tool,
   UIMessage,
   wrapLanguageModel,
 } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
-import { Doc } from "@/convex/_generated/dataModel";
-import { systemPrompt, type RequestHints } from "@/lib/ai/prompts";
-import { ChatSDKError } from "@/lib/errors";
-import { createTogetherAI } from "@ai-sdk/togetherai";
-import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
-import { geolocation } from "@vercel/functions";
-import { getSearchResultsTool } from "@/lib/ai/tools/get-search-results";
-import { chatModelsList } from "@/lib/model-list";
 
 type DBMessage = Doc<"message">;
 export const maxDuration = 60;
-
-const openrouter = createOpenRouter({
-  apiKey: process.env.OPENROUTER_API_KEY!,
-});
-
-const togetherai = createTogetherAI({
-  apiKey: process.env.TOGETHER_AI_API ?? "",
-});
 
 export async function POST(req: Request) {
   try {
@@ -54,8 +45,8 @@ export async function POST(req: Request) {
       searchWeb,
       generateImage,
     } = await req.json();
-    
-    console.log("search_web testing", searchWeb);
+
+    console.log("search_web", searchWeb);
     console.log("data FROM FE");
     console.log("SLUG FE", slug);
     console.log("selectedChatModel FE", selectedChatModel);
@@ -82,6 +73,19 @@ export async function POST(req: Request) {
       return new Response("Unauthorized", { status: 401 });
     }
     const chatId = chatRecord._id;
+    const userKey = await fetchQuery(api.key.getKeyByUserId, {
+      userId: user._id,
+    });
+    console.log("USER OPEN ROUTER KEY", userKey);
+    if (
+      !userKey &&
+      selectedChatModel === "anthropic/claude-4-sonnet-20250522"
+    ) {
+      return new Response("No key found", { status: 400 });
+    }
+    const openrouter = createOpenRouter({
+      apiKey: userKey || process.env.OPENROUTER_API_KEY,
+    });
 
     const lastMessage = message;
     if (!lastMessage) {
@@ -153,34 +157,27 @@ export async function POST(req: Request) {
       chatId,
     });
 
-    const streamId = await fetchMutation(api.stream.createStream, { chatId });
-    console.log("Stream ID:", streamId);
-
-    const { longitude, latitude, city, country } = geolocation(req);
-    const requestHints: RequestHints = {
-      longitude,
-      latitude,
-      city,
-      country,
-    };
-    const systemPrompt = `You are a friendly assistant! Keep your responses concise and helpful. You have access to the internet through getSearchResultsTool, but only use this tool if user requests it. You have the ability to generate image through the generateImageTool. Both tool should never be used together. Always use one tool per request. If you use generateImageTool, do not use getSearchResultsTool. If you use getSearchResultsTool, do not use generateImageTool. Should I use getSearchResultsTool? ${searchWeb}`;
+    // let systemPrompt = ``;
+    // if (selectedChatModel === "deepseek/deepseek-r1-0528") {
+    //   systemPrompt = `You are a friendly assistant! Keep your responses concise and helpful. You have access to the internet through getSearchResultsTool, but only use this tool if user requests it. You have the ability to generate image through the generateImageTool. Both tool should never be used together.`;
+    // } else {
+    //   systemPrompt = `You are a helpful assistant. You have two tools available:
+    // • getSearchResultsTool: use this to search the web when the user asks you to look something up online.
+    // • generateImageTool: use this to create or generate an image when the user explicitly requests an illustration or picture.
+    // Only invoke **one** tool per response—do not use both together. If the user does not ask for a search or an image, just answer in plain text.`;
+    // }
 
     const stream = createDataStream({
       execute: (dataStream) => {
         const result = streamText({
           model: modelUse,
-          system: systemPrompt,
+          system: systemPrompt({ selectedChatModel }),
           messages,
-          maxSteps: 5,
-          // experimental_activeTools:
-          //   selectedChatModel === "chat-model-reasoning"
-          //     ? []
-          //     : [
-          //         "getWeather",
-          //         // "createDocument",
-          //         // "updateDocument",
-          //         // "requestSuggestions",
-          //       ],
+          maxSteps: 1,
+          experimental_activeTools:
+            selectedChatModel === "deepseek/deepseek-r1-0528"
+              ? []
+              : ["generateImageTool", "getSearchResultsTool"],
           experimental_transform: smoothStream({ chunking: "word" }),
           tools: {
             generateImageTool,
@@ -240,24 +237,6 @@ export async function POST(req: Request) {
         return "Oops, an error occurred!";
       },
     });
-    // const streamContext = getStreamContext();
-    // console.groupEnd();
-    // if (streamContext) {
-    //   return new Response(
-    //     await streamContext.resumableStream(streamId, () => stream)
-    //   );
-    // } else {
-    //   return new Response(stream);
-    // }
-    // return new Response(stream, {
-    //   status: 200,
-    //   headers: {
-    //     "Content-Type": "text/event-stream",
-    //     // remove buffering so the client sees tokens as they arrive
-    //     "Cache-Control": "no-transform",
-    //     "X-Accel-Buffering": "no",
-    //   },
-    // });
     return new Response(stream);
   } catch (error: any) {
     if (error instanceof ChatSDKError) {

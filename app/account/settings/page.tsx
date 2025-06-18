@@ -14,7 +14,7 @@ const Page = async ({}) => {
   console.log("About to fetch key for userId:", user._id);
 
   const keyInfo = await fetchQuery(
-    api.key.getKeyByUserId,
+    api.key.checkKeyByUserId,
     { userId: user._id },
     { token: await convexAuthNextjsToken() }
   );

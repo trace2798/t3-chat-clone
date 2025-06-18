@@ -78,4 +78,10 @@ export const chatModelsList: Array<ChatModel> = [
     category: "vision, reasoning",
     tool: true,
   },
+  {
+    label: "Anthropic: Claude Sonnet 4",
+    name: "anthropic/claude-4-sonnet-20250522",
+    category: "reasoning",
+    tool: true,
+  }
 ];

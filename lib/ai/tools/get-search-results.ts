@@ -1,39 +1,3 @@
-// import { tool } from "ai";
-// import { z } from "zod";
-
-// export const getSearchResultsTool = tool({
-//   description: "Get Search Results from the Internet (top 6 only)",
-//   parameters: z.object({
-//     query: z.string(),
-//   }),
-//   execute: async ({ query }) => {
-//     console.log("INSIDE TOOL, query:", query);
-
-//     const base = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-//     const url = `${base}/api/search?q=${encodeURIComponent(query)}`;
-
-//     // 2) Fetch…
-//     const resp = await fetch(url);
-//     if (!resp.ok) {
-//       console.error(
-//         "Search API returned error status",
-//         resp.status,
-//         await resp.text()
-//       );
-//       return []; // still return something
-//     }
-
-//     // 3) Parse & slice
-//     const data: Array<{
-//       title: string;
-//       url: string;
-//       snippet: string;
-//     }> = await resp.json();
-//     console.log("DATA SEARCH:", data);
-
-//     return data.slice(0, 6);
-//   },
-// });
 import { tool } from "ai";
 import { z } from "zod";
 
@@ -45,7 +9,6 @@ export const getSearchResultsTool = tool({
   execute: async ({ query }) => {
     console.log("INSIDE TOOL, query:", query);
 
-    // 1) Build the URL
     let base: string;
     let url: string;
     try {

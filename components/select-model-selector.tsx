@@ -48,7 +48,7 @@ export function SelectModelSelector({
   //   userId: currentUserId as Id<"users">,
   // });
   const key = useQuery(
-    api.key.getKeyByUserId,
+    api.key.checkKeyByUserId,
     currentUserId ? { userId: currentUserId as Id<"users"> } : "skip"
   );
   console.log("CONVEX KEY", key);
