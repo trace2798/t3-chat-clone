@@ -5,10 +5,10 @@ import { DOMParser, type Node } from 'prosemirror-model';
 import { Decoration, DecorationSet, type EditorView } from 'prosemirror-view';
 import { renderToString } from 'react-dom/server';
 
-import { Markdown } from '@/components/markdown';
+import { Markdown } from '@/components/chat-components/markdown';
 
 import { documentSchema } from './config';
-import { createSuggestionWidget, type UISuggestion } from './suggestions';
+import { createSuggestionWidget, type UISuggestion } from './suggestion';
 
 export const buildDocumentFromContent = (content: string) => {
   const parser = DOMParser.fromSchema(documentSchema);
@@ -37,7 +37,7 @@ export const createDecorations = (
           class: 'suggestion-highlight',
         },
         {
-          suggestionId: suggestion.id,
+          suggestionId: suggestion._id,
           type: 'highlight',
         },
       ),
@@ -51,7 +51,7 @@ export const createDecorations = (
           return dom;
         },
         {
-          suggestionId: suggestion.id,
+          suggestionId: suggestion._id,
           type: 'widget',
         },
       ),

@@ -20,20 +20,20 @@ import { ArtifactCloseButton } from "./artifact-close-button";
 import { ArtifactMessages } from "./artifact-messages";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useArtifact } from "@/hooks/use-artifact";
-// import { imageArtifact } from '@/artifacts/image/client';
-// import { codeArtifact } from '@/artifacts/code/client';
-// import { sheetArtifact } from '@/artifacts/sheet/client';
-// import { textArtifact } from '@/artifacts/text/client';
 import equal from "fast-deep-equal";
 import type { UseChatHelpers } from "@ai-sdk/react";
 import type { VisibilityType } from "../chat-components/visibility-selector";
 import { Doc } from "@/convex/_generated/dataModel";
+import { textArtifact } from "@/artifacts/text/client";
+import { codeArtifact } from "@/artifacts/code/client";
+import { imageArtifact } from "@/artifacts/image/client";
+import { sheetArtifact } from "@/artifacts/sheet/client";
 
 export const artifactDefinitions = [
-  //   textArtifact,
-  //   codeArtifact,
-  //   imageArtifact,
-  //   sheetArtifact,
+  textArtifact,
+  codeArtifact,
+  imageArtifact,
+  sheetArtifact,
 ];
 export type ArtifactKind = (typeof artifactDefinitions)[number]["kind"];
 type Document = Doc<"document">;
@@ -244,16 +244,16 @@ function PureArtifact({
     throw new Error("Artifact definition not found!");
   }
 
-  //   useEffect(() => {
-  //     if (artifact.documentId !== 'init') {
-  //       if (artifactDefinition.initialize) {
-  //         artifactDefinition.initialize({
-  //           documentId: artifact.documentId,
-  //           setMetadata,
-  //         });
-  //       }
-  //     }
-  //   }, [artifact.documentId, artifactDefinition, setMetadata]);
+  useEffect(() => {
+    if (artifact.documentId !== "init") {
+      if (artifactDefinition.initialize) {
+        artifactDefinition.initialize({
+          documentId: artifact.documentId,
+          setMetadata,
+        });
+      }
+    }
+  }, [artifact.documentId, artifactDefinition, setMetadata]);
 
   return (
     <AnimatePresence>
@@ -339,6 +339,10 @@ function PureArtifact({
                     append={append}
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}
+                    isImageMode={false}
+                    isSearchMode={false}
+                    onImageModeChange={() => {}}
+                    onSearchModeChange={() => {}}
                   />
                 </form>
               </div>

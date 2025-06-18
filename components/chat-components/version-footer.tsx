@@ -60,7 +60,7 @@ export const VersionFooter = ({
               `/api/document?id=${artifact.documentId}`,
               await fetch(
                 `/api/document?id=${artifact.documentId}&timestamp=${getDocumentTimestampByIndex(
-                  documents,
+                  documents as any,
                   currentVersionIndex
                 )}`,
                 {
@@ -72,10 +72,10 @@ export const VersionFooter = ({
                   ? [
                       ...documents.filter((document) =>
                         isAfter(
-                          new Date(document.createdAt),
+                          new Date(document._creationTime),
                           new Date(
                             getDocumentTimestampByIndex(
-                              documents,
+                              documents as any,
                               currentVersionIndex
                             )
                           )

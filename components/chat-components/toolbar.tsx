@@ -12,6 +12,7 @@ import {
   type Dispatch,
   memo,
   ReactNode,
+  RefObject,
   type SetStateAction,
   useEffect,
   useRef,
@@ -321,7 +322,7 @@ const PureToolbar = ({
   const [selectedTool, setSelectedTool] = useState<string | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  useOnClickOutside(toolbarRef, () => {
+  useOnClickOutside(toolbarRef as RefObject<HTMLDivElement>, () => {
     setIsToolbarVisible(false);
     setSelectedTool(null);
   });

@@ -20,7 +20,6 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { fetchMutation } from "convex/nextjs";
 import { useMutation } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";

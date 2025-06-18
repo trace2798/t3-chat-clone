@@ -1,10 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FC } from "react";
 import { SignInWithGitHub } from "./_components/signin-github";
 
-interface PageProps {}
 
-const Page: FC<PageProps> = ({}) => {
+const Page = ({}) => {
   return (
     <>
       <div className="grid min-h-svh lg:grid-cols-2 absolute top-0 w-full">

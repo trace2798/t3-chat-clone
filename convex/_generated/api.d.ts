@@ -20,6 +20,7 @@ import type * as http from "../http.js";
 import type * as key from "../key.js";
 import type * as message from "../message.js";
 import type * as stream from "../stream.js";
+import type * as suggestion from "../suggestion.js";
 import type * as users from "../users.js";
 import type * as votes from "../votes.js";
 
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   key: typeof key;
   message: typeof message;
   stream: typeof stream;
+  suggestion: typeof suggestion;
   users: typeof users;
   votes: typeof votes;
 }>;

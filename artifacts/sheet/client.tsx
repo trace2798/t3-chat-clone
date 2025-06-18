@@ -1,12 +1,6 @@
-import { Artifact } from '@/components/create-artifact';
-import {
-  CopyIcon,
-  LineChartIcon,
-  RedoIcon,
-  SparklesIcon,
-  UndoIcon,
-} from '@/components/icons';
-import { SpreadsheetEditor } from '@/components/sheet-editor';
+import { Artifact } from '@/components/artifact/create-artifact';
+import { SpreadsheetEditor } from '@/components/chat-components/sheet-editor';
+import { CopyIcon, LineChartIcon, RedoIcon, SparklesIcon, UndoIcon } from 'lucide-react';
 import { parse, unparse } from 'papaparse';
 import { toast } from 'sonner';
 

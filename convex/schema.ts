@@ -79,7 +79,7 @@ const schema = defineSchema({
     userId: v.string(),
   }),
   suggestions: defineTable({
-    documentId: v.id("documents"),
+    documentId: v.id("document"),
     documentCreatedAt: v.number(),
     originalText: v.string(),
     suggestedText: v.string(),

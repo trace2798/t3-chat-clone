@@ -7,10 +7,12 @@ import {
 } from 'prosemirror-view';
 import { createRoot } from 'react-dom/client';
 
-import { Suggestion as PreviewSuggestion } from '@/components/suggestion';
-import type { Suggestion } from '@/lib/db/schema';
-import { ArtifactKind } from '@/components/artifact';
+import { Suggestion as PreviewSuggestion } from '@/components/chat-components/suggestion';
 
+import { ArtifactKind } from '@/components/artifact/artifact';
+import { Doc } from '@/convex/_generated/dataModel';
+
+type Suggestion = Doc<"suggestions">;
 export interface UISuggestion extends Suggestion {
   selectionStart: number;
   selectionEnd: number;
@@ -91,7 +93,7 @@ export function createSuggestionWidget(
       const newDecorations = DecorationSet.create(
         state.doc,
         currentDecorations.find().filter((decoration: Decoration) => {
-          return decoration.spec.suggestionId !== suggestion.id;
+          return decoration.spec.suggestionId !== suggestion._id;
         }),
       );
 

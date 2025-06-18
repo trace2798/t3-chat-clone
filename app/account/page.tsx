@@ -4,7 +4,6 @@ import { api } from "@/convex/_generated/api";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
-import RestoreArchiveChatButton from "./_components/restore-archive-chat";
 import PermanentlyDeleteChatButton from "./_components/permanently-delete-chat";
 import RestoreDeleteChatButton from "./_components/restore-delete-chat";
 
