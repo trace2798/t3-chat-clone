@@ -1,6 +1,5 @@
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
-import { systemPrompt } from "@/lib/ai/prompts";
 import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
 import { getSearchResultsTool } from "@/lib/ai/tools/get-search-results";
 import { ChatSDKError } from "@/lib/errors";
@@ -21,6 +20,7 @@ import {
 } from "ai";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 import type { Tool } from "ai";
+import { systemPrompt } from "@/lib/ai/system-prompts";
 
 type DBMessage = Doc<"message">;
 export const maxDuration = 60;
