@@ -25,6 +25,7 @@ export const systemPrompt = ({
 
     case "meta-llama/llama-4-maverick":
     case "meta-llama/llama-4-scout":
+    case "anthropic/claude-4-sonnet-20250522":
       return `${regularPrompt}\n\n${searchOnlyInfo}`;
 
     default:

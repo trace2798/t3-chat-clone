@@ -50,7 +50,6 @@ const TOOL_MAP: Record<
     active: ["generateImageTool", "getSearchResultsTool"],
   },
 
-  // Only search for Llama 4 Maverick & Scout
   "meta-llama/llama-4-maverick": {
     tools: {
       getSearchResultsTool,
@@ -153,25 +152,11 @@ export async function POST(req: Request) {
       messages: uiFromDB,
       message,
     });
-    // const isReasoning = selectedChatModel === "chat-model-reasoning";
-
-    // const modelTag = isReasoning
-    //   ? "deepseek/deepseek-r1-0528:free"
-    //   : "mistralai/mistral-small-3.1-24b-instruct:free";
-
-    // const modelUse = isReasoning
-    //   ? wrapLanguageModel({
-    //       model: openrouter.chat("deepseek/deepseek-r1-0528:free", {
-    //         reasoning: { effort: "low" },
-    //       }),
-    //       middleware: extractReasoningMiddleware({ tagName: "think" }),
-    //     })
-    //   : openrouter.chat("deepseek/deepseek-r1-0528:free");
 
     const isReasoning = modelConfig.category.includes("reasoning");
     const modelTag = modelConfig.name;
     const baseModel = openrouter.chat(modelTag, {
-      ...(isReasoning ? { reasoning: { effort: "low" } } : {}),
+      ...(isReasoning ? { reasoning: { effort: "medium" } } : {}),
     });
 
     const modelUse = isReasoning
@@ -207,14 +192,11 @@ export async function POST(req: Request) {
           model: modelUse,
           system: systemPrompt({ selectedChatModel }),
           messages,
-          maxSteps: 1,
+          maxSteps: 10,
           experimental_activeTools: active,
           experimental_transform: smoothStream({ chunking: "word" }),
-          // tools: {
-          //   generateImageTool,
-          //   getSearchResultsTool,
-          // },
           tools,
+          toolChoice: "auto",
           onFinish: async ({ response }) => {
             if (user._id) {
               try {

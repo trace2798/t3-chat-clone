@@ -84,8 +84,6 @@ function PureMultimodalInput({
   selectedModel: string;
   onModelChange: (model: string) => void;
 }) {
-  // const [isSearchMode, setIsSearchMode] = useState(false);
-
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
 
@@ -224,7 +222,21 @@ function PureMultimodalInput({
       scrollToBottom();
     }
   }, [status, scrollToBottom]);
+  const bothToolsModels = [
+    "mistralai/mistral-small-3.1-24b-instruct",
+    "google/gemini-2.5-flash-lite-preview-06-17",
+    "anthropic/claude-4-sonnet-20250522",
+  ];
+  const searchOnlyModels = [
+    "meta-llama/llama-4-maverick",
+    "meta-llama/llama-4-scout",
+  ];
 
+  const canSearch =
+    bothToolsModels.includes(selectedModel) ||
+    searchOnlyModels.includes(selectedModel);
+
+  const canGenerateImage = bothToolsModels.includes(selectedModel);
   return (
     <>
       <div className="relative flex flex-col gap-4 w-full max-w2xl mx-auto z-50">
@@ -329,37 +341,49 @@ function PureMultimodalInput({
                 value={selectedModel}
                 onSelectModel={onModelChange}
               />
-              <SearchButton
-                triggerSearch={() => {
-                  onSearchModeChange(!isSearchMode);
-                  if (!isSearchMode) onImageModeChange(false);
-                }}
-                disabled={status !== "ready"}
-                isActive={isSearchMode}
-              />
-              <GenerateImageButton
-                triggerImage={() => {
-                  onImageModeChange(!isImageMode);
-                  if (!isImageMode) onSearchModeChange(false);
-                }}
-                disabled={status !== "ready"}
-                isActive={isImageMode}
-              />
-              {currentUserId ? (
-                <AttachmentsButton
-                  fileInputRef={fileInputRef}
-                  status={status}
+
+              {canSearch && (
+                <SearchButton
+                  triggerSearch={() => {
+                    onSearchModeChange(!isSearchMode);
+                    if (!isSearchMode) onImageModeChange(false);
+                  }}
+                  disabled={status !== "ready"}
+                  isActive={isSearchMode}
                 />
-              ) : (
-                <Button
-                  data-testid="attachments-button"
-                  className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700  hover:cursor-pointer hover:bg-accent"
-                  disabled={!currentUserId}
-                  variant="ghost"
-                >
-                  <PaperclipIcon size={14} />
-                </Button>
               )}
+
+              {canGenerateImage && (
+                <GenerateImageButton
+                  triggerImage={() => {
+                    onImageModeChange(!isImageMode);
+                    if (!isImageMode) onSearchModeChange(false);
+                  }}
+                  disabled={status !== "ready"}
+                  isActive={isImageMode}
+                />
+              )}
+              {(selectedModel === "meta-llama/llama-4-scout" ||
+                selectedModel === "meta-llama/llama-4-maverick" ||
+                selectedModel ===
+                  "google/gemini-2.5-flash-lite-preview-06-17" ||
+                selectedModel === "mistralai/mistral-small-3.1-24b-instruct" ||
+                selectedModel === "anthropic/claude-4-sonnet-20250522") &&
+                (currentUserId ? (
+                  <AttachmentsButton
+                    fileInputRef={fileInputRef}
+                    status={status}
+                  />
+                ) : (
+                  <Button
+                    data-testid="attachments-button"
+                    className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:cursor-pointer hover:bg-accent"
+                    disabled={!currentUserId}
+                    variant="ghost"
+                  >
+                    <PaperclipIcon size={14} />
+                  </Button>
+                ))}
             </div>
             <div className="p-2 w-fit flex flex-row space-x-2 items-center justify-end">
               <Dictaphone input={input} setInput={setInput} />
@@ -394,9 +418,6 @@ export const MultimodalInput = memo(
     if (prevProps.isSearchMode !== nextProps.isSearchMode) return false;
     if (prevProps.isImageMode !== nextProps.isImageMode) return false;
     if (prevProps.selectedModel !== nextProps.selectedModel) return false;
-    // if (prevProps.isArchived !== nextProps.isArchived) return false;
-    // if (prevProps.selectedVisibilityType !== nextProps.selectedVisibilityType)
-    //   return false;
 
     return true;
   }
@@ -435,7 +456,6 @@ function PureSearchButton({
   disabled: boolean;
   isActive: boolean;
 }) {
-  const { isMobile } = useSidebar();
   return (
     <Button
       data-testid="search-button"
@@ -452,7 +472,6 @@ function PureSearchButton({
       variant="ghost"
     >
       <Globe size={14} />
-      {/* <span className={cn(isMobile && "hidden")}>Search</span> */}
     </Button>
   );
 }

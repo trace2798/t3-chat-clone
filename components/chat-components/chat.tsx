@@ -35,10 +35,10 @@ export function Chat({
   const router = useRouter();
 
   const [selectedModel, setSelectedModel] = useState(
-    "deepseek/deepseek-r1-0528"
+    "google/gemini-2.5-flash-lite-preview-06-17"
   );
-  const [searchWeb, setSearchWeb] = useState(false);
-  const [generateImage, setGenerateImage] = useState(false);
+  const [searchWeb, setSearchWeb] = useState(true);
+  const [generateImage, setGenerateImage] = useState(true);
   const dbMessages = useQuery(api.message.getMessagesByChatId, {
     chatId: chatInfo._id,
   });

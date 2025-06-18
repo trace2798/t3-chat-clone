@@ -21,10 +21,10 @@ export function ChatHome({
   const router = useRouter();
   const createChat = useMutation(api.chat.createChat);
   const [selectedModel, setSelectedModel] = useState(
-    "deepseek/deepseek-r1-0528"
+    "google/gemini-2.5-flash-lite-preview-06-17"
   );
-  const [searchWeb, setSearchWeb] = useState(false);
-  const [generateImage, setGenerateImage] = useState(false);
+  const [searchWeb, setSearchWeb] = useState(true);
+  const [generateImage, setGenerateImage] = useState(true);
   const [chatId, setChatId] = useState<string>("");
 
   const [attachments, setAttachments] = useState<Attachment[]>([]);
