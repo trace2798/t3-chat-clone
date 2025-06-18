@@ -125,7 +125,7 @@ const tabs = [
 function PureSuggestedActions({ setInput }: SuggestedActionsProps) {
   return (
     <Tabs defaultValue="create" className="w-full">
-      <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-4 gap-5 w-full bg-transparent">
+      <TabsList className="mb-4 grid grid-cols-2 md:grid-cols-3 gap-5 w-full bg-transparent">
         {tabs.map((tab, index) => (
           <TabsTrigger
             key={`tab-${index}`}
