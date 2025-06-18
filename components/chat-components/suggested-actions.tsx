@@ -66,34 +66,34 @@ const tabs = [
       },
     ],
   },
-  {
-    name: "code",
-    label: "Code",
-    actions: [
-      {
-        title: "Write code to invert a binary search tree in Python",
+  // {
+  //   name: "code",
+  //   label: "Code",
+  //   actions: [
+  //     {
+  //       title: "Write code to invert a binary search tree in Python",
 
-        action: "Write code to invert a binary search tree in Python",
-      },
-      {
-        title:
-          "What's the difference between Promise.all and Promise.allSettled",
+  //       action: "Write code to invert a binary search tree in Python",
+  //     },
+  //     {
+  //       title:
+  //         "What's the difference between Promise.all and Promise.allSettled",
 
-        action:
-          "What's the difference between Promise.all and Promise.allSettled?",
-      },
-      {
-        title: "Explain react's useEffect cleanup function",
+  //       action:
+  //         "What's the difference between Promise.all and Promise.allSettled?",
+  //     },
+  //     {
+  //       title: "Explain react's useEffect cleanup function",
 
-        action: "Explain react's useEffect cleanup function",
-      },
-      {
-        title: "Best practices for error handling in async/await",
+  //       action: "Explain react's useEffect cleanup function",
+  //     },
+  //     {
+  //       title: "Best practices for error handling in async/await",
 
-        action: "Best practices for error handling in async/await",
-      },
-    ],
-  },
+  //       action: "Best practices for error handling in async/await",
+  //     },
+  //   ],
+  // },
   {
     name: "learn",
     label: "Learn",
@@ -151,23 +151,11 @@ function PureSuggestedActions({ setInput }: SuggestedActionsProps) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 20 }}
                   transition={{ delay: 0.05 * index }}
-                  // key={`suggested-action-${suggestedAction.title}-${index}`}
                 >
                   <div
                     typeof="button"
-                    // onClick={async () => {
-                    //   window.history.replaceState({}, "", `/chat/${chatId}`);
-                    //   append({
-                    //     role: "user",
-                    //     content: suggestedAction.action,
-                    //   });
-                    //   handleSubmit();
-                    // }}
                     onClick={() => {
-                      // window.history.replaceState({}, "", `/chat/${chatId}`);
                       setInput(suggestedAction.title);
-                      // append({ role: "user", content: suggestedAction.action });
-                      // handleSubmit();
                     }}
                     className="text-left rounded-xl hover:bg-accent px-3 py-2 text-base flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start hover:cursor-pointer"
                   >
@@ -184,8 +172,4 @@ function PureSuggestedActions({ setInput }: SuggestedActionsProps) {
   );
 }
 
-export const SuggestedActions = memo(
-  PureSuggestedActions,
-  // (prevProps, nextProps) => prevProps.chatId === nextProps.chatId
-  // && prevProps.selectedVisibilityType === nextProps.selectedVisibilityType
-);
+export const SuggestedActions = memo(PureSuggestedActions);
