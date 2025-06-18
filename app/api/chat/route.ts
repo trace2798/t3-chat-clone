@@ -181,16 +181,26 @@ export async function POST(req: Request) {
     await fetchMutation(api.chat.updateChatUpdatedAt, {
       chatId,
     });
-    const { tools, active } = TOOL_MAP[selectedChatModel] ?? {
+    let { tools, active } = TOOL_MAP[selectedChatModel] ?? {
       tools: {},
       active: [],
     };
+
+    if (!searchWeb) {
+      delete tools.getSearchResultsTool;
+      active = active.filter((name) => name !== "getSearchResultsTool");
+    }
+
+    if (!generateImage) {
+      delete tools.generateImageTool;
+      active = active.filter((name) => name !== "generateImageTool");
+    }
 
     const stream = createDataStream({
       execute: (dataStream) => {
         const result = streamText({
           model: modelUse,
-          system: systemPrompt({ selectedChatModel }),
+          system: systemPrompt({ selectedChatModel, searchWeb, generateImage }),
           messages,
           maxSteps: 10,
           experimental_activeTools: active,
