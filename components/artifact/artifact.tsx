@@ -343,6 +343,8 @@ function PureArtifact({
                     isSearchMode={false}
                     onImageModeChange={() => {}}
                     onSearchModeChange={() => {}}
+                    selectedModel="deepseek/deepseek-r1-0528"
+                    onModelChange={() => {}}
                   />
                 </form>
               </div>

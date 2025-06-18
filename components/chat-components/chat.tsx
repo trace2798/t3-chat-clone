@@ -1,20 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Doc } from "@/convex/_generated/dataModel";
+import { useAutoResume } from "@/hooks/use-auto-resume";
+import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { Attachment, UIMessage } from "ai";
-import { fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
-import { useAutoResume } from "@/hooks/use-auto-resume";
 import { fetchMutation } from "convex/nextjs";
+import { useQuery } from "convex/react";
 import { ArchiveRestoreIcon, Loader } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { MultimodalInput } from "./input-box";
 import { Messages } from "./messages";
-import { toast } from "sonner";
 
 type DBMessage = Doc<"message">;
 
@@ -35,7 +35,7 @@ export function Chat({
   const router = useRouter();
 
   const [selectedModel, setSelectedModel] = useState(
-    "deepseek/deepseek-r1-0528:free"
+    "deepseek/deepseek-r1-0528"
   );
   const [searchWeb, setSearchWeb] = useState(false);
   const [generateImage, setGenerateImage] = useState(false);

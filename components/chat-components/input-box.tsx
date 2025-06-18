@@ -568,9 +568,9 @@ export function Dictaphone({ input, setInput }: DictaphoneProps) {
       resetTranscript();
     }
     wasListening.current = listening;
-  }, [listening]);
+  }, [listening, transcript, resetTranscript, setInput]);
 
-  const toggleListening = () => {
+  const toggleListening = useCallback(() => {
     if (listening) {
       SpeechRecognition.stopListening();
     } else {
@@ -580,7 +580,7 @@ export function Dictaphone({ input, setInput }: DictaphoneProps) {
         language: "en-US",
       });
     }
-  };
+  }, [listening, resetTranscript]);
 
   return (
     <HoverCard>

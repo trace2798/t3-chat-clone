@@ -21,6 +21,7 @@ import { createTogetherAI } from "@ai-sdk/togetherai";
 import { generateImageTool } from "@/lib/ai/tools/generate-image-tool";
 import { geolocation } from "@vercel/functions";
 import { getSearchResultsTool } from "@/lib/ai/tools/get-search-results";
+import { chatModelsList } from "@/lib/model-list";
 
 type DBMessage = Doc<"message">;
 export const maxDuration = 60;
@@ -53,12 +54,20 @@ export async function POST(req: Request) {
       searchWeb,
       generateImage,
     } = await req.json();
+    
     console.log("search_web testing", searchWeb);
     console.log("data FROM FE");
     console.log("SLUG FE", slug);
     console.log("selectedChatModel FE", selectedChatModel);
     console.log("message FE", message);
     console.log("generateImage FE", generateImage);
+
+    const modelConfig = chatModelsList.find(
+      (m) => m.name === selectedChatModel
+    );
+    if (!modelConfig) {
+      return new Response("Chat model not found", { status: 404 });
+    }
     const chatRecord = await fetchQuery(api.chat.getChatBySlug, { slug });
     if (!chatRecord) {
       return new Response("Chat not found", { status: 404 });
@@ -95,26 +104,39 @@ export async function POST(req: Request) {
       }));
 
     const uiFromDB = dbMessages ? convertToUIMessages(dbMessages) : [];
-    // console.log("uiFromDB", uiFromDB);
+
     const messages = appendClientMessage({
       messages: uiFromDB,
       message,
     });
-    const isReasoning = selectedChatModel === "chat-model-reasoning";
+    // const isReasoning = selectedChatModel === "chat-model-reasoning";
 
-    const modelTag = isReasoning
-      ? "deepseek/deepseek-r1-0528:free"
-      : "mistralai/mistral-small-3.1-24b-instruct:free";
+    // const modelTag = isReasoning
+    //   ? "deepseek/deepseek-r1-0528:free"
+    //   : "mistralai/mistral-small-3.1-24b-instruct:free";
 
-    //  model: togetherai("deepseek-ai/DeepSeek-R1"),
+    // const modelUse = isReasoning
+    //   ? wrapLanguageModel({
+    //       model: openrouter.chat("deepseek/deepseek-r1-0528:free", {
+    //         reasoning: { effort: "low" },
+    //       }),
+    //       middleware: extractReasoningMiddleware({ tagName: "think" }),
+    //     })
+    //   : openrouter.chat("deepseek/deepseek-r1-0528:free");
+
+    const isReasoning = modelConfig.category.includes("reasoning");
+    const modelTag = modelConfig.name;
+    const baseModel = openrouter.chat(modelTag, {
+      ...(isReasoning ? { reasoning: { effort: "low" } } : {}),
+    });
+
     const modelUse = isReasoning
       ? wrapLanguageModel({
-          model: openrouter.chat("deepseek/deepseek-r1-0528:free", {
-            reasoning: { effort: "low" },
-          }),
+          model: baseModel,
           middleware: extractReasoningMiddleware({ tagName: "think" }),
         })
-      : openrouter.chat("mistralai/mistral-small-3.1-24b-instruct:free");
+      : baseModel;
+
     await fetchMutation(api.message.saveMessage, {
       chatId,
       userId: user._id,
@@ -163,12 +185,6 @@ export async function POST(req: Request) {
           tools: {
             generateImageTool,
             getSearchResultsTool,
-            // createDocument: createDocument({ session, dataStream }),
-            // updateDocument: updateDocument({ session, dataStream }),
-            // requestSuggestions: requestSuggestions({
-            //   session,
-            //   dataStream,
-            // }),
           },
           onFinish: async ({ response }) => {
             if (user._id) {

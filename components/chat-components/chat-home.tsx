@@ -21,7 +21,7 @@ export function ChatHome({
   const router = useRouter();
   const createChat = useMutation(api.chat.createChat);
   const [selectedModel, setSelectedModel] = useState(
-    "deepseek/deepseek-r1-0528:free"
+    "deepseek/deepseek-r1-0528"
   );
   const [searchWeb, setSearchWeb] = useState(false);
   const [generateImage, setGenerateImage] = useState(false);

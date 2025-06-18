@@ -2,7 +2,6 @@ import { Chat } from "@/components/chat-components/chat";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { DEFAULT_CHAT_MODEL } from "@/lib/models";
 import { convexAuthNextjsToken } from "@convex-dev/auth/nextjs/server";
 import { fetchQuery } from "convex/nextjs";
 import { Home } from "lucide-react";
